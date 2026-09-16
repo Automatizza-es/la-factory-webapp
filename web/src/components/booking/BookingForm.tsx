@@ -1,0 +1,167 @@
+"use client";
+
+import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { submitBooking } from "@/app/(coworker)/reservar/actions";
+import { formatDateLong, formatMinutesAsHours } from "@/lib/format";
+import type { QuotaSummary, Room } from "@/types/domain";
+
+interface BookingFormProps {
+  room: Room;
+  quota: QuotaSummary | null;
+  existingBookingId?: string;
+  initialDate?: string;
+  initialStartTime?: string;
+  initialEndTime?: string;
+}
+
+function todayIso() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function toMinutes(time: string) {
+  const [h, m] = time.split(":").map(Number);
+  return h * 60 + m;
+}
+
+export function BookingForm({
+  room,
+  quota,
+  existingBookingId,
+  initialDate,
+  initialStartTime,
+  initialEndTime,
+}: BookingFormProps) {
+  const router = useRouter();
+  const [date, setDate] = useState(initialDate ?? todayIso());
+  const [startTime, setStartTime] = useState(initialStartTime ?? "10:00");
+  const [endTime, setEndTime] = useState(initialEndTime ?? "11:00");
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const durationMinutes = toMinutes(endTime) - toMinutes(startTime);
+  const isValidRange = durationMinutes > 0;
+
+  const availableMinutes = quota ? quota.totalMinutes - quota.usedMinutes : null;
+  const afterMinutes = useMemo(() => {
+    if (availableMinutes === null || !isValidRange) return null;
+    return availableMinutes - durationMinutes;
+  }, [availableMinutes, durationMinutes, isValidRange]);
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!isValidRange) return;
+
+    setSubmitting(true);
+    setError(null);
+
+    const result = await submitBooking({
+      roomId: room.id,
+      date,
+      startTime,
+      endTime,
+      existingBookingId,
+    });
+
+    if (result.error) {
+      setError(result.error);
+      setSubmitting(false);
+      return;
+    }
+
+    router.push("/reservas");
+    router.refresh();
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+      <div className="rounded-3xl bg-white p-5 shadow-sm">
+        <p className="font-semibold text-ink">{room.name}</p>
+        <p className="text-sm text-warm-gray">{room.capacityLabel}</p>
+
+        <div className="mt-4 flex flex-col gap-3">
+          <label className="flex flex-col gap-1 text-sm text-warm-gray">
+            Día
+            <input
+              type="date"
+              value={date}
+              min={todayIso()}
+              onChange={(e) => setDate(e.target.value)}
+              required
+              className="rounded-xl border border-sand bg-white px-3 py-2 text-ink outline-none focus:border-brown-dark"
+            />
+          </label>
+
+          <div className="flex gap-3">
+            <label className="flex flex-1 flex-col gap-1 text-sm text-warm-gray">
+              Inicio
+              <input
+                type="time"
+                value={startTime}
+                onChange={(e) => setStartTime(e.target.value)}
+                required
+                className="rounded-xl border border-sand bg-white px-3 py-2 text-ink outline-none focus:border-brown-dark"
+              />
+            </label>
+            <label className="flex flex-1 flex-col gap-1 text-sm text-warm-gray">
+              Fin
+              <input
+                type="time"
+                value={endTime}
+                onChange={(e) => setEndTime(e.target.value)}
+                required
+                className="rounded-xl border border-sand bg-white px-3 py-2 text-ink outline-none focus:border-brown-dark"
+              />
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div className="rounded-3xl bg-white p-5 shadow-sm">
+        <p className="text-sm text-warm-gray">{formatDateLong(date)}</p>
+        {isValidRange ? (
+          <p className="mt-1 text-lg font-semibold text-ink">
+            {startTime}–{endTime} · Duración: {formatMinutesAsHours(durationMinutes)}
+          </p>
+        ) : (
+          <p className="mt-1 text-sm text-red-600">
+            La hora de fin debe ser posterior a la de inicio.
+          </p>
+        )}
+
+        {availableMinutes !== null && (
+          <div className="mt-4 flex flex-col gap-1 border-t border-sand/50 pt-3 text-sm">
+            <div className="flex justify-between text-warm-gray">
+              <span>Disponible actualmente</span>
+              <span className="font-medium text-ink">
+                {formatMinutesAsHours(availableMinutes)}
+              </span>
+            </div>
+            {afterMinutes !== null && (
+              <div className="flex justify-between text-warm-gray">
+                <span>Después de reservar</span>
+                <span
+                  className={`font-medium ${afterMinutes < 0 ? "text-red-600" : "text-ink"}`}
+                >
+                  {formatMinutesAsHours(Math.max(afterMinutes, 0))}
+                </span>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {error && (
+        <p className="rounded-2xl bg-red-50 p-3 text-sm text-red-600">{error}</p>
+      )}
+
+      <button
+        type="submit"
+        disabled={!isValidRange || submitting}
+        className="rounded-xl bg-brown-dark py-3 text-sm font-medium text-white disabled:opacity-60"
+      >
+        {submitting ? "Reservando..." : existingBookingId ? "Guardar cambios" : "Confirmar reserva"}
+      </button>
+    </form>
+  );
+}

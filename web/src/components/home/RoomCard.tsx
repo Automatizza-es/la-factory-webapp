@@ -20,10 +20,7 @@ export function RoomCard({ room }: RoomCardProps) {
         </span>
       </div>
       <div className="flex flex-1 flex-col gap-3 p-4">
-        <div>
-          <p className="font-semibold text-ink">{room.name}</p>
-          <p className="text-sm text-warm-gray">{room.subtitle}</p>
-        </div>
+        <p className="font-semibold text-ink">{room.name}</p>
         <span className="mt-auto flex items-center justify-center gap-1 whitespace-nowrap rounded-xl bg-brown-dark py-2 text-xs font-medium text-white sm:text-sm">
           Disponibilidad
           <ChevronRight className="h-4 w-4 shrink-0" strokeWidth={2.25} />

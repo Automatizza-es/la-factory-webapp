@@ -1,16 +1,27 @@
 import { CalendarRange, Mail, ShieldCheck } from "lucide-react";
-import { mockCoworker, mockQuota } from "@/lib/mock-data";
+import { SignOutButton } from "@/components/layout/SignOutButton";
+import { getCurrentCoworker, getQuotaSummary } from "@/lib/data/coworker";
+import { createClient } from "@/lib/supabase/server";
 
-export default function PerfilPage() {
+export default async function PerfilPage() {
+  const current = await getCurrentCoworker();
+  if (!current) return null;
+
+  const supabase = await createClient();
+  const [quota, auth] = await Promise.all([
+    getQuotaSummary(supabase, current.contactId),
+    supabase.auth.getUser(),
+  ]);
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col items-center gap-3 pt-2 text-center">
         <div className="flex h-20 w-20 items-center justify-center rounded-full bg-sand text-2xl font-semibold text-brown-dark">
-          {mockCoworker.initials}
+          {current.coworker.initials}
         </div>
         <div>
-          <h1 className="text-xl font-bold text-ink">{mockCoworker.firstName}</h1>
-          <p className="text-sm text-warm-gray">marta.garcia@email.com</p>
+          <h1 className="text-xl font-bold text-ink">{current.coworker.firstName}</h1>
+          <p className="text-sm text-warm-gray">{auth.data.user?.email}</p>
         </div>
       </div>
 
@@ -19,16 +30,18 @@ export default function PerfilPage() {
           <ShieldCheck className="h-5 w-5 text-brown-dark" strokeWidth={1.75} />
           <div>
             <p className="text-sm text-warm-gray">Tarifa</p>
-            <p className="font-medium text-ink">{mockQuota.planLabel}</p>
+            <p className="font-medium text-ink">{quota?.planLabel ?? "Sin tarifa activa"}</p>
           </div>
         </div>
-        <div className="flex items-center gap-3 p-4">
-          <CalendarRange className="h-5 w-5 text-brown-dark" strokeWidth={1.75} />
-          <div>
-            <p className="text-sm text-warm-gray">Periodo actual</p>
-            <p className="font-medium text-ink">{mockQuota.periodLabel}</p>
+        {quota && (
+          <div className="flex items-center gap-3 p-4">
+            <CalendarRange className="h-5 w-5 text-brown-dark" strokeWidth={1.75} />
+            <div>
+              <p className="text-sm text-warm-gray">Periodo actual</p>
+              <p className="font-medium text-ink">{quota.periodLabel}</p>
+            </div>
           </div>
-        </div>
+        )}
         <div className="flex items-center gap-3 p-4">
           <Mail className="h-5 w-5 text-brown-dark" strokeWidth={1.75} />
           <div>
@@ -42,6 +55,8 @@ export default function PerfilPage() {
         La edición de datos personales y las preferencias de comunicación estarán
         disponibles próximamente.
       </p>
+
+      <SignOutButton />
     </div>
   );
 }

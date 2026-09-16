@@ -11,7 +11,6 @@ export interface QuotaSummary {
 export interface Room {
   id: string;
   name: string;
-  subtitle: string;
   capacityLabel: string;
 }
 

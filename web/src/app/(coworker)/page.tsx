@@ -3,21 +3,36 @@ import { ChevronRight } from "lucide-react";
 import { BookingCard } from "@/components/home/BookingCard";
 import { QuotaCard } from "@/components/home/QuotaCard";
 import { RoomCard } from "@/components/home/RoomCard";
-import { mockBookings, mockCoworker, mockQuota, mockRooms } from "@/lib/mock-data";
+import { getBookings, getCurrentCoworker, getQuotaSummary, getRooms } from "@/lib/data/coworker";
+import { createClient } from "@/lib/supabase/server";
 
-export default function HomePage() {
-  const upcomingBookings = mockBookings
-    .filter((booking) => booking.status === "upcoming")
-    .slice(0, 2);
+export default async function HomePage() {
+  const current = await getCurrentCoworker();
+  if (!current) return null;
+
+  const supabase = await createClient();
+  const [quota, rooms, bookings] = await Promise.all([
+    getQuotaSummary(supabase, current.contactId),
+    getRooms(supabase),
+    getBookings(supabase, current.contactId),
+  ]);
+
+  const upcomingBookings = bookings.filter((b) => b.status === "upcoming").slice(0, 2);
 
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-2xl font-bold text-ink">Hola, {mockCoworker.firstName}</h1>
+        <h1 className="text-2xl font-bold text-ink">Hola, {current.coworker.firstName}</h1>
         <p className="text-sm text-warm-gray">Qué bueno tenerte por aquí</p>
       </div>
 
-      <QuotaCard quota={mockQuota} />
+      {quota ? (
+        <QuotaCard quota={quota} />
+      ) : (
+        <p className="rounded-2xl bg-white p-4 text-sm text-warm-gray shadow-sm">
+          No tienes una tarifa activa este mes.
+        </p>
+      )}
 
       <section className="flex flex-col gap-3">
         <div className="flex items-center justify-between">
@@ -31,7 +46,7 @@ export default function HomePage() {
           </Link>
         </div>
         <div className="grid grid-cols-2 gap-3">
-          {mockRooms.map((room) => (
+          {rooms.map((room) => (
             <RoomCard key={room.id} room={room} />
           ))}
         </div>

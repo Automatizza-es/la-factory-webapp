@@ -1,7 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { CheckCircle2, Pencil, Trash2, XCircle } from "lucide-react";
+import { cancelBooking } from "@/app/(coworker)/reservar/actions";
 import { formatDateLong, formatDateShort, formatTimeRange } from "@/lib/format";
 import type { Booking } from "@/types/domain";
 
@@ -16,9 +19,27 @@ const STATUS_LABEL: Record<Booking["status"], string> = {
 };
 
 export function BookingCard({ booking }: BookingCardProps) {
-  const [notice, setNotice] = useState<string | null>(null);
+  const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
+  const [cancelling, setCancelling] = useState(false);
   const { day, month } = formatDateShort(booking.date);
   const durationMinutes = booking.endMinutes - booking.startMinutes;
+
+  async function handleCancel() {
+    if (!window.confirm("¿Seguro que quieres cancelar esta reserva?")) return;
+
+    setCancelling(true);
+    setError(null);
+    const result = await cancelBooking(booking.id);
+
+    if (result.error) {
+      setError(result.error);
+      setCancelling(false);
+      return;
+    }
+
+    router.refresh();
+  }
 
   return (
     <div className="rounded-2xl bg-white p-4 shadow-sm">
@@ -54,26 +75,26 @@ export function BookingCard({ booking }: BookingCardProps) {
 
       {booking.status === "upcoming" && (
         <div className="mt-3 flex gap-2">
-          <button
-            type="button"
-            onClick={() => setNotice("Función disponible próximamente.")}
+          <Link
+            href={`/reservar?sala=${booking.roomId}&reserva=${booking.id}`}
             className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-cream py-2 text-sm font-medium text-brown-dark transition-colors hover:bg-sand/40"
           >
             <Pencil className="h-4 w-4" strokeWidth={2} />
             Modificar
-          </button>
+          </Link>
           <button
             type="button"
-            onClick={() => setNotice("Función disponible próximamente.")}
-            className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-red-50 py-2 text-sm font-medium text-red-600 transition-colors hover:bg-red-100"
+            onClick={handleCancel}
+            disabled={cancelling}
+            className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-red-50 py-2 text-sm font-medium text-red-600 transition-colors hover:bg-red-100 disabled:opacity-60"
           >
             <Trash2 className="h-4 w-4" strokeWidth={2} />
-            Cancelar
+            {cancelling ? "Cancelando..." : "Cancelar"}
           </button>
         </div>
       )}
 
-      {notice && <p className="mt-2 text-xs text-warm-gray">{notice}</p>}
+      {error && <p className="mt-2 text-xs text-red-600">{error}</p>}
     </div>
   );
 }
