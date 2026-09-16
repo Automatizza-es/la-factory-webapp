@@ -1,0 +1,31 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f5f1e9;
+  --foreground: #25231f;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+@theme inline {
+  --color-cream: #f5f1e9;
+  --color-brown: #77512d;
+  --color-brown-dark: #5f4023;
+  --color-ink: #25231f;
+  --color-sand: #d8c7b2;
+  --color-warm-gray: #746d65;
+  --font-sans: var(--font-inter);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+img {
+  max-width: 100%;
+}
+
+[hidden] {
+  display: none !important;
+}

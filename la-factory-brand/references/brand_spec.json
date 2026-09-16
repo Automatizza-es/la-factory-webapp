@@ -1,0 +1,120 @@
+{
+  "name": "La Factory Coworking",
+  "version": "1.2",
+  "date": "2026-09-09",
+  "status": "Sistema operativo aprobado por la usuaria; no manual histórico del rebranding",
+  "brand": {
+    "claim": "NEVER WORK ALONE",
+    "logo_descriptor": "CO WORKING",
+    "positioning": "Espacio de trabajo junto al mar para concentrarse, conectar y trabajar con flexibilidad.",
+    "pillars": [
+      "trabajo real",
+      "comunidad",
+      "flexibilidad",
+      "entorno mediterráneo"
+    ]
+  },
+  "colors": {
+    "primary": {
+      "hex": "#77512D",
+      "status": "Medido en logo cuadrado; seleccionado como principal de comunicación"
+    },
+    "vertical_original": {
+      "hex": "#7E4F25",
+      "status": "Medido en JPEG vertical; no alterar el archivo"
+    },
+    "cream": {
+      "hex": "#F5F1E9",
+      "status": "Propuesta de trabajo aprobada"
+    },
+    "white": {
+      "hex": "#FFFFFF",
+      "status": "Presente en originales"
+    },
+    "ink": {
+      "hex": "#25231F",
+      "status": "Propuesta de trabajo aprobada"
+    },
+    "sand": {
+      "hex": "#D8C7B2",
+      "status": "Propuesta de trabajo aprobada"
+    },
+    "warm_grey": {
+      "hex": "#746D65",
+      "status": "Propuesta de trabajo aprobada"
+    }
+  },
+  "typography": {
+    "communication": "Inter",
+    "email_fallback": "Arial, Helvetica, sans-serif",
+    "logo_font": "Desconocida; dibujo original",
+    "status": "Inter aprobada para el sistema de comunicación, no identificada como fuente histórica"
+  },
+  "logos": {
+    "square": {
+      "path": "assets/logo-cuadrado-original.jpg",
+      "pixels": [
+        640,
+        640
+      ],
+      "format": "JPEG",
+      "transparent": false,
+      "sha256": "4199a6778591f447841de75006193b735cab9a3ccdf705c7d3a2191f823b4c3b"
+    },
+    "vertical": {
+      "path": "assets/logo-vertical-original.jpg",
+      "pixels": [
+        1080,
+        1920
+      ],
+      "format": "JPEG",
+      "transparent": false,
+      "sha256": "97c191b23de69001eb117ab439ec8271b31b8e88e3fd4b7fa29dd9bc8a1e9bd5"
+    }
+  },
+  "visual": {
+    "default_background": "#F5F1E9",
+    "heading_color": "#77512D",
+    "body_color": "#25231F",
+    "email_header": "Logo compacto sobre fondo claro; título claro, sin gran pastilla marrón",
+    "avoid": [
+      "dos grandes bloques marrones consecutivos",
+      "logo duplicado",
+      "fotografía de stock presentada como real",
+      "filtros sepia intensos",
+      "reconstrucciones generativas del logo"
+    ]
+  },
+  "newsletter": {
+    "platform": "Mailrelay",
+    "languages": [
+      "ca",
+      "es",
+      "en"
+    ],
+    "layout": "Un solo HTML, tres secciones completas, enlaces internos CAT / ES / EN",
+    "width_px": 600,
+    "font_stack": "Arial, Helvetica, sans-serif",
+    "logo_public_url": "https://lafactorycoworking.com/wp-content/uploads/2024/09/IG_LOGO.jpg",
+    "anchor_compatibility": "No universal: probar en clientes reales",
+    "unsubscribe": "Insertar y verificar el enlace/variable de baja de la cuenta de Mailrelay; no inventar etiquetas",
+    "sender_subdomain": "news.lafactorycoworking.com (propuesto; configuración pendiente, no confirmado como activo)"
+  },
+  "public_contact_reference": {
+    "website": "https://lafactorycoworking.com/",
+    "email": "hola@lafactorycoworking.com",
+    "address": "Av. Pineda, 2, 08860 Castelldefels",
+    "telephone": "+34 687 561 691",
+    "name": "Mireia Sánchez Salamí",
+    "status": "Datos del correo aportado por la usuaria; verificar antes de publicar si se trata de información actual"
+  },
+  "unknowns": [
+    "vectorial oficial",
+    "fuente del lettering",
+    "colores históricos Pantone/CMYK",
+    "banco de fotografías autorizado",
+    "texto legal de newsletters aprobado",
+    "variable de baja configurada en la cuenta Mailrelay",
+    "estado de autenticación del subdominio"
+  ]
+}
