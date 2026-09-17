@@ -122,7 +122,7 @@ export async function getQuotaSummary(
 export async function getRooms(supabase: SupabaseClient): Promise<Room[]> {
   const { data } = await supabase
     .from("rooms")
-    .select("id, name, capacity_min, capacity_max")
+    .select("id, name, capacity_min, capacity_max, image_path")
     .eq("is_active", true)
     .order("name");
 
@@ -131,6 +131,7 @@ export async function getRooms(supabase: SupabaseClient): Promise<Room[]> {
     name: room.name,
     capacityMin: room.capacity_min,
     capacityMax: room.capacity_max,
+    imagePath: room.image_path,
   }));
 }
 

@@ -13,6 +13,7 @@ export interface Room {
   name: string;
   capacityMin: number;
   capacityMax: number;
+  imagePath: string | null;
 }
 
 export interface Booking {
