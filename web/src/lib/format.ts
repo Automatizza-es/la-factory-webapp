@@ -21,6 +21,22 @@ export function formatTimeRange(startMinutes: number, endMinutes: number): strin
   return `${minutesToTime(startMinutes)}–${minutesToTime(endMinutes)}`;
 }
 
+const LAST_MINUTE_OF_DAY = 23 * 60 + 59;
+
+// Now, rounded up to the next 5-minute mark so the default is still valid
+// ("must start in the future") by the time the page finishes loading.
+export function defaultStartTime(): string {
+  const now = new Date();
+  const minutes = now.getHours() * 60 + now.getMinutes();
+  const rounded = Math.ceil((minutes + 1) / 5) * 5;
+  return minutesToTime(Math.min(rounded, LAST_MINUTE_OF_DAY));
+}
+
+export function defaultEndTime(startTime: string, durationMinutes = 60): string {
+  const [hours, minutes] = startTime.split(":").map(Number);
+  return minutesToTime(Math.min(hours * 60 + minutes + durationMinutes, LAST_MINUTE_OF_DAY));
+}
+
 export function formatDateLong(isoDate: string, locale: Locale = "es"): string {
   const date = new Date(`${isoDate}T00:00:00`);
   const formatted = date.toLocaleDateString(INTL_LOCALE[locale], {

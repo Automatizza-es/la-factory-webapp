@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createAdminBooking, type AdminBookingType } from "@/app/admin/reservar/actions";
 import type { AdminContact, AdminCoworkerRow, AdminRoom } from "@/lib/data/admin";
+import { defaultEndTime, defaultStartTime } from "@/lib/format";
 import { useI18n } from "@/lib/i18n/context";
 
 interface AdminBookingFormProps {
@@ -23,8 +24,8 @@ export function AdminBookingForm({ rooms, coworkers, contacts }: AdminBookingFor
   const [contactId, setContactId] = useState("");
   const [roomId, setRoomId] = useState(rooms[0]?.id ?? "");
   const [date, setDate] = useState(todayIso());
-  const [startTime, setStartTime] = useState("10:00");
-  const [endTime, setEndTime] = useState("11:00");
+  const [startTime, setStartTime] = useState(defaultStartTime());
+  const [endTime, setEndTime] = useState(defaultEndTime(startTime));
   const [consumesQuota, setConsumesQuota] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);

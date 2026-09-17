@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { submitBooking } from "@/app/(coworker)/reservar/actions";
-import { formatDateLong, formatMinutesAsHours } from "@/lib/format";
+import { defaultEndTime, defaultStartTime, formatDateLong, formatMinutesAsHours } from "@/lib/format";
 import { useI18n } from "@/lib/i18n/context";
 import type { QuotaSummary, Room } from "@/types/domain";
 
@@ -36,8 +36,8 @@ export function BookingForm({
   const router = useRouter();
   const { locale, dict } = useI18n();
   const [date, setDate] = useState(initialDate ?? todayIso());
-  const [startTime, setStartTime] = useState(initialStartTime ?? "10:00");
-  const [endTime, setEndTime] = useState(initialEndTime ?? "11:00");
+  const [startTime, setStartTime] = useState(initialStartTime ?? defaultStartTime());
+  const [endTime, setEndTime] = useState(initialEndTime ?? defaultEndTime(startTime));
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
