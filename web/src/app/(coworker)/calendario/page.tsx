@@ -1,7 +1,12 @@
 import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { DayCalendar } from "@/components/calendar/DayCalendar";
-import { getRoomOccupancy, getRooms } from "@/lib/data/coworker";
+import {
+  getCurrentCoworker,
+  getQuotaSummary,
+  getRoomOccupancy,
+  getRooms,
+} from "@/lib/data/coworker";
 import { formatDateLong } from "@/lib/format";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import { getLocale } from "@/lib/i18n/server";
@@ -19,13 +24,16 @@ export default async function CalendarioPage({ searchParams }: CalendarioPagePro
   const locale = await getLocale();
   const dict = getDictionary(locale);
   const supabase = await createClient();
+  const current = await getCurrentCoworker();
+  if (!current) return null;
 
   const rangeStart = zonedDateTimeToUtcIso(date, "00:00");
   const rangeEnd = zonedDateTimeToUtcIso(addDays(date, 1), "00:00");
 
-  const [rooms, occupancy] = await Promise.all([
+  const [rooms, occupancy, quota] = await Promise.all([
     getRooms(supabase),
     getRoomOccupancy(supabase, rangeStart, rangeEnd),
+    getQuotaSummary(supabase, current.contactId, locale),
   ]);
 
   const isToday = date === todayInMadrid();
@@ -65,9 +73,11 @@ export default async function CalendarioPage({ searchParams }: CalendarioPagePro
           date={date}
           rooms={rooms}
           occupancy={occupancy}
+          quota={quota}
           dict={dict.calendar}
           bookingDict={dict.booking}
           roomDict={dict.room}
+          reservarDict={dict.reservar}
           locale={locale}
         />
       </div>
