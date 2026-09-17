@@ -84,6 +84,85 @@ export interface Dictionary {
   language: {
     label: string;
   };
+  admin: {
+    nav: { dashboard: string; calendar: string; coworkers: string; book: string };
+    dashboard: {
+      title: string;
+      subtitle: string;
+      todayBookings: string;
+      bookedToday: string;
+      upcoming: string;
+      noUpcoming: string;
+      incidents: string;
+      noIncidents: string;
+      noBookingsToday: string;
+    };
+    calendar: {
+      title: string;
+      day: string;
+      week: string;
+      month: string;
+      allRooms: string;
+      noBookings: string;
+      today: string;
+      guestLabel: string;
+      internalLabel: string;
+      eventLabel: string;
+    };
+    coworkers: {
+      title: string;
+      subtitle: string;
+      name: string;
+      plan: string;
+      status: string;
+      used: string;
+      available: string;
+      noCoworkers: string;
+      statusActive: string;
+      statusEnded: string;
+      statusCancelled: string;
+      statusNone: string;
+    };
+    coworkerDetail: {
+      back: string;
+      personalData: string;
+      email: string;
+      phone: string;
+      plan: string;
+      status: string;
+      startDate: string;
+      endDate: string;
+      ongoing: string;
+      quotaThisMonth: string;
+      movements: string;
+      noMovements: string;
+      reasonMonthlyGrant: string;
+      reasonBooking: string;
+      reasonCancellation: string;
+      reasonManualAdjustment: string;
+      upcomingBookings: string;
+      history: string;
+      noUpcoming: string;
+      noHistory: string;
+    };
+    createBooking: {
+      title: string;
+      subtitle: string;
+      type: string;
+      typeCoworker: string;
+      typeGuest: string;
+      typeInternal: string;
+      typeEvent: string;
+      coworkerLabel: string;
+      contactLabel: string;
+      chooseOne: string;
+      room: string;
+      consumesQuota: string;
+      submit: string;
+      submitting: string;
+      success: string;
+    };
+  };
   errors: {
     notSignedIn: string;
     notAuthorized: string;
@@ -180,6 +259,85 @@ const es: Dictionary = {
     body: "Hemos verificado tu email pero no encontramos ningún coworker asociado. Contacta con La Factory para activarlo.",
   },
   language: { label: "Idioma" },
+  admin: {
+    nav: { dashboard: "Dashboard", calendar: "Calendario", coworkers: "Coworkers", book: "Reservar" },
+    dashboard: {
+      title: "Dashboard",
+      subtitle: "Resumen de hoy en La Factory.",
+      todayBookings: "Reservas de hoy",
+      bookedToday: "reservado hoy",
+      upcoming: "Próximas reservas",
+      noUpcoming: "No hay próximas reservas.",
+      incidents: "Incidencias",
+      noIncidents: "Sin incidencias.",
+      noBookingsToday: "No hay reservas para hoy.",
+    },
+    calendar: {
+      title: "Calendario",
+      day: "Día",
+      week: "Semana",
+      month: "Mes",
+      allRooms: "Todas las salas",
+      noBookings: "No hay reservas.",
+      today: "Hoy",
+      guestLabel: "Invitado/contacto",
+      internalLabel: "Uso interno",
+      eventLabel: "Evento",
+    },
+    coworkers: {
+      title: "Coworkers",
+      subtitle: "Listado de coworkers y su cuota mensual.",
+      name: "Nombre",
+      plan: "Tarifa",
+      status: "Estado",
+      used: "Usadas",
+      available: "Disponibles",
+      noCoworkers: "Todavía no hay coworkers.",
+      statusActive: "Activa",
+      statusEnded: "Finalizada",
+      statusCancelled: "Cancelada",
+      statusNone: "Sin tarifa",
+    },
+    coworkerDetail: {
+      back: "Volver a coworkers",
+      personalData: "Datos personales",
+      email: "Email",
+      phone: "Teléfono",
+      plan: "Tarifa",
+      status: "Estado",
+      startDate: "Fecha de inicio",
+      endDate: "Fecha de fin",
+      ongoing: "En curso",
+      quotaThisMonth: "Cuota de este mes",
+      movements: "Movimientos de cuota",
+      noMovements: "Todavía no hay movimientos.",
+      reasonMonthlyGrant: "Cuota mensual",
+      reasonBooking: "Reserva",
+      reasonCancellation: "Cancelación",
+      reasonManualAdjustment: "Ajuste manual",
+      upcomingBookings: "Próximas reservas",
+      history: "Histórico",
+      noUpcoming: "No tiene reservas próximas.",
+      noHistory: "Todavía no tiene reservas pasadas.",
+    },
+    createBooking: {
+      title: "Crear reserva",
+      subtitle: "Reserva una sala para un coworker, invitado, uso interno o evento.",
+      type: "Tipo de reserva",
+      typeCoworker: "Coworker",
+      typeGuest: "Invitado / contacto",
+      typeInternal: "Uso interno",
+      typeEvent: "Evento",
+      coworkerLabel: "Coworker",
+      contactLabel: "Contacto",
+      chooseOne: "Selecciona una opción",
+      room: "Sala",
+      consumesQuota: "Descontar de su cuota mensual",
+      submit: "Crear reserva",
+      submitting: "Creando reserva...",
+      success: "Reserva creada correctamente.",
+    },
+  },
   errors: {
     notSignedIn: "No has iniciado sesión.",
     notAuthorized: "No estás autorizado para realizar esta acción.",
@@ -278,6 +436,85 @@ const ca: Dictionary = {
     body: "Hem verificat el teu email però no hem trobat cap coworker associat. Contacta amb La Factory per activar-lo.",
   },
   language: { label: "Idioma" },
+  admin: {
+    nav: { dashboard: "Dashboard", calendar: "Calendari", coworkers: "Coworkers", book: "Reservar" },
+    dashboard: {
+      title: "Dashboard",
+      subtitle: "Resum d'avui a La Factory.",
+      todayBookings: "Reserves d'avui",
+      bookedToday: "reservat avui",
+      upcoming: "Properes reserves",
+      noUpcoming: "No hi ha properes reserves.",
+      incidents: "Incidències",
+      noIncidents: "Sense incidències.",
+      noBookingsToday: "No hi ha reserves per avui.",
+    },
+    calendar: {
+      title: "Calendari",
+      day: "Dia",
+      week: "Setmana",
+      month: "Mes",
+      allRooms: "Totes les sales",
+      noBookings: "No hi ha reserves.",
+      today: "Avui",
+      guestLabel: "Convidat/contacte",
+      internalLabel: "Ús intern",
+      eventLabel: "Esdeveniment",
+    },
+    coworkers: {
+      title: "Coworkers",
+      subtitle: "Llistat de coworkers i la seva quota mensual.",
+      name: "Nom",
+      plan: "Tarifa",
+      status: "Estat",
+      used: "Utilitzades",
+      available: "Disponibles",
+      noCoworkers: "Encara no hi ha coworkers.",
+      statusActive: "Activa",
+      statusEnded: "Finalitzada",
+      statusCancelled: "Cancel·lada",
+      statusNone: "Sense tarifa",
+    },
+    coworkerDetail: {
+      back: "Tornar a coworkers",
+      personalData: "Dades personals",
+      email: "Email",
+      phone: "Telèfon",
+      plan: "Tarifa",
+      status: "Estat",
+      startDate: "Data d'inici",
+      endDate: "Data de fi",
+      ongoing: "En curs",
+      quotaThisMonth: "Quota d'aquest mes",
+      movements: "Moviments de quota",
+      noMovements: "Encara no hi ha moviments.",
+      reasonMonthlyGrant: "Quota mensual",
+      reasonBooking: "Reserva",
+      reasonCancellation: "Cancel·lació",
+      reasonManualAdjustment: "Ajust manual",
+      upcomingBookings: "Properes reserves",
+      history: "Historial",
+      noUpcoming: "No té reserves properes.",
+      noHistory: "Encara no té reserves passades.",
+    },
+    createBooking: {
+      title: "Crear reserva",
+      subtitle: "Reserva una sala per a un coworker, convidat, ús intern o esdeveniment.",
+      type: "Tipus de reserva",
+      typeCoworker: "Coworker",
+      typeGuest: "Convidat / contacte",
+      typeInternal: "Ús intern",
+      typeEvent: "Esdeveniment",
+      coworkerLabel: "Coworker",
+      contactLabel: "Contacte",
+      chooseOne: "Selecciona una opció",
+      room: "Sala",
+      consumesQuota: "Descomptar de la seva quota mensual",
+      submit: "Crear reserva",
+      submitting: "Creant reserva...",
+      success: "Reserva creada correctament.",
+    },
+  },
   errors: {
     notSignedIn: "No has iniciat sessió.",
     notAuthorized: "No estàs autoritzat per fer aquesta acció.",
@@ -375,6 +612,85 @@ const en: Dictionary = {
     body: "We verified your email but couldn't find a matching coworker. Contact La Factory to activate it.",
   },
   language: { label: "Language" },
+  admin: {
+    nav: { dashboard: "Dashboard", calendar: "Calendar", coworkers: "Coworkers", book: "Book" },
+    dashboard: {
+      title: "Dashboard",
+      subtitle: "Today's summary at La Factory.",
+      todayBookings: "Today's bookings",
+      bookedToday: "booked today",
+      upcoming: "Upcoming bookings",
+      noUpcoming: "No upcoming bookings.",
+      incidents: "Incidents",
+      noIncidents: "No incidents.",
+      noBookingsToday: "No bookings for today.",
+    },
+    calendar: {
+      title: "Calendar",
+      day: "Day",
+      week: "Week",
+      month: "Month",
+      allRooms: "All rooms",
+      noBookings: "No bookings.",
+      today: "Today",
+      guestLabel: "Guest/contact",
+      internalLabel: "Internal use",
+      eventLabel: "Event",
+    },
+    coworkers: {
+      title: "Coworkers",
+      subtitle: "List of coworkers and their monthly quota.",
+      name: "Name",
+      plan: "Plan",
+      status: "Status",
+      used: "Used",
+      available: "Available",
+      noCoworkers: "There are no coworkers yet.",
+      statusActive: "Active",
+      statusEnded: "Ended",
+      statusCancelled: "Cancelled",
+      statusNone: "No plan",
+    },
+    coworkerDetail: {
+      back: "Back to coworkers",
+      personalData: "Personal details",
+      email: "Email",
+      phone: "Phone",
+      plan: "Plan",
+      status: "Status",
+      startDate: "Start date",
+      endDate: "End date",
+      ongoing: "Ongoing",
+      quotaThisMonth: "This month's quota",
+      movements: "Quota movements",
+      noMovements: "No movements yet.",
+      reasonMonthlyGrant: "Monthly grant",
+      reasonBooking: "Booking",
+      reasonCancellation: "Cancellation",
+      reasonManualAdjustment: "Manual adjustment",
+      upcomingBookings: "Upcoming bookings",
+      history: "History",
+      noUpcoming: "No upcoming bookings.",
+      noHistory: "No past bookings yet.",
+    },
+    createBooking: {
+      title: "Create booking",
+      subtitle: "Book a room for a coworker, guest, internal use or event.",
+      type: "Booking type",
+      typeCoworker: "Coworker",
+      typeGuest: "Guest / contact",
+      typeInternal: "Internal use",
+      typeEvent: "Event",
+      coworkerLabel: "Coworker",
+      contactLabel: "Contact",
+      chooseOne: "Choose one",
+      room: "Room",
+      consumesQuota: "Deduct from their monthly quota",
+      submit: "Create booking",
+      submitting: "Creating booking...",
+      success: "Booking created successfully.",
+    },
+  },
   errors: {
     notSignedIn: "You're not signed in.",
     notAuthorized: "You're not authorized to perform this action.",

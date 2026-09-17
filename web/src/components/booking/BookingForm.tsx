@@ -72,7 +72,6 @@ export function BookingForm({
     }
 
     router.push("/reservas");
-    router.refresh();
   }
 
   return (

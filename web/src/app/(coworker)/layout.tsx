@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { BottomNav } from "@/components/layout/BottomNav";
 import { getCurrentCoworker } from "@/lib/data/coworker";
@@ -7,6 +8,10 @@ import { getLocale } from "@/lib/i18n/server";
 export default async function CoworkerLayout({ children }: { children: React.ReactNode }) {
   const current = await getCurrentCoworker();
   const dict = getDictionary(await getLocale());
+
+  if (current?.role === "admin") {
+    redirect("/admin");
+  }
 
   if (!current) {
     return (

@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
 import { useI18n } from "@/lib/i18n/context";
 import { createClient } from "@/lib/supabase/client";
@@ -17,8 +17,16 @@ export default function LoginPage() {
   // (#access_token=...&refresh_token=...) instead of a PKCE ?code=.
   // gotrue-js only auto-detects the hash under the implicit flow, so with
   // flowType "pkce" (our default) it's ignored unless we set it explicitly.
+  //
+  // Guarded with a ref because React's Strict Mode double-invokes effects
+  // in dev: without it, setSession + push + refresh ran twice concurrently,
+  // which was enough overlapping load against the connection pooler to
+  // make every "/" request queue up behind the others for 15s+.
+  const hasHandledHash = useRef(false);
   useEffect(() => {
+    if (hasHandledHash.current) return;
     if (!window.location.hash.includes("access_token")) return;
+    hasHandledHash.current = true;
 
     const params = new URLSearchParams(window.location.hash.slice(1));
     const access_token = params.get("access_token");
@@ -29,7 +37,6 @@ export default function LoginPage() {
     supabase.auth.setSession({ access_token, refresh_token }).then(({ error }) => {
       if (!error) {
         router.push("/");
-        router.refresh();
       }
     });
   }, [router]);

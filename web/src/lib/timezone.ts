@@ -12,6 +12,16 @@ function wallClockPartsInZone(instant: Date) {
   return new Date(instant.toLocaleString("en-US", { timeZone: COWORKING_TIME_ZONE }));
 }
 
+export function todayInMadrid(): string {
+  return utcIsoToZonedDateAndMinutes(new Date().toISOString()).date;
+}
+
+export function addDays(dateStr: string, days: number): string {
+  const [y, m, d] = dateStr.split("-").map(Number);
+  const date = new Date(Date.UTC(y, m - 1, d + days));
+  return `${date.getUTCFullYear()}-${pad(date.getUTCMonth() + 1)}-${pad(date.getUTCDate())}`;
+}
+
 export function utcIsoToZonedDateAndMinutes(iso: string): { date: string; minutes: number } {
   const wall = wallClockPartsInZone(new Date(iso));
   return {

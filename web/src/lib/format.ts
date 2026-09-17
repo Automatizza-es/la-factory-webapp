@@ -31,6 +31,16 @@ export function formatDateLong(isoDate: string, locale: Locale = "es"): string {
   return formatted.charAt(0).toUpperCase() + formatted.slice(1);
 }
 
+export function formatWeekdayShort(isoDate: string, locale: Locale = "es"): string {
+  const date = new Date(`${isoDate}T00:00:00`);
+  const label = date.toLocaleDateString(INTL_LOCALE[locale], { weekday: "short" });
+  return label.replace(".", "");
+}
+
+export function formatDayNumber(isoDate: string): string {
+  return isoDate.slice(-2);
+}
+
 export function formatDateShort(
   isoDate: string,
   locale: Locale = "es",

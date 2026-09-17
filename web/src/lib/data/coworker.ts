@@ -16,6 +16,10 @@ export interface CurrentCoworker {
   coworker: Coworker;
 }
 
+// Deliberately not wrapped in React's cache(): in this Next.js/Turbopack
+// dev setup it was observed to leak a stale result (e.g. a null from a
+// pre-auth request) across unrelated later requests, which is far worse
+// than the extra duplicate DB round trip it was meant to save.
 export async function getCurrentCoworker(): Promise<CurrentCoworker | null> {
   const supabase = await createClient();
   const { data: auth } = await supabase.auth.getUser();
