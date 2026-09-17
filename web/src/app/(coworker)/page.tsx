@@ -44,7 +44,7 @@ export default async function HomePage() {
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold text-ink">{dict.home.bookRoom}</h2>
           <Link
-            href="/reservar"
+            href="/calendario"
             className="flex items-center gap-0.5 text-sm font-medium text-brown-dark"
           >
             {dict.home.viewCalendar}

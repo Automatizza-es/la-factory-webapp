@@ -7,11 +7,17 @@ import { createClient } from "@/lib/supabase/server";
 import { minutesToTime } from "@/lib/format";
 
 interface ReservarPageProps {
-  searchParams: Promise<{ sala?: string; reserva?: string }>;
+  searchParams: Promise<{
+    sala?: string;
+    reserva?: string;
+    fecha?: string;
+    inicio?: string;
+    fin?: string;
+  }>;
 }
 
 export default async function ReservarPage({ searchParams }: ReservarPageProps) {
-  const { sala, reserva } = await searchParams;
+  const { sala, reserva, fecha, inicio, fin } = await searchParams;
   const current = await getCurrentCoworker();
   if (!current) return null;
 
@@ -59,9 +65,11 @@ export default async function ReservarPage({ searchParams }: ReservarPageProps) 
         room={room}
         quota={quota}
         existingBookingId={existingBooking?.id}
-        initialDate={existingBooking?.date}
-        initialStartTime={existingBooking ? minutesToTime(existingBooking.startMinutes) : undefined}
-        initialEndTime={existingBooking ? minutesToTime(existingBooking.endMinutes) : undefined}
+        initialDate={existingBooking?.date ?? fecha}
+        initialStartTime={
+          existingBooking ? minutesToTime(existingBooking.startMinutes) : inicio
+        }
+        initialEndTime={existingBooking ? minutesToTime(existingBooking.endMinutes) : fin}
       />
     </div>
   );

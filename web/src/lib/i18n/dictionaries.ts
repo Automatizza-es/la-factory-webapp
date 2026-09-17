@@ -52,6 +52,17 @@ export interface Dictionary {
     saveChanges: string;
     confirmBooking: string;
   };
+  calendar: {
+    title: string;
+    day: string;
+    week: string;
+    today: string;
+    booked: string;
+    occupied: string;
+    available: string;
+    newBooking: string;
+    continueLabel: string;
+  };
   reservas: {
     title: string;
     subtitle: string;
@@ -227,6 +238,17 @@ const es: Dictionary = {
     submitting: "Reservando...",
     saveChanges: "Guardar cambios",
     confirmBooking: "Confirmar reserva",
+  },
+  calendar: {
+    title: "Calendario",
+    day: "Día",
+    week: "Semana",
+    today: "Hoy",
+    booked: "Reservado",
+    occupied: "Ocupado",
+    available: "Disponible",
+    newBooking: "Nueva reserva",
+    continueLabel: "Continuar",
   },
   reservas: {
     title: "Mis reservas",
@@ -405,6 +427,17 @@ const ca: Dictionary = {
     saveChanges: "Desar els canvis",
     confirmBooking: "Confirmar reserva",
   },
+  calendar: {
+    title: "Calendari",
+    day: "Dia",
+    week: "Setmana",
+    today: "Avui",
+    booked: "Reservat",
+    occupied: "Ocupat",
+    available: "Disponible",
+    newBooking: "Nova reserva",
+    continueLabel: "Continuar",
+  },
   reservas: {
     title: "Les meves reserves",
     subtitle: "Consulta, modifica o cancel·la les teves reserves de sales.",
@@ -581,6 +614,17 @@ const en: Dictionary = {
     submitting: "Booking...",
     saveChanges: "Save changes",
     confirmBooking: "Confirm booking",
+  },
+  calendar: {
+    title: "Calendar",
+    day: "Day",
+    week: "Week",
+    today: "Today",
+    booked: "Booked",
+    occupied: "Occupied",
+    available: "Available",
+    newBooking: "New booking",
+    continueLabel: "Continue",
   },
   reservas: {
     title: "My bookings",

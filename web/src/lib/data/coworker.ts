@@ -135,6 +135,55 @@ export async function getRooms(supabase: SupabaseClient): Promise<Room[]> {
   }));
 }
 
+export interface RoomOccupancyBlock {
+  id: string;
+  roomId: string;
+  date: string;
+  startMinutes: number;
+  endMinutes: number;
+  isMine: boolean;
+}
+
+// Room occupancy for the calendar view: any signed-in coworker can see
+// that a slot is taken, but only whether it's their own booking, never
+// whose it is otherwise (see get_room_occupancy's SECURITY DEFINER note).
+export async function getRoomOccupancy(
+  supabase: SupabaseClient,
+  rangeStartIso: string,
+  rangeEndIso: string,
+): Promise<RoomOccupancyBlock[]> {
+  const { data, error } = await supabase.rpc("get_room_occupancy", {
+    p_range_start: rangeStartIso,
+    p_range_end: rangeEndIso,
+  });
+
+  if (error) {
+    console.error("getRoomOccupancy failed:", error.message);
+    return [];
+  }
+
+  interface RawOccupancy {
+    id: string;
+    room_id: string;
+    starts_at: string;
+    ends_at: string;
+    is_mine: boolean;
+  }
+
+  return ((data ?? []) as RawOccupancy[]).map((row) => {
+    const start = utcIsoToZonedDateAndMinutes(row.starts_at);
+    const end = utcIsoToZonedDateAndMinutes(row.ends_at);
+    return {
+      id: row.id,
+      roomId: row.room_id,
+      date: start.date,
+      startMinutes: start.minutes,
+      endMinutes: end.minutes,
+      isMine: row.is_mine,
+    };
+  });
+}
+
 interface RawBooking {
   id: string;
   room_id: string;
