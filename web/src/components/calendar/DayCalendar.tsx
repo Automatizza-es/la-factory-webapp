@@ -8,6 +8,7 @@ import { formatDateLong, minutesToTime } from "@/lib/format";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
 import type { RoomOccupancyBlock } from "@/lib/data/coworker";
+import { todayInMadrid, utcIsoToZonedDateAndMinutes } from "@/lib/timezone";
 import type { Room } from "@/types/domain";
 
 const GRID_START_MINUTES = 7 * 60;
@@ -46,6 +47,11 @@ export function DayCalendar({
   locale,
 }: DayCalendarProps) {
   const [selection, setSelection] = useState<Selection | null>(null);
+
+  const today = todayInMadrid();
+  const isPastDay = date < today;
+  const nowMinutes =
+    date === today ? utcIsoToZonedDateAndMinutes(new Date().toISOString()).minutes : null;
 
   const occupancyByRoom = useMemo(() => {
     const map = new Map<string, RoomOccupancyBlock[]>();
@@ -131,13 +137,31 @@ export function DayCalendar({
             {slots.map((slotStart) => {
               const free = isFree(room.id, slotStart, slotStart + SLOT_MINUTES);
               if (!free) return null;
+
+              const isPast = isPastDay || (nowMinutes !== null && slotStart < nowMinutes);
+              const style = {
+                top: toY(slotStart),
+                height: toY(slotStart + SLOT_MINUTES) - toY(slotStart),
+              };
+
+              if (isPast) {
+                return (
+                  <div
+                    key={slotStart}
+                    aria-disabled="true"
+                    className="absolute left-0 right-0 cursor-not-allowed bg-warm-gray/15"
+                    style={style}
+                  />
+                );
+              }
+
               return (
                 <button
                   key={slotStart}
                   type="button"
                   onClick={() => handleSlotClick(room.id, slotStart)}
                   className="absolute left-0 right-0 transition-colors hover:bg-sand/20 active:bg-sand/30"
-                  style={{ top: toY(slotStart), height: toY(slotStart + SLOT_MINUTES) - toY(slotStart) }}
+                  style={style}
                 />
               );
             })}

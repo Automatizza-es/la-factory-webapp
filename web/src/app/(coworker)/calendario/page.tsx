@@ -28,6 +28,8 @@ export default async function CalendarioPage({ searchParams }: CalendarioPagePro
     getRoomOccupancy(supabase, rangeStart, rangeEnd),
   ]);
 
+  const isToday = date === todayInMadrid();
+
   return (
     <div className="flex flex-col gap-5">
       <div>
@@ -44,7 +46,9 @@ export default async function CalendarioPage({ searchParams }: CalendarioPagePro
         </Link>
         <Link
           href={`/calendario?fecha=${todayInMadrid()}`}
-          className="rounded-lg bg-white px-3 py-2 text-sm font-medium text-brown-dark shadow-sm"
+          className={`rounded-lg px-3 py-2 text-sm font-medium shadow-sm ${
+            isToday ? "bg-brown-dark text-white" : "bg-white text-warm-gray"
+          }`}
         >
           {dict.calendar.today}
         </Link>
