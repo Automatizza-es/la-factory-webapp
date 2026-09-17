@@ -1,6 +1,9 @@
 "use server";
 
 import { getCurrentCoworker } from "@/lib/data/coworker";
+import { translateBookingError } from "@/lib/i18n/booking-errors";
+import { getDictionary } from "@/lib/i18n/dictionaries";
+import { getLocale } from "@/lib/i18n/server";
 import { createClient } from "@/lib/supabase/server";
 import { zonedDateTimeToUtcIso } from "@/lib/timezone";
 
@@ -17,9 +20,10 @@ export interface SubmitBookingResult {
 }
 
 export async function submitBooking(input: SubmitBookingInput): Promise<SubmitBookingResult> {
+  const dict = getDictionary(await getLocale());
   const current = await getCurrentCoworker();
   if (!current) {
-    return { error: "No has iniciado sesión." };
+    return { error: dict.errors.notSignedIn };
   }
 
   const startsAt = zonedDateTimeToUtcIso(input.date, input.startTime);
@@ -33,7 +37,7 @@ export async function submitBooking(input: SubmitBookingInput): Promise<SubmitBo
       p_new_starts_at: startsAt,
       p_new_ends_at: endsAt,
     });
-    return { error: error?.message ?? null };
+    return { error: error ? translateBookingError(error, dict.errors) : null };
   }
 
   const { error } = await supabase.rpc("create_booking", {
@@ -43,16 +47,17 @@ export async function submitBooking(input: SubmitBookingInput): Promise<SubmitBo
     p_ends_at: endsAt,
   });
 
-  return { error: error?.message ?? null };
+  return { error: error ? translateBookingError(error, dict.errors) : null };
 }
 
 export async function cancelBooking(bookingId: string): Promise<SubmitBookingResult> {
+  const dict = getDictionary(await getLocale());
   const current = await getCurrentCoworker();
   if (!current) {
-    return { error: "No has iniciado sesión." };
+    return { error: dict.errors.notSignedIn };
   }
 
   const supabase = await createClient();
   const { error } = await supabase.rpc("cancel_booking", { p_booking_id: bookingId });
-  return { error: error?.message ?? null };
+  return { error: error ? translateBookingError(error, dict.errors) : null };
 }
