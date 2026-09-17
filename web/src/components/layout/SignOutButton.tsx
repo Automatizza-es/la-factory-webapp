@@ -4,7 +4,11 @@ import { useRouter } from "next/navigation";
 import { LogOut } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
-export function SignOutButton() {
+interface SignOutButtonProps {
+  label: string;
+}
+
+export function SignOutButton({ label }: SignOutButtonProps) {
   const router = useRouter();
 
   async function handleSignOut() {
@@ -21,7 +25,7 @@ export function SignOutButton() {
       className="flex items-center justify-center gap-2 rounded-2xl bg-white p-4 text-sm font-medium text-red-600 shadow-sm transition-colors hover:bg-red-50"
     >
       <LogOut className="h-4 w-4" strokeWidth={2} />
-      Cerrar sesión
+      {label}
     </button>
   );
 }

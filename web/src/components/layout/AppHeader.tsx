@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { Bell } from "lucide-react";
+import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
 import type { Coworker } from "@/types/domain";
 
 interface AppHeaderProps {
@@ -18,6 +19,7 @@ export function AppHeader({ coworker }: AppHeaderProps) {
         priority
       />
       <div className="flex items-center gap-3">
+        <LanguageSwitcher />
         <button
           type="button"
           aria-label="Notificaciones"

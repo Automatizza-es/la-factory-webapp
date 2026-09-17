@@ -1,3 +1,5 @@
+import { INTL_LOCALE, type Locale } from "@/lib/i18n/config";
+
 export function formatMinutesAsHours(minutes: number): string {
   const hours = Math.floor(minutes / 60);
   const remainder = minutes % 60;
@@ -19,9 +21,9 @@ export function formatTimeRange(startMinutes: number, endMinutes: number): strin
   return `${minutesToTime(startMinutes)}–${minutesToTime(endMinutes)}`;
 }
 
-export function formatDateLong(isoDate: string): string {
+export function formatDateLong(isoDate: string, locale: Locale = "es"): string {
   const date = new Date(`${isoDate}T00:00:00`);
-  const formatted = date.toLocaleDateString("es-ES", {
+  const formatted = date.toLocaleDateString(INTL_LOCALE[locale], {
     weekday: "long",
     day: "numeric",
     month: "long",
@@ -29,10 +31,16 @@ export function formatDateLong(isoDate: string): string {
   return formatted.charAt(0).toUpperCase() + formatted.slice(1);
 }
 
-export function formatDateShort(isoDate: string): { day: string; month: string } {
+export function formatDateShort(
+  isoDate: string,
+  locale: Locale = "es",
+): { day: string; month: string } {
   const date = new Date(`${isoDate}T00:00:00`);
   return {
-    day: date.toLocaleDateString("es-ES", { day: "2-digit" }),
-    month: date.toLocaleDateString("es-ES", { month: "short" }).replace(".", "").toUpperCase(),
+    day: date.toLocaleDateString(INTL_LOCALE[locale], { day: "2-digit" }),
+    month: date
+      .toLocaleDateString(INTL_LOCALE[locale], { month: "short" })
+      .replace(".", "")
+      .toUpperCase(),
   };
 }

@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
+import { I18nProvider } from "@/lib/i18n/context";
+import { getLocale } from "@/lib/i18n/server";
 import "./globals.css";
 
 const inter = Inter({
@@ -19,11 +21,13 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const locale = await getLocale();
+
   return (
-    <html lang="es" className={`${inter.variable} h-full`}>
+    <html lang={locale} className={`${inter.variable} h-full`}>
       <body className="min-h-full bg-cream font-sans text-ink antialiased md:bg-sand/25">
-        {children}
+        <I18nProvider locale={locale}>{children}</I18nProvider>
       </body>
     </html>
   );

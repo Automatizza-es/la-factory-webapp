@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { submitBooking } from "@/app/(coworker)/reservar/actions";
 import { formatDateLong, formatMinutesAsHours } from "@/lib/format";
+import { useI18n } from "@/lib/i18n/context";
 import type { QuotaSummary, Room } from "@/types/domain";
 
 interface BookingFormProps {
@@ -33,6 +34,7 @@ export function BookingForm({
   initialEndTime,
 }: BookingFormProps) {
   const router = useRouter();
+  const { locale, dict } = useI18n();
   const [date, setDate] = useState(initialDate ?? todayIso());
   const [startTime, setStartTime] = useState(initialStartTime ?? "10:00");
   const [endTime, setEndTime] = useState(initialEndTime ?? "11:00");
@@ -77,11 +79,13 @@ export function BookingForm({
     <form onSubmit={handleSubmit} className="flex flex-col gap-5">
       <div className="rounded-3xl bg-white p-5 shadow-sm">
         <p className="font-semibold text-ink">{room.name}</p>
-        <p className="text-sm text-warm-gray">{room.capacityLabel}</p>
+        <p className="text-sm text-warm-gray">
+          {room.capacityMin}–{room.capacityMax} {dict.room.people}
+        </p>
 
         <div className="mt-4 flex flex-col gap-3">
           <label className="flex flex-col gap-1 text-sm text-warm-gray">
-            Día
+            {dict.reservar.day}
             <input
               type="date"
               value={date}
@@ -94,7 +98,7 @@ export function BookingForm({
 
           <div className="flex gap-3">
             <label className="flex flex-1 flex-col gap-1 text-sm text-warm-gray">
-              Inicio
+              {dict.reservar.start}
               <input
                 type="time"
                 value={startTime}
@@ -104,7 +108,7 @@ export function BookingForm({
               />
             </label>
             <label className="flex flex-1 flex-col gap-1 text-sm text-warm-gray">
-              Fin
+              {dict.reservar.end}
               <input
                 type="time"
                 value={endTime}
@@ -118,28 +122,27 @@ export function BookingForm({
       </div>
 
       <div className="rounded-3xl bg-white p-5 shadow-sm">
-        <p className="text-sm text-warm-gray">{formatDateLong(date)}</p>
+        <p className="text-sm text-warm-gray">{formatDateLong(date, locale)}</p>
         {isValidRange ? (
           <p className="mt-1 text-lg font-semibold text-ink">
-            {startTime}–{endTime} · Duración: {formatMinutesAsHours(durationMinutes)}
+            {startTime}–{endTime} · {dict.reservar.duration}:{" "}
+            {formatMinutesAsHours(durationMinutes)}
           </p>
         ) : (
-          <p className="mt-1 text-sm text-red-600">
-            La hora de fin debe ser posterior a la de inicio.
-          </p>
+          <p className="mt-1 text-sm text-red-600">{dict.reservar.invalidRange}</p>
         )}
 
         {availableMinutes !== null && (
           <div className="mt-4 flex flex-col gap-1 border-t border-sand/50 pt-3 text-sm">
             <div className="flex justify-between text-warm-gray">
-              <span>Disponible actualmente</span>
+              <span>{dict.reservar.availableNow}</span>
               <span className="font-medium text-ink">
                 {formatMinutesAsHours(availableMinutes)}
               </span>
             </div>
             {afterMinutes !== null && (
               <div className="flex justify-between text-warm-gray">
-                <span>Después de reservar</span>
+                <span>{dict.reservar.afterBooking}</span>
                 <span
                   className={`font-medium ${afterMinutes < 0 ? "text-red-600" : "text-ink"}`}
                 >
@@ -160,7 +163,11 @@ export function BookingForm({
         disabled={!isValidRange || submitting}
         className="rounded-xl bg-brown-dark py-3 text-sm font-medium text-white disabled:opacity-60"
       >
-        {submitting ? "Reservando..." : existingBookingId ? "Guardar cambios" : "Confirmar reserva"}
+        {submitting
+          ? dict.reservar.submitting
+          : existingBookingId
+            ? dict.reservar.saveChanges
+            : dict.reservar.confirmBooking}
       </button>
     </form>
   );

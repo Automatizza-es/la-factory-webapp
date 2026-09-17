@@ -1,15 +1,19 @@
 import { CalendarRange, Mail, ShieldCheck } from "lucide-react";
 import { SignOutButton } from "@/components/layout/SignOutButton";
 import { getCurrentCoworker, getQuotaSummary } from "@/lib/data/coworker";
+import { getDictionary } from "@/lib/i18n/dictionaries";
+import { getLocale } from "@/lib/i18n/server";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function PerfilPage() {
   const current = await getCurrentCoworker();
   if (!current) return null;
 
+  const locale = await getLocale();
+  const dict = getDictionary(locale);
   const supabase = await createClient();
   const [quota, auth] = await Promise.all([
-    getQuotaSummary(supabase, current.contactId),
+    getQuotaSummary(supabase, current.contactId, locale),
     supabase.auth.getUser(),
   ]);
 
@@ -29,15 +33,15 @@ export default async function PerfilPage() {
         <div className="flex items-center gap-3 p-4">
           <ShieldCheck className="h-5 w-5 text-brown-dark" strokeWidth={1.75} />
           <div>
-            <p className="text-sm text-warm-gray">Tarifa</p>
-            <p className="font-medium text-ink">{quota?.planLabel ?? "Sin tarifa activa"}</p>
+            <p className="text-sm text-warm-gray">{dict.perfil.plan}</p>
+            <p className="font-medium text-ink">{quota?.planLabel ?? dict.perfil.noActivePlan}</p>
           </div>
         </div>
         {quota && (
           <div className="flex items-center gap-3 p-4">
             <CalendarRange className="h-5 w-5 text-brown-dark" strokeWidth={1.75} />
             <div>
-              <p className="text-sm text-warm-gray">Periodo actual</p>
+              <p className="text-sm text-warm-gray">{dict.perfil.currentPeriod}</p>
               <p className="font-medium text-ink">{quota.periodLabel}</p>
             </div>
           </div>
@@ -45,18 +49,17 @@ export default async function PerfilPage() {
         <div className="flex items-center gap-3 p-4">
           <Mail className="h-5 w-5 text-brown-dark" strokeWidth={1.75} />
           <div>
-            <p className="text-sm text-warm-gray">Contacto</p>
+            <p className="text-sm text-warm-gray">{dict.perfil.contact}</p>
             <p className="font-medium text-ink">hola@lafactorycoworking.com</p>
           </div>
         </div>
       </section>
 
       <p className="rounded-2xl bg-white p-4 text-sm text-warm-gray shadow-sm">
-        La edición de datos personales y las preferencias de comunicación estarán
-        disponibles próximamente.
+        {dict.perfil.comingSoon}
       </p>
 
-      <SignOutButton />
+      <SignOutButton label={dict.perfil.signOut} />
     </div>
   );
 }

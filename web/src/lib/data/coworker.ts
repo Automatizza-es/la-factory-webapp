@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
+import { INTL_LOCALE, type Locale } from "@/lib/i18n/config";
 import { utcIsoToZonedDateAndMinutes } from "@/lib/timezone";
 import type { Booking, Coworker, QuotaSummary, Room } from "@/types/domain";
 
@@ -46,11 +47,6 @@ export async function getCurrentCoworker(): Promise<CurrentCoworker | null> {
   };
 }
 
-const MONTH_LABEL_FORMATTER = new Intl.DateTimeFormat("es-ES", {
-  month: "long",
-  year: "numeric",
-});
-
 function capitalize(text: string) {
   return text.charAt(0).toUpperCase() + text.slice(1);
 }
@@ -58,6 +54,7 @@ function capitalize(text: string) {
 export async function getQuotaSummary(
   supabase: SupabaseClient,
   contactId: string,
+  locale: Locale,
 ): Promise<QuotaSummary | null> {
   const today = new Date();
   const todayIso = today.toISOString().slice(0, 10);
@@ -104,10 +101,15 @@ export async function getQuotaSummary(
 
   const totalMinutes = period?.allocated_minutes ?? plan.monthly_minutes;
 
+  const monthLabelFormatter = new Intl.DateTimeFormat(INTL_LOCALE[locale], {
+    month: "long",
+    year: "numeric",
+  });
+
   return {
     planCode: plan.code,
     planLabel: plan.name.toUpperCase(),
-    periodLabel: capitalize(MONTH_LABEL_FORMATTER.format(today)),
+    periodLabel: capitalize(monthLabelFormatter.format(today)),
     totalMinutes,
     usedMinutes: totalMinutes - availableMinutes,
   };
@@ -123,7 +125,8 @@ export async function getRooms(supabase: SupabaseClient): Promise<Room[]> {
   return (data ?? []).map((room) => ({
     id: room.id,
     name: room.name,
-    capacityLabel: `${room.capacity_min}–${room.capacity_max} pers.`,
+    capacityMin: room.capacity_min,
+    capacityMax: room.capacity_max,
   }));
 }
 

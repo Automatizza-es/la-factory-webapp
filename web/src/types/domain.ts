@@ -11,7 +11,8 @@ export interface QuotaSummary {
 export interface Room {
   id: string;
   name: string;
-  capacityLabel: string;
+  capacityMin: number;
+  capacityMax: number;
 }
 
 export interface Booking {

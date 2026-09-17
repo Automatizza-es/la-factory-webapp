@@ -1,6 +1,8 @@
 import { BookingForm } from "@/components/booking/BookingForm";
 import { RoomCard } from "@/components/home/RoomCard";
 import { getBookings, getCurrentCoworker, getQuotaSummary, getRooms } from "@/lib/data/coworker";
+import { getDictionary } from "@/lib/i18n/dictionaries";
+import { getLocale } from "@/lib/i18n/server";
 import { createClient } from "@/lib/supabase/server";
 import { minutesToTime } from "@/lib/format";
 
@@ -13,6 +15,8 @@ export default async function ReservarPage({ searchParams }: ReservarPageProps) 
   const current = await getCurrentCoworker();
   if (!current) return null;
 
+  const locale = await getLocale();
+  const dict = getDictionary(locale);
   const supabase = await createClient();
   const rooms = await getRooms(supabase);
   const room = sala ? rooms.find((r) => r.id === sala) : undefined;
@@ -21,12 +25,12 @@ export default async function ReservarPage({ searchParams }: ReservarPageProps) 
     return (
       <div className="flex flex-col gap-6">
         <div>
-          <h1 className="text-2xl font-bold text-ink">Reservar sala</h1>
-          <p className="text-sm text-warm-gray">Elige una sala para ver su disponibilidad.</p>
+          <h1 className="text-2xl font-bold text-ink">{dict.reservar.title}</h1>
+          <p className="text-sm text-warm-gray">{dict.reservar.chooseRoom}</p>
         </div>
         <div className="grid grid-cols-2 gap-3">
           {rooms.map((r) => (
-            <RoomCard key={r.id} room={r} />
+            <RoomCard key={r.id} room={r} dict={dict.room} />
           ))}
         </div>
       </div>
@@ -34,7 +38,7 @@ export default async function ReservarPage({ searchParams }: ReservarPageProps) 
   }
 
   const [quota, existingBooking] = await Promise.all([
-    getQuotaSummary(supabase, current.contactId),
+    getQuotaSummary(supabase, current.contactId, locale),
     reserva
       ? getBookings(supabase, current.contactId).then((all) =>
           all.find((b) => b.id === reserva),
@@ -46,9 +50,9 @@ export default async function ReservarPage({ searchParams }: ReservarPageProps) 
     <div className="flex flex-col gap-6">
       <div>
         <h1 className="text-2xl font-bold text-ink">
-          {existingBooking ? "Modificar reserva" : "Reservar sala"}
+          {existingBooking ? dict.reservar.modifyTitle : dict.reservar.title}
         </h1>
-        <p className="text-sm text-warm-gray">Elige el día y el horario que necesites.</p>
+        <p className="text-sm text-warm-gray">{dict.reservar.chooseDateTime}</p>
       </div>
 
       <BookingForm

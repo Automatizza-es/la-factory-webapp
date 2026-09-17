@@ -6,27 +6,29 @@ import { useRouter } from "next/navigation";
 import { CheckCircle2, Pencil, Trash2, XCircle } from "lucide-react";
 import { cancelBooking } from "@/app/(coworker)/reservar/actions";
 import { formatDateLong, formatDateShort, formatTimeRange } from "@/lib/format";
+import { useI18n } from "@/lib/i18n/context";
 import type { Booking } from "@/types/domain";
 
 interface BookingCardProps {
   booking: Booking;
 }
 
-const STATUS_LABEL: Record<Booking["status"], string> = {
-  upcoming: "Próxima",
-  completed: "Completada",
-  cancelled: "Cancelada",
-};
-
 export function BookingCard({ booking }: BookingCardProps) {
   const router = useRouter();
+  const { locale, dict } = useI18n();
   const [error, setError] = useState<string | null>(null);
   const [cancelling, setCancelling] = useState(false);
-  const { day, month } = formatDateShort(booking.date);
+  const { day, month } = formatDateShort(booking.date, locale);
   const durationMinutes = booking.endMinutes - booking.startMinutes;
 
+  const statusLabel = {
+    upcoming: dict.booking.statusUpcoming,
+    completed: dict.booking.statusCompleted,
+    cancelled: dict.booking.statusCancelled,
+  }[booking.status];
+
   async function handleCancel() {
-    if (!window.confirm("¿Seguro que quieres cancelar esta reserva?")) return;
+    if (!window.confirm(dict.booking.confirmCancel)) return;
 
     setCancelling(true);
     setError(null);
@@ -50,9 +52,10 @@ export function BookingCard({ booking }: BookingCardProps) {
         </div>
         <div className="flex-1">
           <p className="font-semibold text-ink">{booking.roomName}</p>
-          <p className="text-sm text-warm-gray">{formatDateLong(booking.date)}</p>
+          <p className="text-sm text-warm-gray">{formatDateLong(booking.date, locale)}</p>
           <p className="text-sm text-warm-gray">
-            {formatTimeRange(booking.startMinutes, booking.endMinutes)} ({durationMinutes} min)
+            {formatTimeRange(booking.startMinutes, booking.endMinutes)} ({durationMinutes}{" "}
+            {dict.booking.minutesShort})
           </p>
         </div>
         {booking.status !== "upcoming" && (
@@ -68,7 +71,7 @@ export function BookingCard({ booking }: BookingCardProps) {
             ) : (
               <XCircle className="h-3.5 w-3.5" strokeWidth={2} />
             )}
-            {STATUS_LABEL[booking.status]}
+            {statusLabel}
           </span>
         )}
       </div>
@@ -80,7 +83,7 @@ export function BookingCard({ booking }: BookingCardProps) {
             className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-cream py-2 text-sm font-medium text-brown-dark transition-colors hover:bg-sand/40"
           >
             <Pencil className="h-4 w-4" strokeWidth={2} />
-            Modificar
+            {dict.booking.modify}
           </Link>
           <button
             type="button"
@@ -89,7 +92,7 @@ export function BookingCard({ booking }: BookingCardProps) {
             className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-red-50 py-2 text-sm font-medium text-red-600 transition-colors hover:bg-red-100 disabled:opacity-60"
           >
             <Trash2 className="h-4 w-4" strokeWidth={2} />
-            {cancelling ? "Cancelando..." : "Cancelar"}
+            {cancelling ? dict.booking.cancelling : dict.booking.cancel}
           </button>
         </div>
       )}

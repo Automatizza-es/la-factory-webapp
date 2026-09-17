@@ -1,18 +1,18 @@
 import { AppHeader } from "@/components/layout/AppHeader";
 import { BottomNav } from "@/components/layout/BottomNav";
 import { getCurrentCoworker } from "@/lib/data/coworker";
+import { getDictionary } from "@/lib/i18n/dictionaries";
+import { getLocale } from "@/lib/i18n/server";
 
 export default async function CoworkerLayout({ children }: { children: React.ReactNode }) {
   const current = await getCurrentCoworker();
+  const dict = getDictionary(await getLocale());
 
   if (!current) {
     return (
       <div className="mx-auto flex min-h-screen w-full max-w-[480px] flex-col items-center justify-center gap-3 px-6 text-center">
-        <p className="text-lg font-semibold text-ink">Tu cuenta todavía no está vinculada</p>
-        <p className="text-sm text-warm-gray">
-          Hemos verificado tu email pero no encontramos ningún coworker asociado. Contacta con
-          La Factory para activarlo.
-        </p>
+        <p className="text-lg font-semibold text-ink">{dict.unlinked.title}</p>
+        <p className="text-sm text-warm-gray">{dict.unlinked.body}</p>
       </div>
     );
   }
