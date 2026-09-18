@@ -61,6 +61,7 @@ export interface Dictionary {
     occupied: string;
     available: string;
     newBooking: string;
+    editBooking: string;
     continueLabel: string;
     chooseRoomAndConfirm: string;
     availableRooms: string;
@@ -255,6 +256,7 @@ const es: Dictionary = {
     occupied: "Ocupado",
     available: "Disponible",
     newBooking: "Nueva reserva",
+    editBooking: "Editar reserva",
     continueLabel: "Continuar",
     chooseRoomAndConfirm: "Elige sala y confirma en un solo paso.",
     availableRooms: "Salas disponibles",
@@ -450,6 +452,7 @@ const ca: Dictionary = {
     occupied: "Ocupat",
     available: "Disponible",
     newBooking: "Nova reserva",
+    editBooking: "Editar reserva",
     continueLabel: "Continuar",
     chooseRoomAndConfirm: "Tria sala i confirma en un sol pas.",
     availableRooms: "Sales disponibles",
@@ -645,6 +648,7 @@ const en: Dictionary = {
     occupied: "Occupied",
     available: "Available",
     newBooking: "New booking",
+    editBooking: "Edit booking",
     continueLabel: "Continue",
     chooseRoomAndConfirm: "Choose a room and confirm in one step.",
     availableRooms: "Available rooms",

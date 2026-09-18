@@ -12,7 +12,7 @@ interface RoomCardProps {
 export function RoomCard({ room, dict }: RoomCardProps) {
   return (
     <Link
-      href={`/reservar?sala=${room.id}`}
+      href={`/calendario?sala=${room.id}`}
       className="flex flex-col overflow-hidden rounded-3xl bg-white shadow-sm transition-transform active:scale-[0.98]"
     >
       <div className="relative flex h-28 items-center justify-center bg-gradient-to-br from-sand/70 to-cream">

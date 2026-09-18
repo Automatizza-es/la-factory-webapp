@@ -11,7 +11,7 @@ export function BottomNav() {
 
   const NAV_ITEMS = [
     { href: "/", label: dict.nav.home, icon: Home },
-    { href: "/reservar", label: dict.nav.book, icon: CalendarDays },
+    { href: "/calendario", label: dict.nav.book, icon: CalendarDays },
     { href: "/reservas", label: dict.nav.bookings, icon: ListChecks },
     { href: "/perfil", label: dict.nav.profile, icon: User },
   ];

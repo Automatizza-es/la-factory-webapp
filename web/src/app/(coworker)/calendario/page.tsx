@@ -14,11 +14,11 @@ import { createClient } from "@/lib/supabase/server";
 import { addDays, todayInMadrid, zonedDateTimeToUtcIso } from "@/lib/timezone";
 
 interface CalendarioPageProps {
-  searchParams: Promise<{ fecha?: string }>;
+  searchParams: Promise<{ fecha?: string; sala?: string }>;
 }
 
 export default async function CalendarioPage({ searchParams }: CalendarioPageProps) {
-  const { fecha } = await searchParams;
+  const { fecha, sala } = await searchParams;
   const date = fecha ?? todayInMadrid();
 
   const locale = await getLocale();
@@ -37,6 +37,8 @@ export default async function CalendarioPage({ searchParams }: CalendarioPagePro
   ]);
 
   const isToday = date === todayInMadrid();
+  const initialRoomId = sala && rooms.some((r) => r.id === sala) ? sala : undefined;
+  const salaQuery = initialRoomId ? `&sala=${initialRoomId}` : "";
 
   return (
     <div className="flex flex-col gap-5">
@@ -47,13 +49,13 @@ export default async function CalendarioPage({ searchParams }: CalendarioPagePro
 
       <div className="flex items-center justify-between gap-2">
         <Link
-          href={`/calendario?fecha=${addDays(date, -1)}`}
+          href={`/calendario?fecha=${addDays(date, -1)}${salaQuery}`}
           className="rounded-lg bg-white p-2 shadow-sm"
         >
           <ChevronLeft className="h-4 w-4 text-ink" strokeWidth={2} />
         </Link>
         <Link
-          href={`/calendario?fecha=${todayInMadrid()}`}
+          href={`/calendario?fecha=${todayInMadrid()}${salaQuery}`}
           className={`rounded-lg px-3 py-2 text-sm font-medium shadow-sm ${
             isToday ? "bg-brown-dark text-white" : "bg-white text-warm-gray"
           }`}
@@ -61,7 +63,7 @@ export default async function CalendarioPage({ searchParams }: CalendarioPagePro
           {dict.calendar.today}
         </Link>
         <Link
-          href={`/calendario?fecha=${addDays(date, 1)}`}
+          href={`/calendario?fecha=${addDays(date, 1)}${salaQuery}`}
           className="rounded-lg bg-white p-2 shadow-sm"
         >
           <ChevronRight className="h-4 w-4 text-ink" strokeWidth={2} />
@@ -78,7 +80,9 @@ export default async function CalendarioPage({ searchParams }: CalendarioPagePro
           bookingDict={dict.booking}
           roomDict={dict.room}
           reservarDict={dict.reservar}
+          roomOverlapText={dict.errors.roomOverlap}
           locale={locale}
+          initialRoomId={initialRoomId}
         />
       </div>
     </div>
