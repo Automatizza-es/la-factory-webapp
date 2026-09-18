@@ -6,13 +6,24 @@ import { createClient } from "@/lib/supabase/server";
 // blocked on the cdmon DNS change (pending as of 2026-09-18). Does nothing
 // unless DEV_BYPASS_SECRET is set on the environment — remove this route
 // and that env var once real login is confirmed working again.
-const BYPASS_EMAIL = "evamartinlopez02@gmail.com";
+const BYPASS_ACCOUNTS: Record<string, string> = {
+  admin: "evamartinlopez02@gmail.com",
+  coworker: "evaamartiin12@gmail.com",
+};
 
 export async function GET(request: NextRequest) {
   const secret = process.env.DEV_BYPASS_SECRET;
   const key = request.nextUrl.searchParams.get("key");
   if (!secret || key !== secret) {
     return new NextResponse("Not found", { status: 404 });
+  }
+
+  const as = request.nextUrl.searchParams.get("as") ?? "coworker";
+  const email = BYPASS_ACCOUNTS[as];
+  if (!email) {
+    return new NextResponse(`Unknown "as" value. Use one of: ${Object.keys(BYPASS_ACCOUNTS).join(", ")}`, {
+      status: 400,
+    });
   }
 
   const admin = createServiceClient(
@@ -22,7 +33,7 @@ export async function GET(request: NextRequest) {
 
   const { data, error } = await admin.auth.admin.generateLink({
     type: "magiclink",
-    email: BYPASS_EMAIL,
+    email,
     options: { redirectTo: `${request.nextUrl.origin}/auth/callback` },
   });
 
