@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Calendar, ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { DatePill } from "@/components/calendar/DatePill";
 import { DayCalendar } from "@/components/calendar/DayCalendar";
 import {
   getCurrentCoworker,
@@ -7,7 +8,7 @@ import {
   getRoomOccupancy,
   getRooms,
 } from "@/lib/data/coworker";
-import { formatDateLong, formatDatePill } from "@/lib/format";
+import { formatDateLong } from "@/lib/format";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import { getLocale } from "@/lib/i18n/server";
 import { createClient } from "@/lib/supabase/server";
@@ -67,12 +68,7 @@ export default async function CalendarioPage({ searchParams }: CalendarioPagePro
         >
           <ChevronLeft className="h-4 w-4 text-ink" strokeWidth={2} />
         </Link>
-        <div className="flex flex-1 items-center justify-center gap-1 overflow-hidden rounded-full bg-white px-2.5 py-2 shadow-sm">
-          <Calendar className="h-4 w-4 shrink-0 text-brown-dark" strokeWidth={2} />
-          <span className="truncate whitespace-nowrap text-sm font-medium text-ink">
-            {formatDatePill(date, locale)}
-          </span>
-        </div>
+        <DatePill date={date} locale={locale} salaQuery={salaQuery} />
         <Link
           href={`/calendario?fecha=${addDays(date, 1)}${salaQuery}`}
           className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white shadow-sm"
