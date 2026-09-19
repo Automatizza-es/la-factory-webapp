@@ -47,6 +47,16 @@ export function formatDateLong(isoDate: string, locale: Locale = "es"): string {
   return formatted.charAt(0).toUpperCase() + formatted.slice(1);
 }
 
+// Shorter than formatDateLong (no weekday, no "de" joiners) so it fits on
+// one line in the compact pill-shaped date nav.
+export function formatDatePill(isoDate: string, locale: Locale = "es"): string {
+  const date = new Date(`${isoDate}T00:00:00`);
+  const day = date.toLocaleDateString(INTL_LOCALE[locale], { day: "numeric" });
+  const month = date.toLocaleDateString(INTL_LOCALE[locale], { month: "long" });
+  const year = date.toLocaleDateString(INTL_LOCALE[locale], { year: "numeric" });
+  return `${day} ${month} ${year}`;
+}
+
 export function formatWeekdayShort(isoDate: string, locale: Locale = "es"): string {
   const date = new Date(`${isoDate}T00:00:00`);
   const label = date.toLocaleDateString(INTL_LOCALE[locale], { weekday: "short" });
