@@ -70,6 +70,7 @@ export interface Dictionary {
     roomLabel: string;
     roomOccupied: string;
     confirming: string;
+    tapFreeSlot: string;
   };
   reservas: {
     title: string;
@@ -265,6 +266,7 @@ const es: Dictionary = {
     roomLabel: "Sala",
     roomOccupied: "Ocupada",
     confirming: "Confirmando...",
+    tapFreeSlot: "Toca una franja libre para reservar.",
   },
   reservas: {
     title: "Mis reservas",
@@ -461,6 +463,7 @@ const ca: Dictionary = {
     roomLabel: "Sala",
     roomOccupied: "Ocupada",
     confirming: "Confirmant...",
+    tapFreeSlot: "Toca una franja lliure per reservar.",
   },
   reservas: {
     title: "Les meves reserves",
@@ -657,6 +660,7 @@ const en: Dictionary = {
     roomLabel: "Room",
     roomOccupied: "Occupied",
     confirming: "Confirming...",
+    tapFreeSlot: "Tap a free slot to book.",
   },
   reservas: {
     title: "My bookings",

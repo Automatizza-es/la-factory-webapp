@@ -22,6 +22,13 @@ export function addDays(dateStr: string, days: number): string {
   return `${date.getUTCFullYear()}-${pad(date.getUTCMonth() + 1)}-${pad(date.getUTCDate())}`;
 }
 
+// Monday of the week containing dateStr (ISO weekday: 1 = Monday).
+export function startOfWeek(dateStr: string): string {
+  const [y, m, d] = dateStr.split("-").map(Number);
+  const isoWeekday = new Date(Date.UTC(y, m - 1, d)).getUTCDay() || 7;
+  return addDays(dateStr, 1 - isoWeekday);
+}
+
 export function utcIsoToZonedDateAndMinutes(iso: string): { date: string; minutes: number } {
   const wall = wallClockPartsInZone(new Date(iso));
   return {

@@ -5,22 +5,23 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Minus, Plus, Trash2, X } from "lucide-react";
 import { cancelBooking, submitBooking } from "@/app/(coworker)/reservar/actions";
+import {
+  GRID_END_MINUTES,
+  GRID_HEIGHT,
+  GRID_START_MINUTES,
+  SLOT_MINUTES,
+  gridLines as buildGridLines,
+  hourMarks,
+  slotStarts,
+  toY,
+} from "@/lib/calendar-grid";
 import { formatDateLong, formatMinutesAsHours, minutesToTime } from "@/lib/format";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
 import type { RoomOccupancyBlock } from "@/lib/data/coworker";
 import { todayInMadrid, utcIsoToZonedDateAndMinutes } from "@/lib/timezone";
 import type { QuotaSummary, Room } from "@/types/domain";
-
-const GRID_START_MINUTES = 7 * 60;
-const GRID_END_MINUTES = 21 * 60;
-const SLOT_MINUTES = 15;
-const HOUR_PX = 80;
-const GRID_HEIGHT = ((GRID_END_MINUTES - GRID_START_MINUTES) / 60) * HOUR_PX;
-
-function toY(minutes: number) {
-  return ((minutes - GRID_START_MINUTES) / 60) * HOUR_PX;
-}
+import { RoomSwitcher } from "./RoomSwitcher";
 
 interface Selection {
   roomId: string;
@@ -87,25 +88,9 @@ export function DayCalendar({
     return map;
   }, [occupancy]);
 
-  const hours = useMemo(() => {
-    const list: number[] = [];
-    for (let m = GRID_START_MINUTES; m <= GRID_END_MINUTES; m += 60) list.push(m);
-    return list;
-  }, []);
-
-  const gridLines = useMemo(() => {
-    const list: { minute: number; major: boolean }[] = [];
-    for (let m = GRID_START_MINUTES; m <= GRID_END_MINUTES; m += 15) {
-      list.push({ minute: m, major: m % 30 === 0 });
-    }
-    return list;
-  }, []);
-
-  const slots = useMemo(() => {
-    const list: number[] = [];
-    for (let m = GRID_START_MINUTES; m < GRID_END_MINUTES; m += SLOT_MINUTES) list.push(m);
-    return list;
-  }, []);
+  const hours = useMemo(() => hourMarks(), []);
+  const gridLines = useMemo(() => buildGridLines(), []);
+  const slots = useMemo(() => slotStarts(), []);
 
   function isFree(roomId: string, start: number, end: number, excludeBookingId?: string) {
     const blocks = occupancyByRoom.get(roomId) ?? [];
@@ -213,31 +198,8 @@ export function DayCalendar({
   return (
     <div className="relative">
       {focusRoomId && (
-        <div className="mb-3 flex gap-2">
-          {rooms.map((room) => {
-            const active = room.id === focusRoomId;
-            return (
-              <button
-                key={room.id}
-                type="button"
-                onClick={() => switchFocusRoom(room.id)}
-                className={`flex flex-1 items-center gap-2 rounded-2xl border px-3 py-2 text-left transition-colors ${
-                  active ? "border-brown-dark bg-cream" : "border-sand/50 bg-white"
-                }`}
-              >
-                <div className="relative h-8 w-8 shrink-0 overflow-hidden rounded-lg bg-sand/50">
-                  {room.imagePath && (
-                    <Image src={room.imagePath} alt={room.name} fill className="object-cover" />
-                  )}
-                </div>
-                <span
-                  className={`text-sm font-medium ${active ? "text-brown-dark" : "text-ink"}`}
-                >
-                  {room.name}
-                </span>
-              </button>
-            );
-          })}
+        <div className="mb-3">
+          <RoomSwitcher rooms={rooms} activeRoomId={focusRoomId} onSelect={switchFocusRoom} />
         </div>
       )}
 

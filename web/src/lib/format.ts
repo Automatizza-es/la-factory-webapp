@@ -57,10 +57,60 @@ export function formatDatePill(isoDate: string, locale: Locale = "es"): string {
   return `${day} ${month} ${year}`;
 }
 
+// "Del 14 al 20 de septiembre de 2026" (or "Del 28 de sept. al 3 de oct. de
+// 2026" when the week crosses a month boundary).
+export function formatWeekRangeLong(
+  startIso: string,
+  endIso: string,
+  locale: Locale = "es",
+): string {
+  const start = new Date(`${startIso}T00:00:00`);
+  const end = new Date(`${endIso}T00:00:00`);
+  const sameMonth = start.getMonth() === end.getMonth() && start.getFullYear() === end.getFullYear();
+  const startDay = start.toLocaleDateString(INTL_LOCALE[locale], { day: "numeric" });
+  const endDay = end.toLocaleDateString(INTL_LOCALE[locale], { day: "numeric" });
+  const endMonth = end.toLocaleDateString(INTL_LOCALE[locale], { month: "long" });
+  const endYear = end.toLocaleDateString(INTL_LOCALE[locale], { year: "numeric" });
+
+  if (sameMonth) {
+    return `Del ${startDay} al ${endDay} de ${endMonth} de ${endYear}`;
+  }
+
+  const startMonth = start.toLocaleDateString(INTL_LOCALE[locale], { month: "long" });
+  return `Del ${startDay} de ${startMonth} al ${endDay} de ${endMonth} de ${endYear}`;
+}
+
+// Short one-line form for the compact pill nav, e.g. "14 – 20 septiembre 2026".
+export function formatWeekRangePill(
+  startIso: string,
+  endIso: string,
+  locale: Locale = "es",
+): string {
+  const start = new Date(`${startIso}T00:00:00`);
+  const end = new Date(`${endIso}T00:00:00`);
+  const sameMonth = start.getMonth() === end.getMonth() && start.getFullYear() === end.getFullYear();
+  const startDay = start.toLocaleDateString(INTL_LOCALE[locale], { day: "numeric" });
+  const endDay = end.toLocaleDateString(INTL_LOCALE[locale], { day: "numeric" });
+  const endMonth = end.toLocaleDateString(INTL_LOCALE[locale], { month: "long" });
+  const endYear = end.toLocaleDateString(INTL_LOCALE[locale], { year: "numeric" });
+
+  if (sameMonth) {
+    return `${startDay} – ${endDay} ${endMonth} ${endYear}`;
+  }
+
+  const startMonth = start.toLocaleDateString(INTL_LOCALE[locale], { month: "short" }).replace(".", "");
+  return `${startDay} ${startMonth} – ${endDay} ${endMonth} ${endYear}`;
+}
+
 export function formatWeekdayShort(isoDate: string, locale: Locale = "es"): string {
   const date = new Date(`${isoDate}T00:00:00`);
   const label = date.toLocaleDateString(INTL_LOCALE[locale], { weekday: "short" });
   return label.replace(".", "");
+}
+
+export function formatWeekdayNarrow(isoDate: string, locale: Locale = "es"): string {
+  const date = new Date(`${isoDate}T00:00:00`);
+  return date.toLocaleDateString(INTL_LOCALE[locale], { weekday: "narrow" }).toUpperCase();
 }
 
 export function formatDayNumber(isoDate: string): string {
