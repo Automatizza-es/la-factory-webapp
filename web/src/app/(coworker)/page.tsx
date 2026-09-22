@@ -21,7 +21,12 @@ export default async function HomePage() {
     getBookings(supabase, current.contactId),
   ]);
 
-  const upcomingBookings = bookings.filter((b) => b.status === "upcoming").slice(0, 2);
+  // Bookings come back soonest-last (starts_at desc); reverse before slicing
+  // so "next up" actually shows the soonest ones, not the furthest out.
+  const upcomingBookings = bookings
+    .filter((b) => b.status === "upcoming")
+    .reverse()
+    .slice(0, 2);
 
   return (
     <div className="flex flex-col gap-6">

@@ -12,7 +12,9 @@ export default async function ReservasPage() {
   const supabase = await createClient();
   const bookings = await getBookings(supabase, current.contactId);
 
-  const upcoming = bookings.filter((booking) => booking.status === "upcoming");
+  // Bookings come back soonest-last (starts_at desc, which suits Histórico);
+  // reverse just the upcoming ones so the next reservation shows first.
+  const upcoming = bookings.filter((booking) => booking.status === "upcoming").reverse();
   const history = bookings.filter((booking) => booking.status !== "upcoming");
 
   return (
