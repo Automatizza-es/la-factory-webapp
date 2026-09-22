@@ -1,13 +1,22 @@
 import Image from "next/image";
-import { Bell } from "lucide-react";
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
+import { NotificationBell } from "@/components/layout/NotificationBell";
+import type { NotificationItem } from "@/lib/data/notifications";
 import type { Coworker } from "@/types/domain";
 
 interface AppHeaderProps {
   coworker: Coworker;
+  notifications: NotificationItem[];
+  notificationsTitle: string;
+  notificationsEmpty: string;
 }
 
-export function AppHeader({ coworker }: AppHeaderProps) {
+export function AppHeader({
+  coworker,
+  notifications,
+  notificationsTitle,
+  notificationsEmpty,
+}: AppHeaderProps) {
   return (
     <header className="flex items-center justify-between px-5 pt-6">
       <Image
@@ -20,13 +29,11 @@ export function AppHeader({ coworker }: AppHeaderProps) {
       />
       <div className="flex items-center gap-3">
         <LanguageSwitcher />
-        <button
-          type="button"
-          aria-label="Notificaciones"
-          className="flex h-10 w-10 items-center justify-center rounded-full text-ink transition-colors hover:bg-sand/40"
-        >
-          <Bell className="h-5 w-5" strokeWidth={1.75} />
-        </button>
+        <NotificationBell
+          notifications={notifications}
+          title={notificationsTitle}
+          emptyLabel={notificationsEmpty}
+        />
         <div
           className="flex h-10 w-10 items-center justify-center rounded-full bg-sand text-sm font-semibold text-brown-dark"
           aria-label={`Perfil de ${coworker.firstName}`}

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CalendarDays, LayoutDashboard, PlusCircle, Users } from "lucide-react";
+import { CalendarDays, LayoutDashboard, Package, PlusCircle, Users } from "lucide-react";
 import { useI18n } from "@/lib/i18n/context";
 
 export function useAdminNavItems() {
@@ -12,6 +12,7 @@ export function useAdminNavItems() {
     { href: "/admin", label: dict.admin.nav.dashboard, icon: LayoutDashboard },
     { href: "/admin/calendario", label: dict.admin.nav.calendar, icon: CalendarDays },
     { href: "/admin/coworkers", label: dict.admin.nav.coworkers, icon: Users },
+    { href: "/admin/paquetes", label: dict.admin.nav.packages, icon: Package },
     { href: "/admin/reservar", label: dict.admin.nav.book, icon: PlusCircle },
   ];
 }

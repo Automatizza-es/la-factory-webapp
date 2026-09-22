@@ -17,6 +17,35 @@ export interface Dictionary {
     viewAll: string;
     noUpcoming: string;
   };
+  packages: {
+    title: string;
+    subtitle: string;
+    pending: string;
+    history: string;
+    noPending: string;
+    noHistory: string;
+    statusPending: string;
+    statusCollected: string;
+    receivedAt: string;
+    collectedAt: string;
+    note: string;
+    view: string;
+    homeBannerOne: string;
+    homeBannerMany: (count: number) => string;
+    homeBannerReceived: (when: string) => string;
+    emailSubject: string;
+    emailGreeting: (name: string) => string;
+    emailBody: string;
+    emailCta: string;
+  };
+  notifications: {
+    title: string;
+    empty: string;
+    genericTitle: string;
+    genericBody: string;
+    packageReceivedTitle: string;
+    packageReceivedBody: (when: string) => string;
+  };
   quota: {
     currentPlan: string;
     availableOf: string;
@@ -128,7 +157,7 @@ export interface Dictionary {
     label: string;
   };
   admin: {
-    nav: { dashboard: string; calendar: string; coworkers: string; book: string };
+    nav: { dashboard: string; calendar: string; coworkers: string; book: string; packages: string };
     dashboard: {
       title: string;
       subtitle: string;
@@ -231,6 +260,40 @@ export interface Dictionary {
       submitting: string;
       success: string;
     };
+    packages: {
+      title: string;
+      subtitle: string;
+      newPackage: string;
+      filterPending: string;
+      filterCollected: string;
+      filterAll: string;
+      recipient: string;
+      receivedAt: string;
+      collectedAtLabel: string;
+      status: string;
+      statusPending: string;
+      statusCollected: string;
+      markCollected: string;
+      noPackages: string;
+    };
+    newPackageForm: {
+      title: string;
+      photoLabel: string;
+      changePhoto: string;
+      recipientLabel: string;
+      searchPlaceholder: string;
+      noResults: string;
+      noteLabel: string;
+      noteOptional: string;
+      summaryTitle: string;
+      summaryFor: string;
+      summaryReceived: string;
+      submit: (name: string) => string;
+      submitting: string;
+      success: string;
+      photoRequired: string;
+      recipientRequired: string;
+    };
   };
   errors: {
     notSignedIn: string;
@@ -264,6 +327,35 @@ const es: Dictionary = {
     upcomingBookings: "Próximas reservas",
     viewAll: "Ver todas",
     noUpcoming: "No tienes reservas próximas.",
+  },
+  packages: {
+    title: "Mis paquetes",
+    subtitle: "Consulta tus paquetes recibidos en La Factory.",
+    pending: "Pendientes",
+    history: "Histórico",
+    noPending: "No tienes paquetes pendientes de recoger.",
+    noHistory: "Todavía no tienes paquetes recogidos.",
+    statusPending: "Pendiente de recoger",
+    statusCollected: "Recogido",
+    receivedAt: "Recibido",
+    collectedAt: "Recogido",
+    note: "Nota",
+    view: "Ver",
+    homeBannerOne: "Tienes 1 paquete pendiente",
+    homeBannerMany: (count) => `Tienes ${count} paquetes pendientes`,
+    homeBannerReceived: (when) => `Recibido ${when}`,
+    emailSubject: "Tienes un paquete en La Factory 📦",
+    emailGreeting: (name) => `Hola ${name},`,
+    emailBody: "Ha llegado un paquete para ti a La Factory. Puedes recogerlo cuando quieras.",
+    emailCta: "Ver paquete",
+  },
+  notifications: {
+    title: "Notificaciones",
+    empty: "No tienes notificaciones.",
+    genericTitle: "Notificación",
+    genericBody: "",
+    packageReceivedTitle: "📦 Tienes un paquete",
+    packageReceivedBody: (when) => `Ha llegado un paquete para ti a La Factory.\n${when}`,
   },
   quota: {
     currentPlan: "Tu tarifa actual",
@@ -372,7 +464,7 @@ const es: Dictionary = {
   },
   language: { label: "Idioma" },
   admin: {
-    nav: { dashboard: "Dashboard", calendar: "Calendario", coworkers: "Coworkers", book: "Reservar" },
+    nav: { dashboard: "Dashboard", calendar: "Calendario", coworkers: "Coworkers", book: "Reservar", packages: "Paquetería" },
     dashboard: {
       title: "Dashboard",
       subtitle: "Resumen de hoy en La Factory.",
@@ -475,6 +567,40 @@ const es: Dictionary = {
       submitting: "Creando reserva...",
       success: "Reserva creada correctamente.",
     },
+    packages: {
+      title: "Paquetería",
+      subtitle: "Paquetes recibidos para coworkers.",
+      newPackage: "+ Registrar paquete",
+      filterPending: "Pendientes",
+      filterCollected: "Recogidos",
+      filterAll: "Todos",
+      recipient: "Destinatario",
+      receivedAt: "Recibido",
+      collectedAtLabel: "Recogido",
+      status: "Estado",
+      statusPending: "Pendiente",
+      statusCollected: "Recogido",
+      markCollected: "Marcar como recogido",
+      noPackages: "No hay paquetes.",
+    },
+    newPackageForm: {
+      title: "Registrar paquete",
+      photoLabel: "Foto del paquete",
+      changePhoto: "Cambiar foto",
+      recipientLabel: "¿Para quién es el paquete?",
+      searchPlaceholder: "Buscar coworker...",
+      noResults: "Sin resultados.",
+      noteLabel: "Nota",
+      noteOptional: "opcional",
+      summaryTitle: "Nuevo paquete",
+      summaryFor: "Para",
+      summaryReceived: "Recibido",
+      submit: (name) => `Avisar a ${name}`,
+      submitting: "Registrando...",
+      success: "Paquete registrado y aviso enviado.",
+      photoRequired: "Añade una foto del paquete.",
+      recipientRequired: "Elige a quién va dirigido el paquete.",
+    },
   },
   errors: {
     notSignedIn: "No has iniciado sesión.",
@@ -510,6 +636,35 @@ const ca: Dictionary = {
     upcomingBookings: "Properes reserves",
     viewAll: "Veure-les totes",
     noUpcoming: "No tens reserves properes.",
+  },
+  packages: {
+    title: "Els meus paquets",
+    subtitle: "Consulta els teus paquets rebuts a La Factory.",
+    pending: "Pendents",
+    history: "Historial",
+    noPending: "No tens paquets pendents de recollir.",
+    noHistory: "Encara no tens paquets recollits.",
+    statusPending: "Pendent de recollir",
+    statusCollected: "Recollit",
+    receivedAt: "Rebut",
+    collectedAt: "Recollit",
+    note: "Nota",
+    view: "Veure",
+    homeBannerOne: "Tens 1 paquet pendent",
+    homeBannerMany: (count) => `Tens ${count} paquets pendents`,
+    homeBannerReceived: (when) => `Rebut ${when}`,
+    emailSubject: "Tens un paquet a La Factory 📦",
+    emailGreeting: (name) => `Hola ${name},`,
+    emailBody: "Ha arribat un paquet per a tu a La Factory. Pots recollir-lo quan vulguis.",
+    emailCta: "Veure paquet",
+  },
+  notifications: {
+    title: "Notificacions",
+    empty: "No tens notificacions.",
+    genericTitle: "Notificació",
+    genericBody: "",
+    packageReceivedTitle: "📦 Tens un paquet",
+    packageReceivedBody: (when) => `Ha arribat un paquet per a tu a La Factory.\n${when}`,
   },
   quota: {
     currentPlan: "La teva tarifa actual",
@@ -618,7 +773,7 @@ const ca: Dictionary = {
   },
   language: { label: "Idioma" },
   admin: {
-    nav: { dashboard: "Dashboard", calendar: "Calendari", coworkers: "Coworkers", book: "Reservar" },
+    nav: { dashboard: "Dashboard", calendar: "Calendari", coworkers: "Coworkers", book: "Reservar", packages: "Paqueteria" },
     dashboard: {
       title: "Dashboard",
       subtitle: "Resum d'avui a La Factory.",
@@ -721,6 +876,40 @@ const ca: Dictionary = {
       submitting: "Creant reserva...",
       success: "Reserva creada correctament.",
     },
+    packages: {
+      title: "Paqueteria",
+      subtitle: "Paquets rebuts per a coworkers.",
+      newPackage: "+ Registrar paquet",
+      filterPending: "Pendents",
+      filterCollected: "Recollits",
+      filterAll: "Tots",
+      recipient: "Destinatari",
+      receivedAt: "Rebut",
+      collectedAtLabel: "Recollit",
+      status: "Estat",
+      statusPending: "Pendent",
+      statusCollected: "Recollit",
+      markCollected: "Marcar com a recollit",
+      noPackages: "No hi ha paquets.",
+    },
+    newPackageForm: {
+      title: "Registrar paquet",
+      photoLabel: "Foto del paquet",
+      changePhoto: "Canviar foto",
+      recipientLabel: "Per a qui és el paquet?",
+      searchPlaceholder: "Cerca un coworker...",
+      noResults: "Sense resultats.",
+      noteLabel: "Nota",
+      noteOptional: "opcional",
+      summaryTitle: "Nou paquet",
+      summaryFor: "Per a",
+      summaryReceived: "Rebut",
+      submit: (name) => `Avisar ${name}`,
+      submitting: "Registrant...",
+      success: "Paquet registrat i avís enviat.",
+      photoRequired: "Afegeix una foto del paquet.",
+      recipientRequired: "Tria a qui va dirigit el paquet.",
+    },
   },
   errors: {
     notSignedIn: "No has iniciat sessió.",
@@ -756,6 +945,35 @@ const en: Dictionary = {
     upcomingBookings: "Upcoming bookings",
     viewAll: "View all",
     noUpcoming: "You have no upcoming bookings.",
+  },
+  packages: {
+    title: "My packages",
+    subtitle: "Check the packages you've received at La Factory.",
+    pending: "Pending",
+    history: "History",
+    noPending: "You have no packages waiting to be picked up.",
+    noHistory: "You haven't picked up any packages yet.",
+    statusPending: "Pending pickup",
+    statusCollected: "Picked up",
+    receivedAt: "Received",
+    collectedAt: "Picked up",
+    note: "Note",
+    view: "View",
+    homeBannerOne: "You have 1 package waiting",
+    homeBannerMany: (count) => `You have ${count} packages waiting`,
+    homeBannerReceived: (when) => `Received ${when}`,
+    emailSubject: "You have a package at La Factory 📦",
+    emailGreeting: (name) => `Hi ${name},`,
+    emailBody: "A package has arrived for you at La Factory. Pick it up whenever you like.",
+    emailCta: "View package",
+  },
+  notifications: {
+    title: "Notifications",
+    empty: "You have no notifications.",
+    genericTitle: "Notification",
+    genericBody: "",
+    packageReceivedTitle: "📦 You have a package",
+    packageReceivedBody: (when) => `A package has arrived for you at La Factory.\n${when}`,
   },
   quota: {
     currentPlan: "Your current plan",
@@ -863,7 +1081,7 @@ const en: Dictionary = {
   },
   language: { label: "Language" },
   admin: {
-    nav: { dashboard: "Dashboard", calendar: "Calendar", coworkers: "Coworkers", book: "Book" },
+    nav: { dashboard: "Dashboard", calendar: "Calendar", coworkers: "Coworkers", book: "Book", packages: "Packages" },
     dashboard: {
       title: "Dashboard",
       subtitle: "Today's summary at La Factory.",
@@ -965,6 +1183,40 @@ const en: Dictionary = {
       submit: "Create booking",
       submitting: "Creating booking...",
       success: "Booking created successfully.",
+    },
+    packages: {
+      title: "Packages",
+      subtitle: "Packages received for coworkers.",
+      newPackage: "+ Register package",
+      filterPending: "Pending",
+      filterCollected: "Picked up",
+      filterAll: "All",
+      recipient: "Recipient",
+      receivedAt: "Received",
+      collectedAtLabel: "Picked up",
+      status: "Status",
+      statusPending: "Pending",
+      statusCollected: "Picked up",
+      markCollected: "Mark as picked up",
+      noPackages: "No packages.",
+    },
+    newPackageForm: {
+      title: "Register package",
+      photoLabel: "Package photo",
+      changePhoto: "Change photo",
+      recipientLabel: "Who's this package for?",
+      searchPlaceholder: "Search coworker...",
+      noResults: "No results.",
+      noteLabel: "Note",
+      noteOptional: "optional",
+      summaryTitle: "New package",
+      summaryFor: "For",
+      summaryReceived: "Received",
+      submit: (name) => `Notify ${name}`,
+      submitting: "Registering...",
+      success: "Package registered and notification sent.",
+      photoRequired: "Add a photo of the package.",
+      recipientRequired: "Choose who the package is for.",
     },
   },
   errors: {

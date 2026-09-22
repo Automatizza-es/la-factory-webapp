@@ -1,12 +1,15 @@
 import Link from "next/link";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Package } from "lucide-react";
 import { BookingCard } from "@/components/home/BookingCard";
 import { QuotaCard } from "@/components/home/QuotaCard";
 import { RoomCard } from "@/components/home/RoomCard";
 import { getBookings, getCurrentCoworker, getQuotaSummary, getRooms } from "@/lib/data/coworker";
+import { getMyPendingPackagesSummary } from "@/lib/data/packages";
+import { formatDateLong, minutesToTime } from "@/lib/format";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import { getLocale } from "@/lib/i18n/server";
 import { createClient } from "@/lib/supabase/server";
+import { utcIsoToZonedDateAndMinutes } from "@/lib/timezone";
 
 export default async function HomePage() {
   const current = await getCurrentCoworker();
@@ -15,10 +18,11 @@ export default async function HomePage() {
   const locale = await getLocale();
   const dict = getDictionary(locale);
   const supabase = await createClient();
-  const [quota, rooms, bookings] = await Promise.all([
+  const [quota, rooms, bookings, pendingPackages] = await Promise.all([
     getQuotaSummary(supabase, current.contactId, locale),
     getRooms(supabase),
     getBookings(supabase, current.contactId),
+    getMyPendingPackagesSummary(supabase, current.contactId),
   ]);
 
   // Bookings come back soonest-last (starts_at desc); reverse before slicing
@@ -36,6 +40,35 @@ export default async function HomePage() {
         </h1>
         <p className="text-sm text-warm-gray">{dict.home.subtitle}</p>
       </div>
+
+      {pendingPackages.count > 0 && (
+        <Link
+          href="/paquetes"
+          className="flex items-center gap-3 rounded-2xl bg-brown-dark p-4 text-white shadow-sm"
+        >
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/15">
+            <Package className="h-5 w-5" strokeWidth={1.75} />
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="font-semibold">
+              {pendingPackages.count === 1
+                ? dict.packages.homeBannerOne
+                : dict.packages.homeBannerMany(pendingPackages.count)}
+            </p>
+            {pendingPackages.mostRecentReceivedAt && (
+              <p className="text-sm text-white/80">
+                {dict.packages.homeBannerReceived(
+                  (() => {
+                    const zoned = utcIsoToZonedDateAndMinutes(pendingPackages.mostRecentReceivedAt);
+                    return `${formatDateLong(zoned.date, locale)} · ${minutesToTime(zoned.minutes)}`;
+                  })(),
+                )}
+              </p>
+            )}
+          </div>
+          <span className="shrink-0 text-sm font-medium underline">{dict.packages.view}</span>
+        </Link>
+      )}
 
       {quota ? (
         <QuotaCard quota={quota} dict={dict.quota} />

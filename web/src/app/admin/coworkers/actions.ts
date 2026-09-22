@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { getCurrentCoworker } from "@/lib/data/coworker";
+import { sendTransactionalEmail } from "@/lib/email/resend";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import { getLocale } from "@/lib/i18n/server";
 import { createClient } from "@/lib/supabase/server";
@@ -108,31 +109,20 @@ export async function sendCoworkerInvitationEmail(
     return { error: dict.errors.notAuthorized };
   }
 
-  const apiKey = process.env.RESEND_API_KEY;
-  if (!apiKey) return { error: dict.errors.unknown };
-
-  const response = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      from: "onboarding@resend.dev",
-      to: email,
-      subject: "Bienvenido/a a La Factory Coworking",
-      html: `
-        <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto;">
-          <h2>Bienvenido/a a La Factory</h2>
-          <p>Te han dado de alta como coworker en La Factory Coworking. Completa tu registro para activar tu cuenta:</p>
-          <p><a href="${inviteLink}" style="display:inline-block;background:#5b4636;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;">Completar registro</a></p>
-          <p>O copia y pega este enlace en tu navegador:<br>${inviteLink}</p>
-        </div>
-      `,
-    }),
+  const { error: sendError } = await sendTransactionalEmail({
+    to: email,
+    subject: "Bienvenido/a a La Factory Coworking",
+    html: `
+      <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto;">
+        <h2>Bienvenido/a a La Factory</h2>
+        <p>Te han dado de alta como coworker en La Factory Coworking. Completa tu registro para activar tu cuenta:</p>
+        <p><a href="${inviteLink}" style="display:inline-block;background:#5b4636;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;">Completar registro</a></p>
+        <p>O copia y pega este enlace en tu navegador:<br>${inviteLink}</p>
+      </div>
+    `,
   });
 
-  if (!response.ok) {
+  if (sendError) {
     return { error: dict.errors.unknown };
   }
 
