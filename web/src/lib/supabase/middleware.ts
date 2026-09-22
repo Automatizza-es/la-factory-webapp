@@ -2,7 +2,7 @@ import { createClient as createServiceClient } from "@supabase/supabase-js";
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-const PUBLIC_PATHS = ["/login", "/auth/callback"];
+const PUBLIC_PATHS = ["/login", "/auth/callback", "/invite", "/onboarding"];
 
 // TEMPORARY: while Resend's sending domain is pending DNS verification
 // (due back 2026-09-22), TEMP_AUTH_BYPASS=true on Vercel logs any

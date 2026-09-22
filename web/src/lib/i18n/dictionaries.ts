@@ -101,6 +101,29 @@ export interface Dictionary {
     title: string;
     body: string;
   };
+  onboarding: {
+    title: string;
+    subtitle: string;
+    firstName: string;
+    lastName: string;
+    nif: string;
+    companyName: string;
+    optional: string;
+    phone: string;
+    email: string;
+    language: string;
+    languageCa: string;
+    languageEs: string;
+    languageEn: string;
+    privacyText: string;
+    privacyLinkLabel: string;
+    marketingConsent: string;
+    submit: string;
+    submitting: string;
+    errorNotFound: string;
+    errorExpired: string;
+    errorCancelled: string;
+  };
   language: {
     label: string;
   };
@@ -142,6 +165,32 @@ export interface Dictionary {
       statusEnded: string;
       statusCancelled: string;
       statusNone: string;
+      newCoworker: string;
+      statusInvited: string;
+      statusOnboarding: string;
+      statusInviteExpired: string;
+      statusInviteCancelled: string;
+      resendInvitation: string;
+      copyLink: string;
+      cancelInvitation: string;
+      linkCopied: string;
+      cancelConfirm: string;
+    };
+    newCoworker: {
+      title: string;
+      subtitle: string;
+      email: string;
+      plan: string;
+      startDate: string;
+      submit: string;
+      submitting: string;
+      emailAlreadyExists: string;
+      created: string;
+      inviteLinkLabel: string;
+      sendEmail: string;
+      sendingEmail: string;
+      emailSent: string;
+      backToList: string;
     };
     coworkerDetail: {
       back: string;
@@ -298,6 +347,29 @@ const es: Dictionary = {
     title: "Tu cuenta todavía no está vinculada",
     body: "Hemos verificado tu email pero no encontramos ningún coworker asociado. Contacta con La Factory para activarlo.",
   },
+  onboarding: {
+    title: "Bienvenido/a a La Factory",
+    subtitle: "Completa tus datos para terminar de configurar tu cuenta.",
+    firstName: "Nombre",
+    lastName: "Apellidos",
+    nif: "NIF",
+    companyName: "Empresa",
+    optional: "opcional",
+    phone: "Teléfono",
+    email: "Email",
+    language: "Idioma preferido",
+    languageCa: "Català",
+    languageEs: "Castellano",
+    languageEn: "English",
+    privacyText: "Tus datos se tratan conforme a nuestra",
+    privacyLinkLabel: "política de privacidad",
+    marketingConsent: "Quiero recibir novedades, actividades y comunicaciones de La Factory.",
+    submit: "Completar registro",
+    submitting: "Guardando...",
+    errorNotFound: "Este enlace de invitación no es válido.",
+    errorExpired: "Este enlace de invitación ha caducado. Pide a tu administrador que te envíe uno nuevo.",
+    errorCancelled: "Esta invitación ha sido cancelada.",
+  },
   language: { label: "Idioma" },
   admin: {
     nav: { dashboard: "Dashboard", calendar: "Calendario", coworkers: "Coworkers", book: "Reservar" },
@@ -337,6 +409,32 @@ const es: Dictionary = {
       statusEnded: "Finalizada",
       statusCancelled: "Cancelada",
       statusNone: "Sin tarifa",
+      newCoworker: "+ Nuevo coworker",
+      statusInvited: "Invitación enviada",
+      statusOnboarding: "Onboarding pendiente",
+      statusInviteExpired: "Invitación caducada",
+      statusInviteCancelled: "Invitación cancelada",
+      resendInvitation: "Reenviar invitación",
+      copyLink: "Copiar enlace",
+      cancelInvitation: "Cancelar invitación",
+      linkCopied: "Enlace copiado",
+      cancelConfirm: "¿Seguro que quieres cancelar esta invitación?",
+    },
+    newCoworker: {
+      title: "Nuevo coworker",
+      subtitle: "El coworker completará el resto de sus datos al aceptar la invitación.",
+      email: "Email",
+      plan: "Tarifa",
+      startDate: "Fecha de inicio",
+      submit: "Crear e invitar",
+      submitting: "Creando...",
+      emailAlreadyExists: "Ya existe un contacto con ese email.",
+      created: "Invitación creada.",
+      inviteLinkLabel: "Enlace de invitación",
+      sendEmail: "Enviar por email",
+      sendingEmail: "Enviando...",
+      emailSent: "Email enviado.",
+      backToList: "Volver a coworkers",
     },
     coworkerDetail: {
       back: "Volver a coworkers",
@@ -495,6 +593,29 @@ const ca: Dictionary = {
     title: "El teu compte encara no està vinculat",
     body: "Hem verificat el teu email però no hem trobat cap coworker associat. Contacta amb La Factory per activar-lo.",
   },
+  onboarding: {
+    title: "Benvingut/da a La Factory",
+    subtitle: "Completa les teves dades per acabar de configurar el teu compte.",
+    firstName: "Nom",
+    lastName: "Cognoms",
+    nif: "NIF",
+    companyName: "Empresa",
+    optional: "opcional",
+    phone: "Telèfon",
+    email: "Email",
+    language: "Idioma preferit",
+    languageCa: "Català",
+    languageEs: "Castellà",
+    languageEn: "English",
+    privacyText: "Les teves dades es tracten segons la nostra",
+    privacyLinkLabel: "política de privacitat",
+    marketingConsent: "Vull rebre novetats, activitats i comunicacions de La Factory.",
+    submit: "Completar registre",
+    submitting: "Desant...",
+    errorNotFound: "Aquest enllaç d'invitació no és vàlid.",
+    errorExpired: "Aquest enllaç d'invitació ha caducat. Demana a un administrador que te'n enviï un de nou.",
+    errorCancelled: "Aquesta invitació ha estat cancel·lada.",
+  },
   language: { label: "Idioma" },
   admin: {
     nav: { dashboard: "Dashboard", calendar: "Calendari", coworkers: "Coworkers", book: "Reservar" },
@@ -534,6 +655,32 @@ const ca: Dictionary = {
       statusEnded: "Finalitzada",
       statusCancelled: "Cancel·lada",
       statusNone: "Sense tarifa",
+      newCoworker: "+ Nou coworker",
+      statusInvited: "Invitació enviada",
+      statusOnboarding: "Onboarding pendent",
+      statusInviteExpired: "Invitació caducada",
+      statusInviteCancelled: "Invitació cancel·lada",
+      resendInvitation: "Reenviar invitació",
+      copyLink: "Copiar enllaç",
+      cancelInvitation: "Cancel·lar invitació",
+      linkCopied: "Enllaç copiat",
+      cancelConfirm: "Segur que vols cancel·lar aquesta invitació?",
+    },
+    newCoworker: {
+      title: "Nou coworker",
+      subtitle: "El coworker completarà la resta de les seves dades en acceptar la invitació.",
+      email: "Email",
+      plan: "Tarifa",
+      startDate: "Data d'inici",
+      submit: "Crear i convidar",
+      submitting: "Creant...",
+      emailAlreadyExists: "Ja existeix un contacte amb aquest email.",
+      created: "Invitació creada.",
+      inviteLinkLabel: "Enllaç d'invitació",
+      sendEmail: "Enviar per email",
+      sendingEmail: "Enviant...",
+      emailSent: "Email enviat.",
+      backToList: "Tornar a coworkers",
     },
     coworkerDetail: {
       back: "Tornar a coworkers",
@@ -691,6 +838,29 @@ const en: Dictionary = {
     title: "Your account isn't linked yet",
     body: "We verified your email but couldn't find a matching coworker. Contact La Factory to activate it.",
   },
+  onboarding: {
+    title: "Welcome to La Factory",
+    subtitle: "Complete your details to finish setting up your account.",
+    firstName: "First name",
+    lastName: "Last name",
+    nif: "Tax ID (NIF)",
+    companyName: "Company",
+    optional: "optional",
+    phone: "Phone",
+    email: "Email",
+    language: "Preferred language",
+    languageCa: "Català",
+    languageEs: "Castellano",
+    languageEn: "English",
+    privacyText: "Your data is handled according to our",
+    privacyLinkLabel: "privacy policy",
+    marketingConsent: "I want to receive news, events and communications from La Factory.",
+    submit: "Complete sign-up",
+    submitting: "Saving...",
+    errorNotFound: "This invitation link isn't valid.",
+    errorExpired: "This invitation link has expired. Ask your administrator to send you a new one.",
+    errorCancelled: "This invitation has been cancelled.",
+  },
   language: { label: "Language" },
   admin: {
     nav: { dashboard: "Dashboard", calendar: "Calendar", coworkers: "Coworkers", book: "Book" },
@@ -730,6 +900,32 @@ const en: Dictionary = {
       statusEnded: "Ended",
       statusCancelled: "Cancelled",
       statusNone: "No plan",
+      newCoworker: "+ New coworker",
+      statusInvited: "Invitation sent",
+      statusOnboarding: "Onboarding pending",
+      statusInviteExpired: "Invitation expired",
+      statusInviteCancelled: "Invitation cancelled",
+      resendInvitation: "Resend invitation",
+      copyLink: "Copy link",
+      cancelInvitation: "Cancel invitation",
+      linkCopied: "Link copied",
+      cancelConfirm: "Are you sure you want to cancel this invitation?",
+    },
+    newCoworker: {
+      title: "New coworker",
+      subtitle: "The coworker will fill in the rest of their details when accepting the invitation.",
+      email: "Email",
+      plan: "Plan",
+      startDate: "Start date",
+      submit: "Create and invite",
+      submitting: "Creating...",
+      emailAlreadyExists: "A contact with that email already exists.",
+      created: "Invitation created.",
+      inviteLinkLabel: "Invitation link",
+      sendEmail: "Send by email",
+      sendingEmail: "Sending...",
+      emailSent: "Email sent.",
+      backToList: "Back to coworkers",
     },
     coworkerDetail: {
       back: "Back to coworkers",

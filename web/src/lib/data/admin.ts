@@ -35,6 +35,13 @@ export async function getAllContacts(supabase: SupabaseClient): Promise<AdminCon
   }));
 }
 
+export type AdminCoworkerStage =
+  | "active"
+  | "invited"
+  | "onboarding"
+  | "invite_expired"
+  | "invite_cancelled";
+
 export interface AdminCoworkerRow {
   contactId: string;
   firstName: string;
@@ -44,6 +51,12 @@ export interface AdminCoworkerRow {
   membershipStatus: "active" | "ended" | "cancelled" | "none";
   totalMinutes: number;
   usedMinutes: number;
+  stage: AdminCoworkerStage;
+  invitation: {
+    id: string;
+    token: string;
+    status: "pending" | "completed" | "cancelled";
+  } | null;
 }
 
 export async function getAllCoworkers(
@@ -62,6 +75,28 @@ export async function getAllCoworkers(
       latestByContact.set(row.contact_id, row);
     }
   }
+
+  const contactIds = Array.from(latestByContact.keys());
+
+  const { data: invitationRows } = await supabase
+    .from("coworker_invitations")
+    .select("id, contact_id, token, status, expires_at, created_at")
+    .in("contact_id", contactIds.length > 0 ? contactIds : ["00000000-0000-0000-0000-000000000000"])
+    .order("created_at", { ascending: false });
+
+  const latestInvitationByContact = new Map<string, NonNullable<typeof invitationRows>[number]>();
+  for (const inv of invitationRows ?? []) {
+    if (!latestInvitationByContact.has(inv.contact_id)) {
+      latestInvitationByContact.set(inv.contact_id, inv);
+    }
+  }
+
+  const { data: userRows } = await supabase
+    .from("users")
+    .select("contact_id")
+    .in("contact_id", contactIds.length > 0 ? contactIds : ["00000000-0000-0000-0000-000000000000"]);
+
+  const linkedContactIds = new Set((userRows ?? []).map((u) => u.contact_id));
 
   const rows: AdminCoworkerRow[] = [];
   for (const row of latestByContact.values()) {
@@ -83,6 +118,22 @@ export async function getAllCoworkers(
       }
     }
 
+    const invitation = latestInvitationByContact.get(row.contact_id) ?? null;
+    let stage: AdminCoworkerStage = "active";
+    if (invitation) {
+      if (invitation.status === "completed") {
+        stage = "active";
+      } else if (invitation.status === "cancelled") {
+        stage = "invite_cancelled";
+      } else if (new Date(invitation.expires_at) < new Date()) {
+        stage = "invite_expired";
+      } else if (linkedContactIds.has(row.contact_id)) {
+        stage = "onboarding";
+      } else {
+        stage = "invited";
+      }
+    }
+
     rows.push({
       contactId: row.contact_id,
       firstName: contact.first_name,
@@ -92,10 +143,14 @@ export async function getAllCoworkers(
       membershipStatus: row.status,
       totalMinutes,
       usedMinutes,
+      stage,
+      invitation: invitation
+        ? { id: invitation.id, token: invitation.token, status: invitation.status }
+        : null,
     });
   }
 
-  return rows.sort((a, b) => a.firstName.localeCompare(b.firstName));
+  return rows.sort((a, b) => (a.firstName || a.email || "").localeCompare(b.firstName || b.email || ""));
 }
 
 export interface AdminCoworkerDetail {
