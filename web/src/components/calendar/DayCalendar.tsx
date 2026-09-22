@@ -203,26 +203,28 @@ export function DayCalendar({
         </div>
       )}
 
-      <div className="flex">
-        <div className="w-10 shrink-0" />
-        {visibleRooms.map((room) => (
-          <div key={room.id} className="flex flex-1 items-center gap-2 px-1 pb-2">
-            <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-lg bg-sand/50">
-              {room.imagePath && (
-                <Image src={room.imagePath} alt={room.name} fill className="object-cover" />
-              )}
+      {!focusRoomId && (
+        <div className="flex">
+          <div className="w-10 shrink-0" />
+          {visibleRooms.map((room) => (
+            <div key={room.id} className="flex flex-1 items-center gap-2 px-1 pb-2">
+              <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-lg bg-sand/50">
+                {room.imagePath && (
+                  <Image src={room.imagePath} alt={room.name} fill className="object-cover" />
+                )}
+              </div>
+              <div className="min-w-0">
+                <p className="truncate text-[11px] font-semibold leading-tight text-ink">
+                  {room.name}
+                </p>
+                <p className="truncate text-[10px] leading-tight text-warm-gray">
+                  {room.capacityMin}–{room.capacityMax} {roomDict.people}
+                </p>
+              </div>
             </div>
-            <div className="min-w-0">
-              <p className="truncate text-[11px] font-semibold leading-tight text-ink">
-                {room.name}
-              </p>
-              <p className="truncate text-[10px] leading-tight text-warm-gray">
-                {room.capacityMin}–{room.capacityMax} {roomDict.people}
-              </p>
-            </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
 
       <div className="flex">
         <div className="relative w-10 shrink-0" style={{ height: GRID_HEIGHT }}>
