@@ -190,7 +190,7 @@ interface RawBooking {
   starts_at: string;
   ends_at: string;
   status: "confirmed" | "cancelled";
-  rooms: { name: string } | null;
+  rooms: { name: string; image_path: string | null } | null;
 }
 
 function toBooking(row: RawBooking, now: Date): Booking {
@@ -205,6 +205,7 @@ function toBooking(row: RawBooking, now: Date): Booking {
     id: row.id,
     roomId: row.room_id,
     roomName: row.rooms?.name ?? "Sala",
+    roomImagePath: row.rooms?.image_path ?? null,
     date: start.date,
     startMinutes: start.minutes,
     endMinutes: end.minutes,
@@ -218,7 +219,7 @@ export async function getBookings(
 ): Promise<Booking[]> {
   const { data } = await supabase
     .from("bookings")
-    .select("id, room_id, starts_at, ends_at, status, rooms(name)")
+    .select("id, room_id, starts_at, ends_at, status, rooms(name, image_path)")
     .eq("contact_id", contactId)
     .order("starts_at", { ascending: false });
 

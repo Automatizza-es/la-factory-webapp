@@ -20,6 +20,7 @@ export interface Booking {
   id: string;
   roomId: string;
   roomName: string;
+  roomImagePath: string | null;
   date: string;
   startMinutes: number;
   endMinutes: number;

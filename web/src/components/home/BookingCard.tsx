@@ -1,11 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { CheckCircle2, ChevronDown, Pencil, Trash2, XCircle } from "lucide-react";
+import { CheckCircle2, Pencil, Trash2, X, XCircle } from "lucide-react";
 import { cancelBooking } from "@/app/(coworker)/reservar/actions";
-import { formatDateLong, formatDateShort, formatTimeRange } from "@/lib/format";
+import { formatDateLong, formatDateShort, formatMinutesAsHours, formatTimeRange } from "@/lib/format";
 import { useI18n } from "@/lib/i18n/context";
 import type { Booking } from "@/types/domain";
 
@@ -18,7 +19,7 @@ export function BookingCard({ booking }: BookingCardProps) {
   const { locale, dict } = useI18n();
   const [error, setError] = useState<string | null>(null);
   const [cancelling, setCancelling] = useState(false);
-  const [expanded, setExpanded] = useState(false);
+  const [detailOpen, setDetailOpen] = useState(false);
   const { day, month } = formatDateShort(booking.date, locale);
   const durationMinutes = booking.endMinutes - booking.startMinutes;
   const isHistory = booking.status !== "upcoming";
@@ -54,12 +55,10 @@ export function BookingCard({ booking }: BookingCardProps) {
       <div className="flex-1">
         <p className="font-semibold text-ink">{booking.roomName}</p>
         <p className="text-sm text-warm-gray">{formatDateLong(booking.date, locale)}</p>
-        {(!isHistory || expanded) && (
-          <p className="text-sm text-warm-gray">
-            {formatTimeRange(booking.startMinutes, booking.endMinutes)} ({durationMinutes}{" "}
-            {dict.booking.minutesShort})
-          </p>
-        )}
+        <p className="text-sm text-warm-gray">
+          {formatTimeRange(booking.startMinutes, booking.endMinutes)} ({durationMinutes}{" "}
+          {dict.booking.minutesShort})
+        </p>
       </div>
       {isHistory && (
         <span
@@ -77,26 +76,13 @@ export function BookingCard({ booking }: BookingCardProps) {
           {statusLabel}
         </span>
       )}
-      {isHistory && (
-        <ChevronDown
-          className={`mt-1 h-4 w-4 shrink-0 text-warm-gray transition-transform ${
-            expanded ? "rotate-180" : ""
-          }`}
-          strokeWidth={2}
-        />
-      )}
     </div>
   );
 
   return (
     <div className="rounded-2xl bg-white p-4 shadow-sm">
       {isHistory ? (
-        <button
-          type="button"
-          onClick={() => setExpanded((v) => !v)}
-          className="w-full text-left"
-          aria-expanded={expanded}
-        >
+        <button type="button" onClick={() => setDetailOpen(true)} className="w-full text-left">
           {header}
         </button>
       ) : (
@@ -125,6 +111,70 @@ export function BookingCard({ booking }: BookingCardProps) {
       )}
 
       {error && <p className="mt-2 text-xs text-red-600">{error}</p>}
+
+      {detailOpen && (
+        <div className="fixed inset-0 z-30 flex items-end justify-center">
+          <button
+            type="button"
+            aria-label="Close"
+            onClick={() => setDetailOpen(false)}
+            className="absolute inset-0 bg-ink/30"
+          />
+          <div className="relative w-full max-w-[480px] overflow-hidden rounded-t-3xl bg-white pb-[max(env(safe-area-inset-bottom,0px),20px)] shadow-xl">
+            <div className="relative h-40 w-full bg-sand/50">
+              {booking.roomImagePath && (
+                <Image
+                  src={booking.roomImagePath}
+                  alt={booking.roomName}
+                  fill
+                  className="object-cover"
+                />
+              )}
+              <button
+                type="button"
+                onClick={() => setDetailOpen(false)}
+                aria-label="Close"
+                className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 shadow-sm"
+              >
+                <X className="h-4 w-4 text-ink" strokeWidth={2} />
+              </button>
+              <span
+                className={`absolute left-3 top-3 flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-medium ${
+                  booking.status === "completed"
+                    ? "bg-white/90 text-brown-dark"
+                    : "bg-red-50/95 text-red-600"
+                }`}
+              >
+                {booking.status === "completed" ? (
+                  <CheckCircle2 className="h-3.5 w-3.5" strokeWidth={2} />
+                ) : (
+                  <XCircle className="h-3.5 w-3.5" strokeWidth={2} />
+                )}
+                {statusLabel}
+              </span>
+            </div>
+
+            <div className="p-5">
+              <h3 className="text-lg font-bold text-ink">{booking.roomName}</h3>
+              <p className="mt-1 text-sm text-warm-gray">{formatDateLong(booking.date, locale)}</p>
+
+              <div className="mt-4 grid grid-cols-2 gap-x-6 gap-y-2 rounded-2xl bg-cream p-4 text-sm">
+                <span className="text-warm-gray">{dict.reservar.start}</span>
+                <span className="text-ink">{formatTimeRange(booking.startMinutes, booking.endMinutes)}</span>
+                <span className="text-warm-gray">{dict.reservar.duration}</span>
+                <span className="text-ink">{formatMinutesAsHours(durationMinutes)}</span>
+              </div>
+
+              <Link
+                href={`/calendario?fecha=${booking.date}&sala=${booking.roomId}`}
+                className="mt-4 flex w-full items-center justify-center rounded-xl bg-brown-dark py-3 text-sm font-medium text-white"
+              >
+                {dict.home.viewCalendar}
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
