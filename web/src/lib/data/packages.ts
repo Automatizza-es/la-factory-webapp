@@ -5,27 +5,20 @@ export interface PackageContactOption {
   name: string;
 }
 
-// Active coworkers only, for the "¿Para quién es el paquete?" search --
-// mirrors AdminBookingForm's contact source but scoped to active
-// memberships since a package can't go to someone without one.
+// Active coworkers only, for the "¿Para quién es el paquete?" search. Goes
+// through a SECURITY DEFINER RPC (not a direct memberships/contacts query)
+// because any signed-in coworker can register a package now, and the real
+// RLS on those tables only lets someone see their own row.
 export async function getActiveContactsForPicker(
   supabase: SupabaseClient,
 ): Promise<PackageContactOption[]> {
-  const { data } = await supabase
-    .from("memberships")
-    .select("contact_id, status, contacts(first_name, last_name)")
-    .eq("status", "active");
+  const { data } = await supabase.rpc("get_active_coworkers_directory");
 
-  const seen = new Set<string>();
   const options: PackageContactOption[] = [];
-  for (const row of data ?? []) {
-    if (seen.has(row.contact_id)) continue;
-    seen.add(row.contact_id);
-    const contact = row.contacts as unknown as { first_name: string; last_name: string | null } | null;
-    if (!contact) continue;
+  for (const row of (data ?? []) as { id: string; first_name: string; last_name: string | null }[]) {
     options.push({
-      id: row.contact_id,
-      name: `${contact.first_name} ${contact.last_name ?? ""}`.trim(),
+      id: row.id,
+      name: `${row.first_name} ${row.last_name ?? ""}`.trim(),
     });
   }
 

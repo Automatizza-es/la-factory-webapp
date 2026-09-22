@@ -20,16 +20,18 @@ export interface RegisterPackageInput {
   appOrigin: string;
 }
 
+// Callable by any signed-in coworker, not just admin: whoever's around when
+// a delivery arrives is the one who registers it.
 export async function registerPackage(input: RegisterPackageInput): Promise<ActionResult> {
   const dict = getDictionary(await getLocale());
   const current = await getCurrentCoworker();
-  if (!current || current.role !== "admin") {
+  if (!current) {
     return { error: dict.errors.notAuthorized };
   }
 
   const supabase = await createClient();
   const { data, error } = await supabase
-    .rpc("admin_register_package", {
+    .rpc("register_package", {
       p_recipient_contact_id: input.recipientContactId,
       p_image_path: input.imagePath,
       p_note: input.note || null,
@@ -73,6 +75,8 @@ export async function registerPackage(input: RegisterPackageInput): Promise<Acti
   }
 
   revalidatePath("/admin/paquetes");
+  revalidatePath("/paquetes");
+  revalidatePath("/");
   return { error: null };
 }
 

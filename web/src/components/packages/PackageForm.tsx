@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Camera, ImageUp } from "lucide-react";
 import { registerPackage } from "@/app/admin/paquetes/actions";
-import { RecipientPicker } from "@/components/admin/RecipientPicker";
+import { RecipientPicker } from "@/components/packages/RecipientPicker";
 import { formatDateLong, minutesToTime } from "@/lib/format";
 import { useI18n } from "@/lib/i18n/context";
 import type { PackageContactOption } from "@/lib/data/packages";
@@ -14,9 +14,10 @@ import { todayInMadrid, utcIsoToZonedDateAndMinutes } from "@/lib/timezone";
 
 interface PackageFormProps {
   contacts: PackageContactOption[];
+  redirectTo: string;
 }
 
-export function PackageForm({ contacts }: PackageFormProps) {
+export function PackageForm({ contacts, redirectTo }: PackageFormProps) {
   const router = useRouter();
   const { locale, dict: fullDict } = useI18n();
   const dict = fullDict.admin.newPackageForm;
@@ -81,7 +82,7 @@ export function PackageForm({ contacts }: PackageFormProps) {
       return;
     }
 
-    router.push("/admin/paquetes");
+    router.push(redirectTo);
   }
 
   return (
