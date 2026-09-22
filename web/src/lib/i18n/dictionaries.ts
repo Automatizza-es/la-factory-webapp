@@ -33,6 +33,8 @@ export interface Dictionary {
     homeBannerOne: string;
     homeBannerMany: (count: number) => string;
     homeBannerReceived: (when: string) => string;
+    registerAction: string;
+    registerActionSubtitle: string;
     emailSubject: string;
     emailGreeting: (name: string) => string;
     emailBody: string;
@@ -290,7 +292,9 @@ export interface Dictionary {
       summaryReceived: string;
       submit: (name: string) => string;
       submitting: string;
-      success: string;
+      success: (name: string) => string;
+      registerAnother: string;
+      backHome: string;
       photoRequired: string;
       recipientRequired: string;
     };
@@ -344,6 +348,8 @@ const es: Dictionary = {
     homeBannerOne: "Tienes 1 paquete pendiente",
     homeBannerMany: (count) => `Tienes ${count} paquetes pendientes`,
     homeBannerReceived: (when) => `Recibido ${when}`,
+    registerAction: "Registrar paquete",
+    registerActionSubtitle: "¿Ha llegado un paquete para alguien? Avísale en un momento.",
     emailSubject: "Tienes un paquete en La Factory 📦",
     emailGreeting: (name) => `Hola ${name},`,
     emailBody: "Ha llegado un paquete para ti a La Factory. Puedes recogerlo cuando quieras.",
@@ -597,7 +603,9 @@ const es: Dictionary = {
       summaryReceived: "Recibido",
       submit: (name) => `Avisar a ${name}`,
       submitting: "Registrando...",
-      success: "Paquete registrado y aviso enviado.",
+      success: (name) => `Paquete registrado. Hemos avisado a ${name}.`,
+      registerAnother: "Registrar otro paquete",
+      backHome: "Volver a inicio",
       photoRequired: "Añade una foto del paquete.",
       recipientRequired: "Elige a quién va dirigido el paquete.",
     },
@@ -653,6 +661,8 @@ const ca: Dictionary = {
     homeBannerOne: "Tens 1 paquet pendent",
     homeBannerMany: (count) => `Tens ${count} paquets pendents`,
     homeBannerReceived: (when) => `Rebut ${when}`,
+    registerAction: "Registrar paquet",
+    registerActionSubtitle: "Ha arribat un paquet per a algú? Avisa-l'hi en un moment.",
     emailSubject: "Tens un paquet a La Factory 📦",
     emailGreeting: (name) => `Hola ${name},`,
     emailBody: "Ha arribat un paquet per a tu a La Factory. Pots recollir-lo quan vulguis.",
@@ -906,7 +916,9 @@ const ca: Dictionary = {
       summaryReceived: "Rebut",
       submit: (name) => `Avisar ${name}`,
       submitting: "Registrant...",
-      success: "Paquet registrat i avís enviat.",
+      success: (name) => `Paquet registrat. Hem avisat ${name}.`,
+      registerAnother: "Registrar un altre paquet",
+      backHome: "Tornar a inici",
       photoRequired: "Afegeix una foto del paquet.",
       recipientRequired: "Tria a qui va dirigit el paquet.",
     },
@@ -962,6 +974,8 @@ const en: Dictionary = {
     homeBannerOne: "You have 1 package waiting",
     homeBannerMany: (count) => `You have ${count} packages waiting`,
     homeBannerReceived: (when) => `Received ${when}`,
+    registerAction: "Register a package",
+    registerActionSubtitle: "Did a package arrive for someone? Let them know in a moment.",
     emailSubject: "You have a package at La Factory 📦",
     emailGreeting: (name) => `Hi ${name},`,
     emailBody: "A package has arrived for you at La Factory. Pick it up whenever you like.",
@@ -1214,7 +1228,9 @@ const en: Dictionary = {
       summaryReceived: "Received",
       submit: (name) => `Notify ${name}`,
       submitting: "Registering...",
-      success: "Package registered and notification sent.",
+      success: (name) => `Package registered. We've notified ${name}.`,
+      registerAnother: "Register another package",
+      backHome: "Back to home",
       photoRequired: "Add a photo of the package.",
       recipientRequired: "Choose who the package is for.",
     },

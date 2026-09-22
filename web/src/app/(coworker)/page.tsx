@@ -78,6 +78,20 @@ export default async function HomePage() {
         </p>
       )}
 
+      <Link
+        href="/paquetes/nuevo"
+        className="flex items-center gap-3 rounded-2xl bg-white p-4 shadow-sm"
+      >
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-cream">
+          <Package className="h-5 w-5 text-brown-dark" strokeWidth={1.75} />
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="font-semibold text-ink">{dict.packages.registerAction}</p>
+          <p className="text-xs text-warm-gray">{dict.packages.registerActionSubtitle}</p>
+        </div>
+        <ChevronRight className="h-4 w-4 shrink-0 text-warm-gray" strokeWidth={2} />
+      </Link>
+
       <section className="flex flex-col gap-3">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold text-ink">{dict.home.bookRoom}</h2>

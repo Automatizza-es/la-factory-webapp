@@ -1,5 +1,3 @@
-import Link from "next/link";
-import { Plus } from "lucide-react";
 import { PackageCard } from "@/components/packages/PackageCard";
 import { getCurrentCoworker } from "@/lib/data/coworker";
 import { getMyPackages } from "@/lib/data/packages";
@@ -20,18 +18,9 @@ export default async function PaquetesPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-bold text-ink">{dict.packages.title}</h1>
-          <p className="text-sm text-warm-gray">{dict.packages.subtitle}</p>
-        </div>
-        <Link
-          href="/paquetes/nuevo"
-          className="flex shrink-0 items-center gap-1.5 rounded-xl bg-brown-dark px-3.5 py-2.5 text-sm font-medium text-white"
-        >
-          <Plus className="h-4 w-4" strokeWidth={2.5} />
-          {dict.admin.packages.newPackage}
-        </Link>
+      <div>
+        <h1 className="text-2xl font-bold text-ink">{dict.packages.title}</h1>
+        <p className="text-sm text-warm-gray">{dict.packages.subtitle}</p>
       </div>
 
       <section className="flex flex-col gap-3">

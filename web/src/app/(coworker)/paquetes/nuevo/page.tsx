@@ -20,7 +20,7 @@ export default async function NewPackagePage() {
       </div>
 
       <div className="rounded-3xl bg-white p-5 shadow-sm">
-        <PackageForm contacts={contacts} redirectTo="/paquetes" />
+        <PackageForm contacts={contacts} redirectTo="/" />
       </div>
     </div>
   );

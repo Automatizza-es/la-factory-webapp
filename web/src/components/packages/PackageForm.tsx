@@ -1,8 +1,8 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { useRouter } from "next/navigation";
-import { Camera, ImageUp } from "lucide-react";
+import Link from "next/link";
+import { Camera, CheckCircle2, ImageUp } from "lucide-react";
 import { registerPackage } from "@/app/admin/paquetes/actions";
 import { RecipientPicker } from "@/components/packages/RecipientPicker";
 import { formatDateLong, minutesToTime } from "@/lib/format";
@@ -18,7 +18,6 @@ interface PackageFormProps {
 }
 
 export function PackageForm({ contacts, redirectTo }: PackageFormProps) {
-  const router = useRouter();
   const { locale, dict: fullDict } = useI18n();
   const dict = fullDict.admin.newPackageForm;
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -28,6 +27,7 @@ export function PackageForm({ contacts, redirectTo }: PackageFormProps) {
   const [note, setNote] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [registeredForName, setRegisteredForName] = useState<string | null>(null);
 
   const recipientName = contacts.find((c) => c.id === recipientId)?.name ?? "";
   const nowLabel = `${formatDateLong(todayInMadrid(), locale)} · ${minutesToTime(
@@ -82,7 +82,43 @@ export function PackageForm({ contacts, redirectTo }: PackageFormProps) {
       return;
     }
 
-    router.push(redirectTo);
+    setSubmitting(false);
+    setRegisteredForName(recipientName);
+  }
+
+  function handleRegisterAnother() {
+    setFile(null);
+    setPreview(null);
+    setRecipientId("");
+    setNote("");
+    setError(null);
+    setRegisteredForName(null);
+  }
+
+  if (registeredForName) {
+    return (
+      <div className="flex flex-col items-center gap-4 py-4 text-center">
+        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-emerald-50">
+          <CheckCircle2 className="h-7 w-7 text-emerald-600" strokeWidth={2} />
+        </div>
+        <p className="text-base font-medium text-ink">{dict.success(registeredForName)}</p>
+        <div className="flex w-full flex-col gap-2">
+          <button
+            type="button"
+            onClick={handleRegisterAnother}
+            className="flex w-full items-center justify-center rounded-xl bg-brown-dark py-3 text-sm font-medium text-white"
+          >
+            {dict.registerAnother}
+          </button>
+          <Link
+            href={redirectTo}
+            className="flex w-full items-center justify-center rounded-xl bg-cream py-3 text-sm font-medium text-brown-dark"
+          >
+            {dict.backHome}
+          </Link>
+        </div>
+      </div>
+    );
   }
 
   return (
