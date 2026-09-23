@@ -27,8 +27,8 @@ interface WeekCalendarProps {
   activeRoomId: string;
   occupancy: RoomOccupancyBlock[];
   dict: Dictionary["calendar"];
-  bookingDict: Dictionary["booking"];
   locale: Locale;
+  myName: string;
 }
 
 export function WeekCalendar({
@@ -37,8 +37,8 @@ export function WeekCalendar({
   activeRoomId,
   occupancy,
   dict,
-  bookingDict,
   locale,
+  myName,
 }: WeekCalendarProps) {
   const router = useRouter();
   const activeRoom = rooms.find((r) => r.id === activeRoomId);
@@ -172,7 +172,7 @@ export function WeekCalendar({
                   const content = (
                     <>
                       <p className="truncate font-medium">
-                        {block.isMine ? bookingDict.statusUpcoming : dict.booked}
+                        {block.isMine ? myName : dict.booked}
                       </p>
                       <p className="truncate opacity-80">
                         {minutesToTime(block.startMinutes)}–{minutesToTime(block.endMinutes)}

@@ -132,8 +132,8 @@ export default async function CalendarioPage({ searchParams }: CalendarioPagePro
               activeRoomId={activeRoomId}
               occupancy={occupancy}
               dict={dict.calendar}
-              bookingDict={dict.booking}
               locale={locale}
+              myName={current.coworker.firstName}
             />
           )
         ) : (
@@ -149,6 +149,7 @@ export default async function CalendarioPage({ searchParams }: CalendarioPagePro
             roomOverlapText={dict.errors.roomOverlap}
             locale={locale}
             initialRoomId={initialRoomId}
+            myName={current.coworker.firstName}
           />
         )}
       </div>

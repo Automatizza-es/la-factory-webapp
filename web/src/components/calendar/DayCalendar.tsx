@@ -42,6 +42,7 @@ interface DayCalendarProps {
   roomOverlapText: string;
   locale: Locale;
   initialRoomId?: string;
+  myName: string;
 }
 
 export function DayCalendar({
@@ -56,6 +57,7 @@ export function DayCalendar({
   roomOverlapText,
   locale,
   initialRoomId,
+  myName,
 }: DayCalendarProps) {
   const router = useRouter();
   const [selection, setSelection] = useState<Selection | null>(null);
@@ -296,7 +298,7 @@ export function DayCalendar({
               const content = (
                 <>
                   <p className="font-medium">
-                    {block.isMine ? bookingDict.statusUpcoming : dict.booked}
+                    {block.isMine ? myName : dict.booked}
                   </p>
                   <p className="opacity-80">
                     {minutesToTime(block.startMinutes)}–{minutesToTime(block.endMinutes)}
