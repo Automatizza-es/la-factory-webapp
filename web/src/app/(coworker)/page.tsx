@@ -95,24 +95,6 @@ export default async function HomePage() {
         <ChevronRight className="h-4 w-4 shrink-0 text-warm-gray" strokeWidth={2} />
       </Link>
 
-      <section className="flex flex-col gap-3">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-ink">{dict.home.bookRoom}</h2>
-          <Link
-            href="/calendario"
-            className="flex items-center gap-0.5 text-sm font-medium text-brown-dark"
-          >
-            {dict.home.viewCalendar}
-            <ChevronRight className="h-4 w-4" strokeWidth={2.25} />
-          </Link>
-        </div>
-        <div className="grid grid-cols-2 gap-3">
-          {rooms.map((room) => (
-            <RoomCard key={room.id} room={room} dict={dict.room} />
-          ))}
-        </div>
-      </section>
-
       {upcomingEvents.length > 0 && (
         <section className="flex flex-col gap-3">
           <div className="flex items-center justify-between">
@@ -132,6 +114,24 @@ export default async function HomePage() {
           </div>
         </section>
       )}
+
+      <section className="flex flex-col gap-3">
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-semibold text-ink">{dict.home.bookRoom}</h2>
+          <Link
+            href="/calendario"
+            className="flex items-center gap-0.5 text-sm font-medium text-brown-dark"
+          >
+            {dict.home.viewCalendar}
+            <ChevronRight className="h-4 w-4" strokeWidth={2.25} />
+          </Link>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          {rooms.map((room) => (
+            <RoomCard key={room.id} room={room} dict={dict.room} />
+          ))}
+        </div>
+      </section>
 
       <section className="flex flex-col gap-3">
         <div className="flex items-center justify-between">
