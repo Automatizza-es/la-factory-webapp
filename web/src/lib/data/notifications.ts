@@ -30,6 +30,7 @@ function renderNotification(
   dict: Dictionary["notifications"],
   locale: Locale,
   packageReceivedAt: string | undefined,
+  event: { title: string; startsAt: string } | undefined,
 ): NotificationItem {
   let title = dict.genericTitle;
   let body = dict.genericBody;
@@ -41,6 +42,14 @@ function renderNotification(
       body = dict.packageReceivedBody(`${formatDateLong(zoned.date, locale)} · ${minutesToTime(zoned.minutes)}`);
     } else {
       body = dict.packageReceivedBody("");
+    }
+  } else if (row.type === "event_new") {
+    title = dict.eventNewTitle;
+    if (event) {
+      const zoned = utcIsoToZonedDateAndMinutes(event.startsAt);
+      body = dict.eventNewBody(event.title, `${formatDateLong(zoned.date, locale)} · ${minutesToTime(zoned.minutes)}`);
+    } else {
+      body = dict.eventNewBody("", "");
     }
   }
 
@@ -80,8 +89,24 @@ export async function getMyNotifications(
     for (const p of packageRows ?? []) receivedAtById.set(p.id, p.received_at);
   }
 
+  const eventIds = rows.filter((r) => r.type === "event_new" && r.related_id).map((r) => r.related_id as string);
+  const eventById = new Map<string, { title: string; startsAt: string }>();
+  if (eventIds.length > 0) {
+    const { data: eventRows } = await supabase
+      .from("events")
+      .select("id, title, starts_at")
+      .in("id", eventIds);
+    for (const e of eventRows ?? []) eventById.set(e.id, { title: e.title, startsAt: e.starts_at });
+  }
+
   return rows.map((row) =>
-    renderNotification(row, dict, locale, row.related_id ? receivedAtById.get(row.related_id) : undefined),
+    renderNotification(
+      row,
+      dict,
+      locale,
+      row.related_id ? receivedAtById.get(row.related_id) : undefined,
+      row.related_id ? eventById.get(row.related_id) : undefined,
+    ),
   );
 }
 

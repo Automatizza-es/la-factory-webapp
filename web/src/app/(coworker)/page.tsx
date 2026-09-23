@@ -3,7 +3,9 @@ import { ChevronRight, Package } from "lucide-react";
 import { BookingCard } from "@/components/home/BookingCard";
 import { QuotaCard } from "@/components/home/QuotaCard";
 import { RoomCard } from "@/components/home/RoomCard";
+import { EventCard } from "@/components/events/EventCard";
 import { getBookings, getCurrentCoworker, getQuotaSummary, getRooms } from "@/lib/data/coworker";
+import { getUpcomingEventsForHome } from "@/lib/data/events";
 import { getMyPendingPackagesSummary } from "@/lib/data/packages";
 import { formatDateLong, minutesToTime } from "@/lib/format";
 import { getDictionary } from "@/lib/i18n/dictionaries";
@@ -18,11 +20,12 @@ export default async function HomePage() {
   const locale = await getLocale();
   const dict = getDictionary(locale);
   const supabase = await createClient();
-  const [quota, rooms, bookings, pendingPackages] = await Promise.all([
+  const [quota, rooms, bookings, pendingPackages, upcomingEvents] = await Promise.all([
     getQuotaSummary(supabase, current.contactId, locale),
     getRooms(supabase),
     getBookings(supabase, current.contactId),
     getMyPendingPackagesSummary(supabase, current.contactId),
+    getUpcomingEventsForHome(supabase, current.contactId),
   ]);
 
   // Bookings come back soonest-last (starts_at desc); reverse before slicing
@@ -109,6 +112,26 @@ export default async function HomePage() {
           ))}
         </div>
       </section>
+
+      {upcomingEvents.length > 0 && (
+        <section className="flex flex-col gap-3">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-ink">{dict.events.homeTitle}</h2>
+            <Link
+              href="/eventos"
+              className="flex items-center gap-0.5 text-sm font-medium text-brown-dark"
+            >
+              {dict.events.viewAll}
+              <ChevronRight className="h-4 w-4" strokeWidth={2.25} />
+            </Link>
+          </div>
+          <div className="flex flex-col gap-3">
+            {upcomingEvents.map((event) => (
+              <EventCard key={event.id} event={event} dict={dict.events} locale={locale} />
+            ))}
+          </div>
+        </section>
+      )}
 
       <section className="flex flex-col gap-3">
         <div className="flex items-center justify-between">

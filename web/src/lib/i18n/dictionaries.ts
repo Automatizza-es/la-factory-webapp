@@ -47,6 +47,35 @@ export interface Dictionary {
     genericBody: string;
     packageReceivedTitle: string;
     packageReceivedBody: (when: string) => string;
+    eventNewTitle: string;
+    eventNewBody: (eventTitle: string, when: string) => string;
+  };
+  events: {
+    homeTitle: string;
+    viewAll: string;
+    title: string;
+    subtitle: string;
+    upcoming: string;
+    past: string;
+    noUpcoming: string;
+    noPast: string;
+    join: string;
+    joined: string;
+    full: string;
+    cancelAttendance: string;
+    cancelConfirm: string;
+    spotsLeft: (n: number) => string;
+    spotsLeftOne: string;
+    location: string;
+    capacity: string;
+    registrationClosed: string;
+    joining: string;
+    cancelling: string;
+    errorFull: string;
+    errorClosed: string;
+    errorNotAuthorized: string;
+    errorGeneric: string;
+    back: string;
   };
   quota: {
     currentPlan: string;
@@ -159,7 +188,7 @@ export interface Dictionary {
     label: string;
   };
   admin: {
-    nav: { dashboard: string; calendar: string; coworkers: string; book: string; packages: string };
+    nav: { dashboard: string; calendar: string; coworkers: string; book: string; packages: string; events: string };
     dashboard: {
       title: string;
       subtitle: string;
@@ -298,6 +327,52 @@ export interface Dictionary {
       photoRequired: string;
       recipientRequired: string;
     };
+    events: {
+      title: string;
+      subtitle: string;
+      newEvent: string;
+      attendeesLabel: (n: number) => string;
+      viewAttendees: string;
+      cancelEvent: string;
+      cancelConfirm: string;
+      noEvents: string;
+      statusCancelled: string;
+      unlimitedCapacity: string;
+    };
+    newEventForm: {
+      title: string;
+      titleLabel: string;
+      descriptionLabel: string;
+      imageLabel: string;
+      dateLabel: string;
+      startTimeLabel: string;
+      endTimeLabel: string;
+      locationLabel: string;
+      roomLabel: string;
+      noRoom: string;
+      blockRoomLabel: string;
+      capacityLabel: string;
+      capacityOptional: string;
+      registrationDeadlineLabel: string;
+      deadlineOptional: string;
+      audienceLabel: string;
+      audienceAll: string;
+      audiencePlan: string;
+      audienceContacts: string;
+      audienceSearchPlaceholder: string;
+      submit: string;
+      submitting: string;
+      success: string;
+      titleRequired: string;
+      backToList: string;
+    };
+    eventAttendees: {
+      title: string;
+      back: string;
+      registered: string;
+      cancelled: string;
+      noAttendees: string;
+    };
   };
   errors: {
     notSignedIn: string;
@@ -362,6 +437,35 @@ const es: Dictionary = {
     genericBody: "",
     packageReceivedTitle: "📦 Tienes un paquete",
     packageReceivedBody: (when) => `Ha llegado un paquete para ti a La Factory.\n${when}`,
+    eventNewTitle: "🎉 Nuevo evento en La Factory",
+    eventNewBody: (eventTitle, when) => `${eventTitle} · ${when}`,
+  },
+  events: {
+    homeTitle: "Próximos eventos",
+    viewAll: "Ver todos",
+    title: "Eventos",
+    subtitle: "Actividades y eventos de La Factory.",
+    upcoming: "Próximos",
+    past: "Pasados",
+    noUpcoming: "No hay eventos próximos.",
+    noPast: "Todavía no hay eventos pasados.",
+    join: "Me apunto",
+    joined: "✓ Estás apuntado",
+    full: "Completo",
+    cancelAttendance: "Cancelar asistencia",
+    cancelConfirm: "¿Seguro que quieres cancelar tu asistencia?",
+    spotsLeft: (n) => `${n} plazas disponibles`,
+    spotsLeftOne: "1 plaza disponible",
+    location: "Lugar",
+    capacity: "Aforo",
+    registrationClosed: "El plazo de inscripción ha finalizado.",
+    joining: "Apuntando...",
+    cancelling: "Cancelando...",
+    errorFull: "El evento se ha completado.",
+    errorClosed: "El plazo de inscripción ha finalizado.",
+    errorNotAuthorized: "No tienes acceso a este evento.",
+    errorGeneric: "No hemos podido completar la operación. Inténtalo de nuevo.",
+    back: "Volver a eventos",
   },
   quota: {
     currentPlan: "Tu tarifa actual",
@@ -470,7 +574,7 @@ const es: Dictionary = {
   },
   language: { label: "Idioma" },
   admin: {
-    nav: { dashboard: "Dashboard", calendar: "Calendario", coworkers: "Coworkers", book: "Reservar", packages: "Paquetería" },
+    nav: { dashboard: "Dashboard", calendar: "Calendario", coworkers: "Coworkers", book: "Reservar", packages: "Paquetería", events: "Eventos" },
     dashboard: {
       title: "Dashboard",
       subtitle: "Resumen de hoy en La Factory.",
@@ -609,6 +713,52 @@ const es: Dictionary = {
       photoRequired: "Añade una foto del paquete.",
       recipientRequired: "Elige a quién va dirigido el paquete.",
     },
+    events: {
+      title: "Eventos",
+      subtitle: "Actividades y eventos internos de La Factory.",
+      newEvent: "+ Crear evento",
+      attendeesLabel: (n) => `${n} inscritos`,
+      viewAttendees: "Ver asistentes",
+      cancelEvent: "Cancelar evento",
+      cancelConfirm: "¿Seguro que quieres cancelar este evento?",
+      noEvents: "Todavía no hay eventos.",
+      statusCancelled: "Cancelado",
+      unlimitedCapacity: "Sin límite",
+    },
+    newEventForm: {
+      title: "Crear evento",
+      titleLabel: "Título",
+      descriptionLabel: "Descripción",
+      imageLabel: "Imagen",
+      dateLabel: "Fecha",
+      startTimeLabel: "Hora de inicio",
+      endTimeLabel: "Hora de fin",
+      locationLabel: "Lugar",
+      roomLabel: "Sala",
+      noRoom: "Ninguna",
+      blockRoomLabel: "Bloquear sala durante el evento",
+      capacityLabel: "Aforo",
+      capacityOptional: "opcional, sin límite si se deja en blanco",
+      registrationDeadlineLabel: "Fecha límite de inscripción",
+      deadlineOptional: "opcional",
+      audienceLabel: "Público objetivo",
+      audienceAll: "Todos los coworkers",
+      audiencePlan: "Un plan concreto",
+      audienceContacts: "Personas concretas",
+      audienceSearchPlaceholder: "Buscar coworker...",
+      submit: "Crear evento",
+      submitting: "Creando...",
+      success: "Evento creado y aviso enviado.",
+      titleRequired: "Añade un título para el evento.",
+      backToList: "Volver a eventos",
+    },
+    eventAttendees: {
+      title: "Asistentes",
+      back: "Volver al evento",
+      registered: "Apuntados",
+      cancelled: "Cancelados",
+      noAttendees: "Todavía no hay inscritos.",
+    },
   },
   errors: {
     notSignedIn: "No has iniciado sesión.",
@@ -675,6 +825,35 @@ const ca: Dictionary = {
     genericBody: "",
     packageReceivedTitle: "📦 Tens un paquet",
     packageReceivedBody: (when) => `Ha arribat un paquet per a tu a La Factory.\n${when}`,
+    eventNewTitle: "🎉 Nou esdeveniment a La Factory",
+    eventNewBody: (eventTitle, when) => `${eventTitle} · ${when}`,
+  },
+  events: {
+    homeTitle: "Propers esdeveniments",
+    viewAll: "Veure'ls tots",
+    title: "Esdeveniments",
+    subtitle: "Activitats i esdeveniments de La Factory.",
+    upcoming: "Propers",
+    past: "Passats",
+    noUpcoming: "No hi ha esdeveniments propers.",
+    noPast: "Encara no hi ha esdeveniments passats.",
+    join: "M'hi apunto",
+    joined: "✓ Estàs apuntat/da",
+    full: "Complet",
+    cancelAttendance: "Cancel·lar assistència",
+    cancelConfirm: "Segur que vols cancel·lar la teva assistència?",
+    spotsLeft: (n) => `${n} places disponibles`,
+    spotsLeftOne: "1 plaça disponible",
+    location: "Lloc",
+    capacity: "Aforament",
+    registrationClosed: "El termini d'inscripció ha finalitzat.",
+    joining: "Apuntant...",
+    cancelling: "Cancel·lant...",
+    errorFull: "L'esdeveniment s'ha completat.",
+    errorClosed: "El termini d'inscripció ha finalitzat.",
+    errorNotAuthorized: "No tens accés a aquest esdeveniment.",
+    errorGeneric: "No hem pogut completar l'operació. Torna-ho a provar.",
+    back: "Tornar a esdeveniments",
   },
   quota: {
     currentPlan: "La teva tarifa actual",
@@ -783,7 +962,7 @@ const ca: Dictionary = {
   },
   language: { label: "Idioma" },
   admin: {
-    nav: { dashboard: "Dashboard", calendar: "Calendari", coworkers: "Coworkers", book: "Reservar", packages: "Paqueteria" },
+    nav: { dashboard: "Dashboard", calendar: "Calendari", coworkers: "Coworkers", book: "Reservar", packages: "Paqueteria", events: "Esdeveniments" },
     dashboard: {
       title: "Dashboard",
       subtitle: "Resum d'avui a La Factory.",
@@ -922,6 +1101,52 @@ const ca: Dictionary = {
       photoRequired: "Afegeix una foto del paquet.",
       recipientRequired: "Tria a qui va dirigit el paquet.",
     },
+    events: {
+      title: "Esdeveniments",
+      subtitle: "Activitats i esdeveniments interns de La Factory.",
+      newEvent: "+ Crear esdeveniment",
+      attendeesLabel: (n) => `${n} inscrits`,
+      viewAttendees: "Veure assistents",
+      cancelEvent: "Cancel·lar esdeveniment",
+      cancelConfirm: "Segur que vols cancel·lar aquest esdeveniment?",
+      noEvents: "Encara no hi ha esdeveniments.",
+      statusCancelled: "Cancel·lat",
+      unlimitedCapacity: "Sense límit",
+    },
+    newEventForm: {
+      title: "Crear esdeveniment",
+      titleLabel: "Títol",
+      descriptionLabel: "Descripció",
+      imageLabel: "Imatge",
+      dateLabel: "Data",
+      startTimeLabel: "Hora d'inici",
+      endTimeLabel: "Hora de fi",
+      locationLabel: "Lloc",
+      roomLabel: "Sala",
+      noRoom: "Cap",
+      blockRoomLabel: "Bloquejar sala durant l'esdeveniment",
+      capacityLabel: "Aforament",
+      capacityOptional: "opcional, sense límit si es deixa en blanc",
+      registrationDeadlineLabel: "Data límit d'inscripció",
+      deadlineOptional: "opcional",
+      audienceLabel: "Públic objectiu",
+      audienceAll: "Tots els coworkers",
+      audiencePlan: "Un pla concret",
+      audienceContacts: "Persones concretes",
+      audienceSearchPlaceholder: "Cerca un coworker...",
+      submit: "Crear esdeveniment",
+      submitting: "Creant...",
+      success: "Esdeveniment creat i avís enviat.",
+      titleRequired: "Afegeix un títol per a l'esdeveniment.",
+      backToList: "Tornar a esdeveniments",
+    },
+    eventAttendees: {
+      title: "Assistents",
+      back: "Tornar a l'esdeveniment",
+      registered: "Apuntats",
+      cancelled: "Cancel·lats",
+      noAttendees: "Encara no hi ha inscrits.",
+    },
   },
   errors: {
     notSignedIn: "No has iniciat sessió.",
@@ -988,6 +1213,35 @@ const en: Dictionary = {
     genericBody: "",
     packageReceivedTitle: "📦 You have a package",
     packageReceivedBody: (when) => `A package has arrived for you at La Factory.\n${when}`,
+    eventNewTitle: "🎉 New event at La Factory",
+    eventNewBody: (eventTitle, when) => `${eventTitle} · ${when}`,
+  },
+  events: {
+    homeTitle: "Upcoming events",
+    viewAll: "View all",
+    title: "Events",
+    subtitle: "Activities and events at La Factory.",
+    upcoming: "Upcoming",
+    past: "Past",
+    noUpcoming: "No upcoming events.",
+    noPast: "No past events yet.",
+    join: "I'm in",
+    joined: "✓ You're signed up",
+    full: "Full",
+    cancelAttendance: "Cancel attendance",
+    cancelConfirm: "Are you sure you want to cancel your attendance?",
+    spotsLeft: (n) => `${n} spots left`,
+    spotsLeftOne: "1 spot left",
+    location: "Location",
+    capacity: "Capacity",
+    registrationClosed: "Registration has closed.",
+    joining: "Signing up...",
+    cancelling: "Cancelling...",
+    errorFull: "This event is full.",
+    errorClosed: "Registration has closed.",
+    errorNotAuthorized: "You don't have access to this event.",
+    errorGeneric: "We couldn't complete the operation. Please try again.",
+    back: "Back to events",
   },
   quota: {
     currentPlan: "Your current plan",
@@ -1095,7 +1349,7 @@ const en: Dictionary = {
   },
   language: { label: "Language" },
   admin: {
-    nav: { dashboard: "Dashboard", calendar: "Calendar", coworkers: "Coworkers", book: "Book", packages: "Packages" },
+    nav: { dashboard: "Dashboard", calendar: "Calendar", coworkers: "Coworkers", book: "Book", packages: "Packages", events: "Events" },
     dashboard: {
       title: "Dashboard",
       subtitle: "Today's summary at La Factory.",
@@ -1233,6 +1487,52 @@ const en: Dictionary = {
       backHome: "Back to home",
       photoRequired: "Add a photo of the package.",
       recipientRequired: "Choose who the package is for.",
+    },
+    events: {
+      title: "Events",
+      subtitle: "Internal activities and events at La Factory.",
+      newEvent: "+ Create event",
+      attendeesLabel: (n) => `${n} registered`,
+      viewAttendees: "View attendees",
+      cancelEvent: "Cancel event",
+      cancelConfirm: "Are you sure you want to cancel this event?",
+      noEvents: "No events yet.",
+      statusCancelled: "Cancelled",
+      unlimitedCapacity: "No limit",
+    },
+    newEventForm: {
+      title: "Create event",
+      titleLabel: "Title",
+      descriptionLabel: "Description",
+      imageLabel: "Image",
+      dateLabel: "Date",
+      startTimeLabel: "Start time",
+      endTimeLabel: "End time",
+      locationLabel: "Location",
+      roomLabel: "Room",
+      noRoom: "None",
+      blockRoomLabel: "Block room during the event",
+      capacityLabel: "Capacity",
+      capacityOptional: "optional, no limit if left blank",
+      registrationDeadlineLabel: "Registration deadline",
+      deadlineOptional: "optional",
+      audienceLabel: "Target audience",
+      audienceAll: "All coworkers",
+      audiencePlan: "A specific plan",
+      audienceContacts: "Specific people",
+      audienceSearchPlaceholder: "Search coworker...",
+      submit: "Create event",
+      submitting: "Creating...",
+      success: "Event created and notification sent.",
+      titleRequired: "Add a title for the event.",
+      backToList: "Back to events",
+    },
+    eventAttendees: {
+      title: "Attendees",
+      back: "Back to event",
+      registered: "Registered",
+      cancelled: "Cancelled",
+      noAttendees: "No one has registered yet.",
     },
   },
   errors: {
