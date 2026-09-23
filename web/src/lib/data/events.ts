@@ -140,6 +140,7 @@ export async function getEventDetail(
 // --- admin ---------------------------------------------------------------
 
 export interface AdminEventItem extends EventItem {
+  imagePath: string | null;
   roomId: string | null;
   roomName: string | null;
   blockRoom: boolean;
@@ -166,12 +167,38 @@ export async function getAdminEvents(supabase: SupabaseClient): Promise<AdminEve
   const rows = (data ?? []) as unknown as RawAdminEvent[];
   return rows.map((row) => ({
     ...toEventItem(supabase, row, new Set()),
+    imagePath: row.image_path,
     roomId: row.room_id,
     roomName: row.rooms?.name ?? null,
     blockRoom: row.block_room,
     audienceType: row.audience_type,
     audiencePlanName: row.plans?.name ?? null,
   }));
+}
+
+export async function getAdminEventById(
+  supabase: SupabaseClient,
+  eventId: string,
+): Promise<AdminEventItem | null> {
+  const { data } = await supabase
+    .from("events")
+    .select(
+      `${EVENT_COLUMNS}, room_id, block_room, audience_type, rooms(name), plans:audience_plan_id(name)`,
+    )
+    .eq("id", eventId)
+    .maybeSingle();
+
+  if (!data) return null;
+  const row = data as unknown as RawAdminEvent;
+  return {
+    ...toEventItem(supabase, row, new Set()),
+    imagePath: row.image_path,
+    roomId: row.room_id,
+    roomName: row.rooms?.name ?? null,
+    blockRoom: row.block_room,
+    audienceType: row.audience_type,
+    audiencePlanName: row.plans?.name ?? null,
+  };
 }
 
 export interface EventAttendee {

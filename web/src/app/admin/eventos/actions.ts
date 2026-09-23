@@ -75,6 +75,51 @@ export async function createEvent(input: CreateEventInput): Promise<ActionResult
   return { error: null };
 }
 
+export interface UpdateEventInput {
+  eventId: string;
+  title: string;
+  description: string;
+  imagePath: string | null;
+  location: string;
+  capacity: string;
+  registrationDeadlineDate: string;
+  registrationDeadlineTime: string;
+}
+
+export async function updateEvent(input: UpdateEventInput): Promise<ActionResult> {
+  const dict = getDictionary(await getLocale());
+  const current = await getCurrentCoworker();
+  if (!current || current.role !== "admin") {
+    return { error: dict.errors.notAuthorized };
+  }
+
+  const registrationDeadline =
+    input.registrationDeadlineDate && input.registrationDeadlineTime
+      ? zonedDateTimeToUtcIso(input.registrationDeadlineDate, input.registrationDeadlineTime)
+      : null;
+  const capacity = input.capacity.trim() ? Number(input.capacity) : null;
+
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("admin_update_event", {
+    p_event_id: input.eventId,
+    p_title: input.title,
+    p_description: input.description || null,
+    p_image_path: input.imagePath,
+    p_location: input.location || null,
+    p_capacity: capacity,
+    p_registration_deadline: registrationDeadline,
+  });
+
+  if (error) return { error: dict.errors.unknown };
+
+  revalidatePath("/admin/eventos");
+  revalidatePath(`/admin/eventos/${input.eventId}`);
+  revalidatePath("/eventos");
+  revalidatePath(`/eventos/${input.eventId}`);
+  revalidatePath("/");
+  return { error: null };
+}
+
 export async function cancelEvent(eventId: string): Promise<ActionResult> {
   const dict = getDictionary(await getLocale());
   const current = await getCurrentCoworker();

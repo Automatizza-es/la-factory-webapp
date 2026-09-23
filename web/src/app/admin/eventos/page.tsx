@@ -69,11 +69,19 @@ export default async function AdminEventsPage() {
                   {dict.admin.events.statusCancelled}
                 </span>
               ) : (
-                <CancelEventButton
-                  eventId={ev.id}
-                  label={dict.admin.events.cancelEvent}
-                  confirmLabel={dict.admin.events.cancelConfirm}
-                />
+                <div className="flex shrink-0 flex-col gap-1.5">
+                  <Link
+                    href={`/admin/eventos/${ev.id}/editar`}
+                    className="rounded-lg bg-cream px-3 py-1.5 text-center text-xs font-medium text-brown-dark"
+                  >
+                    {dict.admin.events.edit}
+                  </Link>
+                  <CancelEventButton
+                    eventId={ev.id}
+                    label={dict.admin.events.cancelEvent}
+                    confirmLabel={dict.admin.events.cancelConfirm}
+                  />
+                </div>
               )}
             </div>
           ))}

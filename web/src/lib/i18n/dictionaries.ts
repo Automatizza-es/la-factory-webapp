@@ -338,6 +338,7 @@ export interface Dictionary {
       noEvents: string;
       statusCancelled: string;
       unlimitedCapacity: string;
+      edit: string;
     };
     newEventForm: {
       title: string;
@@ -365,6 +366,9 @@ export interface Dictionary {
       success: string;
       titleRequired: string;
       backToList: string;
+      editTitle: string;
+      editSubmit: string;
+      editSuccess: string;
     };
     eventAttendees: {
       title: string;
@@ -724,6 +728,7 @@ const es: Dictionary = {
       noEvents: "Todavía no hay eventos.",
       statusCancelled: "Cancelado",
       unlimitedCapacity: "Sin límite",
+      edit: "Editar",
     },
     newEventForm: {
       title: "Crear evento",
@@ -751,6 +756,9 @@ const es: Dictionary = {
       success: "Evento creado y aviso enviado.",
       titleRequired: "Añade un título para el evento.",
       backToList: "Volver a eventos",
+      editTitle: "Editar evento",
+      editSubmit: "Guardar cambios",
+      editSuccess: "Cambios guardados.",
     },
     eventAttendees: {
       title: "Asistentes",
@@ -1112,6 +1120,7 @@ const ca: Dictionary = {
       noEvents: "Encara no hi ha esdeveniments.",
       statusCancelled: "Cancel·lat",
       unlimitedCapacity: "Sense límit",
+      edit: "Editar",
     },
     newEventForm: {
       title: "Crear esdeveniment",
@@ -1139,6 +1148,9 @@ const ca: Dictionary = {
       success: "Esdeveniment creat i avís enviat.",
       titleRequired: "Afegeix un títol per a l'esdeveniment.",
       backToList: "Tornar a esdeveniments",
+      editTitle: "Editar esdeveniment",
+      editSubmit: "Desar canvis",
+      editSuccess: "Canvis desats.",
     },
     eventAttendees: {
       title: "Assistents",
@@ -1499,6 +1511,7 @@ const en: Dictionary = {
       noEvents: "No events yet.",
       statusCancelled: "Cancelled",
       unlimitedCapacity: "No limit",
+      edit: "Edit",
     },
     newEventForm: {
       title: "Create event",
@@ -1526,6 +1539,9 @@ const en: Dictionary = {
       success: "Event created and notification sent.",
       titleRequired: "Add a title for the event.",
       backToList: "Back to events",
+      editTitle: "Edit event",
+      editSubmit: "Save changes",
+      editSuccess: "Changes saved.",
     },
     eventAttendees: {
       title: "Attendees",
