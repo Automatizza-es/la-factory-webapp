@@ -2,7 +2,10 @@ import { createClient as createServiceClient } from "@supabase/supabase-js";
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-const PUBLIC_PATHS = ["/login", "/auth/callback", "/invite", "/onboarding"];
+// /api/push is called server-to-server by our own Supabase pg_net trigger,
+// not by a browser session -- it checks its own shared-secret header
+// instead of a Supabase auth cookie, same reasoning as /invite.
+const PUBLIC_PATHS = ["/login", "/auth/callback", "/invite", "/onboarding", "/api/push"];
 
 // TEMPORARY: while Resend's sending domain is pending DNS verification
 // (due back 2026-09-22), TEMP_AUTH_BYPASS=true on Vercel logs any

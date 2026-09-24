@@ -31,6 +31,7 @@ function renderNotification(
   locale: Locale,
   packageReceivedAt: string | undefined,
   event: { title: string; startsAt: string } | undefined,
+  booking: { roomName: string; startsAt: string; endsAt: string } | undefined,
 ): NotificationItem {
   let title = dict.genericTitle;
   let body = dict.genericBody;
@@ -50,6 +51,18 @@ function renderNotification(
       body = dict.eventNewBody(event.title, `${formatDateLong(zoned.date, locale)} · ${minutesToTime(zoned.minutes)}`);
     } else {
       body = dict.eventNewBody("", "");
+    }
+  } else if (row.type === "booking_reminder") {
+    title = dict.bookingReminderTitle;
+    if (booking) {
+      const startZoned = utcIsoToZonedDateAndMinutes(booking.startsAt);
+      const endZoned = utcIsoToZonedDateAndMinutes(booking.endsAt);
+      body = dict.bookingReminderBody(
+        booking.roomName,
+        `${minutesToTime(startZoned.minutes)}–${minutesToTime(endZoned.minutes)}`,
+      );
+    } else {
+      body = dict.bookingReminderBody("", "");
     }
   }
 
@@ -99,6 +112,18 @@ export async function getMyNotifications(
     for (const e of eventRows ?? []) eventById.set(e.id, { title: e.title, startsAt: e.starts_at });
   }
 
+  const bookingIds = rows.filter((r) => r.type === "booking_reminder" && r.related_id).map((r) => r.related_id as string);
+  const bookingById = new Map<string, { roomName: string; startsAt: string; endsAt: string }>();
+  if (bookingIds.length > 0) {
+    const { data: bookingRows } = await supabase
+      .from("bookings")
+      .select("id, starts_at, ends_at, rooms(name)")
+      .in("id", bookingIds);
+    for (const b of (bookingRows ?? []) as unknown as { id: string; starts_at: string; ends_at: string; rooms: { name: string } | null }[]) {
+      bookingById.set(b.id, { roomName: b.rooms?.name ?? "", startsAt: b.starts_at, endsAt: b.ends_at });
+    }
+  }
+
   return rows.map((row) =>
     renderNotification(
       row,
@@ -106,6 +131,7 @@ export async function getMyNotifications(
       locale,
       row.related_id ? receivedAtById.get(row.related_id) : undefined,
       row.related_id ? eventById.get(row.related_id) : undefined,
+      row.related_id ? bookingById.get(row.related_id) : undefined,
     ),
   );
 }

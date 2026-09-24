@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -20,9 +20,21 @@ export function BookingCard({ booking }: BookingCardProps) {
   const [error, setError] = useState<string | null>(null);
   const [cancelling, setCancelling] = useState(false);
   const [detailOpen, setDetailOpen] = useState(false);
+  // Booking reminder notifications link to /reservas#reserva-<id>; briefly
+  // highlight the matching card so tapping the notification feels like it
+  // opened "the" booking, even though every field is already inline here.
+  const [highlighted, setHighlighted] = useState(
+    () => typeof window !== "undefined" && window.location.hash === `#reserva-${booking.id}`,
+  );
   const { day, month } = formatDateShort(booking.date, locale);
   const durationMinutes = booking.endMinutes - booking.startMinutes;
   const isHistory = booking.status !== "upcoming";
+
+  useEffect(() => {
+    if (!highlighted) return;
+    const timeout = setTimeout(() => setHighlighted(false), 2500);
+    return () => clearTimeout(timeout);
+  }, [highlighted]);
 
   const statusLabel = {
     upcoming: dict.booking.statusUpcoming,
@@ -80,7 +92,12 @@ export function BookingCard({ booking }: BookingCardProps) {
   );
 
   return (
-    <div className="rounded-2xl bg-white p-4 shadow-sm">
+    <div
+      id={`reserva-${booking.id}`}
+      className={`scroll-mt-4 rounded-2xl bg-white p-4 shadow-sm transition-shadow ${
+        highlighted ? "ring-2 ring-brown-dark" : ""
+      }`}
+    >
       {isHistory ? (
         <button type="button" onClick={() => setDetailOpen(true)} className="w-full text-left">
           {header}

@@ -49,6 +49,8 @@ export interface Dictionary {
     packageReceivedBody: (when: string) => string;
     eventNewTitle: string;
     eventNewBody: (eventTitle: string, when: string) => string;
+    bookingReminderTitle: string;
+    bookingReminderBody: (roomName: string, timeRange: string) => string;
   };
   events: {
     homeTitle: string;
@@ -76,6 +78,25 @@ export interface Dictionary {
     errorNotAuthorized: string;
     errorGeneric: string;
     back: string;
+  };
+  notificationSettings: {
+    back: string;
+    title: string;
+    subtitle: string;
+    pushSectionTitle: string;
+    pushEnabled: string;
+    pushDisabledHint: string;
+    activateButton: string;
+    activating: string;
+    deactivateButton: string;
+    deactivating: string;
+    notSupported: string;
+    permissionDenied: string;
+    preferencesTitle: string;
+    bookingReminders: string;
+    packages: string;
+    events: string;
+    saved: string;
   };
   quota: {
     currentPlan: string;
@@ -147,6 +168,7 @@ export interface Dictionary {
     contact: string;
     comingSoon: string;
     signOut: string;
+    notifications: string;
   };
   login: {
     title: string;
@@ -443,6 +465,8 @@ const es: Dictionary = {
     packageReceivedBody: (when) => `Ha llegado un paquete para ti a La Factory.\n${when}`,
     eventNewTitle: "🎉 Nuevo evento en La Factory",
     eventNewBody: (eventTitle, when) => `${eventTitle} · ${when}`,
+    bookingReminderTitle: "⏰ Tu reserva empieza en 1 hora",
+    bookingReminderBody: (roomName, timeRange) => `${roomName} · ${timeRange}`,
   },
   events: {
     homeTitle: "Próximos eventos",
@@ -470,6 +494,25 @@ const es: Dictionary = {
     errorNotAuthorized: "No tienes acceso a este evento.",
     errorGeneric: "No hemos podido completar la operación. Inténtalo de nuevo.",
     back: "Volver a eventos",
+  },
+  notificationSettings: {
+    back: "Volver al perfil",
+    title: "Notificaciones",
+    subtitle: "Elige qué avisos quieres recibir y activa las notificaciones push.",
+    pushSectionTitle: "Notificaciones push",
+    pushEnabled: "Notificaciones push activadas en este dispositivo.",
+    pushDisabledHint: "Las has bloqueado en el navegador. Actívalas desde los ajustes del sitio para recibirlas.",
+    activateButton: "Activar notificaciones",
+    activating: "Activando...",
+    deactivateButton: "Desactivar en este dispositivo",
+    deactivating: "Desactivando...",
+    notSupported: "Tu navegador no admite notificaciones push.",
+    permissionDenied: "No hemos podido activarlas: el navegador denegó el permiso.",
+    preferencesTitle: "Qué quiero recibir",
+    bookingReminders: "Recordatorios de reservas",
+    packages: "Paquetes",
+    events: "Eventos",
+    saved: "Preferencias guardadas.",
   },
   quota: {
     currentPlan: "Tu tarifa actual",
@@ -539,6 +582,7 @@ const es: Dictionary = {
     comingSoon:
       "La edición de datos personales y las preferencias de comunicación estarán disponibles próximamente.",
     signOut: "Cerrar sesión",
+    notifications: "Notificaciones",
   },
   login: {
     title: "Entrar",
@@ -835,6 +879,8 @@ const ca: Dictionary = {
     packageReceivedBody: (when) => `Ha arribat un paquet per a tu a La Factory.\n${when}`,
     eventNewTitle: "🎉 Nou esdeveniment a La Factory",
     eventNewBody: (eventTitle, when) => `${eventTitle} · ${when}`,
+    bookingReminderTitle: "⏰ La teva reserva comença en 1 hora",
+    bookingReminderBody: (roomName, timeRange) => `${roomName} · ${timeRange}`,
   },
   events: {
     homeTitle: "Propers esdeveniments",
@@ -862,6 +908,25 @@ const ca: Dictionary = {
     errorNotAuthorized: "No tens accés a aquest esdeveniment.",
     errorGeneric: "No hem pogut completar l'operació. Torna-ho a provar.",
     back: "Tornar a esdeveniments",
+  },
+  notificationSettings: {
+    back: "Tornar al perfil",
+    title: "Notificacions",
+    subtitle: "Tria quins avisos vols rebre i activa les notificacions push.",
+    pushSectionTitle: "Notificacions push",
+    pushEnabled: "Notificacions push activades en aquest dispositiu.",
+    pushDisabledHint: "Les has bloquejat al navegador. Activa-les des dels ajustos del lloc per rebre-les.",
+    activateButton: "Activar notificacions",
+    activating: "Activant...",
+    deactivateButton: "Desactivar en aquest dispositiu",
+    deactivating: "Desactivant...",
+    notSupported: "El teu navegador no admet notificacions push.",
+    permissionDenied: "No les hem pogut activar: el navegador ha denegat el permís.",
+    preferencesTitle: "Què vull rebre",
+    bookingReminders: "Recordatoris de reserves",
+    packages: "Paquets",
+    events: "Esdeveniments",
+    saved: "Preferències desades.",
   },
   quota: {
     currentPlan: "La teva tarifa actual",
@@ -931,6 +996,7 @@ const ca: Dictionary = {
     comingSoon:
       "L'edició de dades personals i les preferències de comunicació estaran disponibles properament.",
     signOut: "Tancar sessió",
+    notifications: "Notificacions",
   },
   login: {
     title: "Entrar",
@@ -1227,6 +1293,8 @@ const en: Dictionary = {
     packageReceivedBody: (when) => `A package has arrived for you at La Factory.\n${when}`,
     eventNewTitle: "🎉 New event at La Factory",
     eventNewBody: (eventTitle, when) => `${eventTitle} · ${when}`,
+    bookingReminderTitle: "⏰ Your booking starts in 1 hour",
+    bookingReminderBody: (roomName, timeRange) => `${roomName} · ${timeRange}`,
   },
   events: {
     homeTitle: "Upcoming events",
@@ -1254,6 +1322,25 @@ const en: Dictionary = {
     errorNotAuthorized: "You don't have access to this event.",
     errorGeneric: "We couldn't complete the operation. Please try again.",
     back: "Back to events",
+  },
+  notificationSettings: {
+    back: "Back to profile",
+    title: "Notifications",
+    subtitle: "Choose which alerts you want, and turn on push notifications.",
+    pushSectionTitle: "Push notifications",
+    pushEnabled: "Push notifications are on for this device.",
+    pushDisabledHint: "You've blocked them in your browser. Turn them back on from the site settings to receive them.",
+    activateButton: "Turn on notifications",
+    activating: "Turning on...",
+    deactivateButton: "Turn off on this device",
+    deactivating: "Turning off...",
+    notSupported: "Your browser doesn't support push notifications.",
+    permissionDenied: "We couldn't turn them on: the browser denied permission.",
+    preferencesTitle: "What I want to receive",
+    bookingReminders: "Booking reminders",
+    packages: "Packages",
+    events: "Events",
+    saved: "Preferences saved.",
   },
   quota: {
     currentPlan: "Your current plan",
@@ -1322,6 +1409,7 @@ const en: Dictionary = {
     contact: "Contact",
     comingSoon: "Editing personal details and communication preferences will be available soon.",
     signOut: "Sign out",
+    notifications: "Notifications",
   },
   login: {
     title: "Sign in",
