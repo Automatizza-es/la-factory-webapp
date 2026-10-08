@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Minus, Plus, Trash2, X } from "lucide-react";
@@ -20,6 +20,7 @@ import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
 import type { RoomOccupancyBlock } from "@/lib/data/coworker";
 import { todayInMadrid, utcIsoToZonedDateAndMinutes } from "@/lib/timezone";
+import { useScrollToNow } from "@/lib/use-scroll-to-now";
 import type { QuotaSummary, Room } from "@/types/domain";
 import { RoomSwitcher } from "./RoomSwitcher";
 
@@ -79,6 +80,9 @@ export function DayCalendar({
   const isPastDay = date < today;
   const nowMinutes =
     date === today ? utcIsoToZonedDateAndMinutes(new Date().toISOString()).minutes : null;
+
+  const gridRef = useRef<HTMLDivElement>(null);
+  useScrollToNow(gridRef, date === today, date);
 
   const occupancyByRoom = useMemo(() => {
     const map = new Map<string, RoomOccupancyBlock[]>();
@@ -228,7 +232,7 @@ export function DayCalendar({
         </div>
       )}
 
-      <div className="flex">
+      <div ref={gridRef} className="flex">
         <div className="relative w-10 shrink-0" style={{ height: GRID_HEIGHT }}>
           {hours.map((m) => (
             <div

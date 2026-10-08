@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import {
@@ -18,6 +18,7 @@ import type { Dictionary } from "@/lib/i18n/dictionaries";
 import type { RoomOccupancyBlock } from "@/lib/data/coworker";
 import type { Locale } from "@/lib/i18n/config";
 import { todayInMadrid, utcIsoToZonedDateAndMinutes } from "@/lib/timezone";
+import { useScrollToNow } from "@/lib/use-scroll-to-now";
 import type { Room } from "@/types/domain";
 import { RoomSwitcher } from "./RoomSwitcher";
 
@@ -45,6 +46,9 @@ export function WeekCalendar({
 
   const today = todayInMadrid();
   const nowMinutes = utcIsoToZonedDateAndMinutes(new Date().toISOString());
+
+  const gridRef = useRef<HTMLDivElement>(null);
+  useScrollToNow(gridRef, weekDates.includes(today), weekDates[0]);
 
   const hours = useMemo(() => hourMarks(), []);
   const gridLines = useMemo(() => buildGridLines(), []);
@@ -101,7 +105,7 @@ export function WeekCalendar({
           })}
         </div>
 
-        <div className="flex min-w-[560px]">
+        <div ref={gridRef} className="flex min-w-[560px]">
           <div className="relative w-10 shrink-0" style={{ height: GRID_HEIGHT }}>
             {hours.map((m) => (
               <div
