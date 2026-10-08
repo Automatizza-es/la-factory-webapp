@@ -23,6 +23,11 @@ export const metadata: Metadata = {
   icons: {
     apple: "/brand/icon-180.png",
   },
+  // Next only emits the standard mobile-web-app-capable tag, but iOS still
+  // needs the apple- prefixed one to honour the status bar style above.
+  other: {
+    "apple-mobile-web-app-capable": "yes",
+  },
 };
 
 export const viewport: Viewport = {
