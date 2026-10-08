@@ -16,9 +16,7 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     title: "La Factory",
-    // iOS only allows white/black bars, or a translucent one with white text
-    // over the page: we take translucent and paint the strip brown below.
-    statusBarStyle: "black-translucent",
+    statusBarStyle: "default",
   },
   icons: {
     apple: "/brand/icon-180.png",
@@ -34,8 +32,8 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  // The app has no dark theme: without this, iOS in dark mode paints the
-  // status bar black.
+  // The app has no dark theme. (iOS still paints the installed app's status
+  // bar black in system dark mode -- that one isn't controllable from the web.)
   colorScheme: "light",
 };
 
@@ -45,11 +43,6 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang={locale} className={`${inter.variable} h-full`}>
       <body className="min-h-full bg-cream font-sans text-ink antialiased md:bg-sand/25">
-        {/* Brand-brown strip behind the iOS status bar (zero height elsewhere). */}
-        <div
-          aria-hidden
-          className="pointer-events-none fixed inset-x-0 top-0 z-50 h-[env(safe-area-inset-top,0px)] bg-brown-dark"
-        />
         <I18nProvider locale={locale}>{children}</I18nProvider>
       </body>
     </html>
