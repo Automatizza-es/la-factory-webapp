@@ -34,6 +34,9 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
+  // The app has no dark theme: without this, iOS in dark mode paints the
+  // status bar black.
+  colorScheme: "light",
 };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
