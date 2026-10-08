@@ -1,5 +1,6 @@
 "use server";
 
+import { createClient as createServiceClient } from "@supabase/supabase-js";
 import { revalidatePath } from "next/cache";
 import { getCurrentCoworker } from "@/lib/data/coworker";
 import { sendTransactionalEmail } from "@/lib/email/resend";
@@ -44,7 +45,14 @@ export async function registerPackage(input: RegisterPackageInput): Promise<Acti
 
   const pkg = data as { id: string; received_at: string };
 
-  const { data: recipient } = await supabase
+  // contacts RLS only lets a coworker read their own row, so a non-admin
+  // registering a package for someone else can't see the recipient's email.
+  // The package is already registered by now, so read it with the service key.
+  const admin = createServiceClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  );
+  const { data: recipient } = await admin
     .from("contacts")
     .select("first_name, email, preferred_locale")
     .eq("id", input.recipientContactId)
