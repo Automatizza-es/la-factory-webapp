@@ -27,6 +27,8 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
+  // Paints the iOS status bar with the app's cream background instead of black.
+  themeColor: "#f5f1e9",
 };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
