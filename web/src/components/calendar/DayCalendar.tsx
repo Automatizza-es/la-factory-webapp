@@ -24,6 +24,9 @@ import { useScrollToNow } from "@/lib/use-scroll-to-now";
 import type { QuotaSummary, Room } from "@/types/domain";
 import { RoomSwitcher } from "./RoomSwitcher";
 
+// Space kept free under the hour grid's scroll box: bottom nav + card and page padding.
+const DAY_RESERVE_BELOW_PX = 140;
+
 interface Selection {
   roomId: string;
   startMinutes: number;
@@ -82,7 +85,7 @@ export function DayCalendar({
     date === today ? utcIsoToZonedDateAndMinutes(new Date().toISOString()).minutes : null;
 
   const gridRef = useRef<HTMLDivElement>(null);
-  useScrollToNow(gridRef, date === today, date);
+  useScrollToNow(gridRef, date === today, date, DAY_RESERVE_BELOW_PX);
 
   const occupancyByRoom = useMemo(() => {
     const map = new Map<string, RoomOccupancyBlock[]>();
@@ -232,126 +235,129 @@ export function DayCalendar({
         </div>
       )}
 
-      <div ref={gridRef} className="flex">
-        <div className="relative w-10 shrink-0" style={{ height: GRID_HEIGHT }}>
-          {hours.map((m) => (
-            <div
-              key={m}
-              className="absolute right-1 -translate-y-1/2 text-[11px] text-warm-gray"
-              style={{ top: toY(m) }}
-            >
-              {minutesToTime(m)}
-            </div>
-          ))}
-        </div>
-
-        {visibleRooms.map((room) => (
-          <div
-            key={room.id}
-            className="relative flex-1 border-l border-sand/40"
-            style={{ height: GRID_HEIGHT }}
-          >
-            {gridLines.map(({ minute, major }) => (
+      {/* pt-2/pb-2 keep the first and last hour labels from being clipped by the scroll box. */}
+      <div ref={gridRef} className="overflow-y-auto overscroll-contain">
+        <div className="flex pb-2 pt-2">
+          <div className="relative w-10 shrink-0" style={{ height: GRID_HEIGHT }}>
+            {hours.map((m) => (
               <div
-                key={minute}
-                className={`absolute left-0 right-0 border-t ${
-                  major ? "border-sand/50" : "border-sand/15"
-                }`}
-                style={{ top: toY(minute) }}
-              />
+                key={m}
+                className="absolute right-1 -translate-y-1/2 text-[11px] text-warm-gray"
+                style={{ top: toY(m) }}
+              >
+                {minutesToTime(m)}
+              </div>
             ))}
+          </div>
 
-            {slots.map((slotStart) => {
-              const free = isFree(room.id, slotStart, slotStart + SLOT_MINUTES);
-              if (!free) return null;
+          {visibleRooms.map((room) => (
+            <div
+              key={room.id}
+              className="relative flex-1 border-l border-sand/40"
+              style={{ height: GRID_HEIGHT }}
+            >
+              {gridLines.map(({ minute, major }) => (
+                <div
+                  key={minute}
+                  className={`absolute left-0 right-0 border-t ${
+                    major ? "border-sand/50" : "border-sand/15"
+                  }`}
+                  style={{ top: toY(minute) }}
+                />
+              ))}
 
-              const isPast = isPastDay || (nowMinutes !== null && slotStart < nowMinutes);
-              const style = {
-                top: toY(slotStart),
-                height: toY(slotStart + SLOT_MINUTES) - toY(slotStart),
-              };
+              {slots.map((slotStart) => {
+                const free = isFree(room.id, slotStart, slotStart + SLOT_MINUTES);
+                if (!free) return null;
 
-              if (isPast) {
+                const isPast = isPastDay || (nowMinutes !== null && slotStart < nowMinutes);
+                const style = {
+                  top: toY(slotStart),
+                  height: toY(slotStart + SLOT_MINUTES) - toY(slotStart),
+                };
+
+                if (isPast) {
+                  return (
+                    <div
+                      key={slotStart}
+                      aria-disabled="true"
+                      className="absolute left-0 right-0 cursor-not-allowed bg-warm-gray/15"
+                      style={style}
+                    />
+                  );
+                }
+
                 return (
-                  <div
+                  <button
                     key={slotStart}
-                    aria-disabled="true"
-                    className="absolute left-0 right-0 cursor-not-allowed bg-warm-gray/15"
+                    type="button"
+                    onClick={() => handleSlotClick(room.id, slotStart)}
+                    className="absolute left-0 right-0 transition-colors hover:bg-sand/20 active:bg-sand/30"
                     style={style}
                   />
                 );
-              }
+              })}
 
-              return (
-                <button
-                  key={slotStart}
-                  type="button"
-                  onClick={() => handleSlotClick(room.id, slotStart)}
-                  className="absolute left-0 right-0 transition-colors hover:bg-sand/20 active:bg-sand/30"
-                  style={style}
-                />
-              );
-            })}
+              {(occupancyByRoom.get(room.id) ?? []).map((block) => {
+                const top = toY(Math.max(block.startMinutes, GRID_START_MINUTES));
+                const bottom = toY(Math.min(block.endMinutes, GRID_END_MINUTES));
+                const blockIsPast =
+                  isPastDay || (nowMinutes !== null && block.endMinutes <= nowMinutes);
+                const style = { top, height: Math.max(bottom - top, 18) };
+                const content = (
+                  <>
+                    <p className="font-medium">
+                      {block.isMine ? myName : dict.booked}
+                    </p>
+                    <p className="opacity-80">
+                      {minutesToTime(block.startMinutes)}–{minutesToTime(block.endMinutes)}
+                    </p>
+                  </>
+                );
 
-            {(occupancyByRoom.get(room.id) ?? []).map((block) => {
-              const top = toY(Math.max(block.startMinutes, GRID_START_MINUTES));
-              const bottom = toY(Math.min(block.endMinutes, GRID_END_MINUTES));
-              const blockIsPast =
-                isPastDay || (nowMinutes !== null && block.endMinutes <= nowMinutes);
-              const style = { top, height: Math.max(bottom - top, 18) };
-              const content = (
-                <>
-                  <p className="font-medium">
-                    {block.isMine ? myName : dict.booked}
-                  </p>
-                  <p className="opacity-80">
-                    {minutesToTime(block.startMinutes)}–{minutesToTime(block.endMinutes)}
-                  </p>
-                </>
-              );
+                if (block.isMine && !blockIsPast) {
+                  return (
+                    <button
+                      key={block.id}
+                      type="button"
+                      onClick={() => handleBookingClick(block)}
+                      className="absolute left-0.5 right-0.5 overflow-hidden rounded-lg bg-brown-dark/15 px-1.5 py-1 text-left text-[11px] text-brown-dark transition-colors hover:bg-brown-dark/25"
+                      style={style}
+                    >
+                      {content}
+                    </button>
+                  );
+                }
 
-              if (block.isMine && !blockIsPast) {
                 return (
-                  <button
+                  <div
                     key={block.id}
-                    type="button"
-                    onClick={() => handleBookingClick(block)}
-                    className="absolute left-0.5 right-0.5 overflow-hidden rounded-lg bg-brown-dark/15 px-1.5 py-1 text-left text-[11px] text-brown-dark transition-colors hover:bg-brown-dark/25"
+                    className={`absolute left-0.5 right-0.5 overflow-hidden rounded-lg px-1.5 py-1 text-[11px] ${
+                      block.isMine
+                        ? "bg-brown-dark/15 text-brown-dark"
+                        : "bg-warm-gray/20 text-warm-gray"
+                    }`}
                     style={style}
                   >
                     {content}
-                  </button>
+                  </div>
                 );
-              }
+              })}
 
-              return (
+              {selection && selection.roomId === room.id && (
                 <div
-                  key={block.id}
-                  className={`absolute left-0.5 right-0.5 overflow-hidden rounded-lg px-1.5 py-1 text-[11px] ${
-                    block.isMine
-                      ? "bg-brown-dark/15 text-brown-dark"
-                      : "bg-warm-gray/20 text-warm-gray"
-                  }`}
-                  style={style}
+                  className="absolute left-0.5 right-0.5 z-10 flex items-center justify-center rounded-lg border-2 border-blue-400 bg-blue-50 px-1.5 text-[11px] font-medium text-blue-700"
+                  style={{
+                    top: toY(selection.startMinutes),
+                    height: toY(selection.endMinutes) - toY(selection.startMinutes),
+                  }}
                 >
-                  {content}
+                  {minutesToTime(selection.startMinutes)}–{minutesToTime(selection.endMinutes)}
                 </div>
-              );
-            })}
-
-            {selection && selection.roomId === room.id && (
-              <div
-                className="absolute left-0.5 right-0.5 z-10 flex items-center justify-center rounded-lg border-2 border-blue-400 bg-blue-50 px-1.5 text-[11px] font-medium text-blue-700"
-                style={{
-                  top: toY(selection.startMinutes),
-                  height: toY(selection.endMinutes) - toY(selection.startMinutes),
-                }}
-              >
-                {minutesToTime(selection.startMinutes)}–{minutesToTime(selection.endMinutes)}
-              </div>
-            )}
-          </div>
-        ))}
+              )}
+            </div>
+          ))}
+        </div>
       </div>
 
       {selection && selectedRoom && (

@@ -22,6 +22,9 @@ import { useScrollToNow } from "@/lib/use-scroll-to-now";
 import type { Room } from "@/types/domain";
 import { RoomSwitcher } from "./RoomSwitcher";
 
+// Space kept free under the hour grid's scroll box: bottom nav + card and page padding + the room footer under the grid.
+const WEEK_RESERVE_BELOW_PX = 200;
+
 interface WeekCalendarProps {
   weekDates: string[];
   rooms: Room[];
@@ -48,7 +51,7 @@ export function WeekCalendar({
   const nowMinutes = utcIsoToZonedDateAndMinutes(new Date().toISOString());
 
   const gridRef = useRef<HTMLDivElement>(null);
-  useScrollToNow(gridRef, weekDates.includes(today), weekDates[0]);
+  useScrollToNow(gridRef, weekDates.includes(today), weekDates[0], WEEK_RESERVE_BELOW_PX);
 
   const hours = useMemo(() => hourMarks(), []);
   const gridLines = useMemo(() => buildGridLines(), []);
@@ -105,116 +108,119 @@ export function WeekCalendar({
           })}
         </div>
 
-        <div ref={gridRef} className="flex min-w-[560px]">
-          <div className="relative w-10 shrink-0" style={{ height: GRID_HEIGHT }}>
-            {hours.map((m) => (
-              <div
-                key={m}
-                className="absolute right-1 -translate-y-1/2 text-[11px] text-warm-gray"
-                style={{ top: toY(m) }}
-              >
-                {minutesToTime(m)}
-              </div>
-            ))}
-          </div>
+        {/* pt-2/pb-2 keep the first and last hour labels from being clipped by the scroll box. */}
+        <div ref={gridRef} className="min-w-[560px] overflow-y-auto overscroll-contain">
+          <div className="flex pb-2 pt-2">
+            <div className="relative w-10 shrink-0" style={{ height: GRID_HEIGHT }}>
+              {hours.map((m) => (
+                <div
+                  key={m}
+                  className="absolute right-1 -translate-y-1/2 text-[11px] text-warm-gray"
+                  style={{ top: toY(m) }}
+                >
+                  {minutesToTime(m)}
+                </div>
+              ))}
+            </div>
 
-          {weekDates.map((date) => {
-            const isPastDay = date < today;
-            const dayNowMinutes = date === today ? nowMinutes.minutes : null;
-            const blocks = occupancyByDate.get(date) ?? [];
+            {weekDates.map((date) => {
+              const isPastDay = date < today;
+              const dayNowMinutes = date === today ? nowMinutes.minutes : null;
+              const blocks = occupancyByDate.get(date) ?? [];
 
-            return (
-              <div key={date} className="relative flex-1 border-l border-sand/40" style={{ height: GRID_HEIGHT }}>
-                {gridLines.map(({ minute, major }) => (
-                  <div
-                    key={minute}
-                    className={`absolute left-0 right-0 border-t ${
-                      major ? "border-sand/50" : "border-sand/15"
-                    }`}
-                    style={{ top: toY(minute) }}
-                  />
-                ))}
+              return (
+                <div key={date} className="relative flex-1 border-l border-sand/40" style={{ height: GRID_HEIGHT }}>
+                  {gridLines.map(({ minute, major }) => (
+                    <div
+                      key={minute}
+                      className={`absolute left-0 right-0 border-t ${
+                        major ? "border-sand/50" : "border-sand/15"
+                      }`}
+                      style={{ top: toY(minute) }}
+                    />
+                  ))}
 
-                {slots.map((slotStart) => {
-                  const free = isFree(date, slotStart, slotStart + SLOT_MINUTES);
-                  if (!free) return null;
+                  {slots.map((slotStart) => {
+                    const free = isFree(date, slotStart, slotStart + SLOT_MINUTES);
+                    if (!free) return null;
 
-                  const isPast = isPastDay || (dayNowMinutes !== null && slotStart < dayNowMinutes);
-                  const style = {
-                    top: toY(slotStart),
-                    height: toY(slotStart + SLOT_MINUTES) - toY(slotStart),
-                  };
+                    const isPast = isPastDay || (dayNowMinutes !== null && slotStart < dayNowMinutes);
+                    const style = {
+                      top: toY(slotStart),
+                      height: toY(slotStart + SLOT_MINUTES) - toY(slotStart),
+                    };
 
-                  if (isPast) {
+                    if (isPast) {
+                      return (
+                        <div
+                          key={slotStart}
+                          aria-disabled="true"
+                          className="absolute left-0 right-0 cursor-not-allowed bg-warm-gray/15"
+                          style={style}
+                        />
+                      );
+                    }
+
                     return (
-                      <div
+                      <button
                         key={slotStart}
-                        aria-disabled="true"
-                        className="absolute left-0 right-0 cursor-not-allowed bg-warm-gray/15"
+                        type="button"
+                        onClick={() => goToDay(date)}
+                        className="absolute left-0 right-0 transition-colors hover:bg-sand/20 active:bg-sand/30"
                         style={style}
                       />
                     );
-                  }
+                  })}
 
-                  return (
-                    <button
-                      key={slotStart}
-                      type="button"
-                      onClick={() => goToDay(date)}
-                      className="absolute left-0 right-0 transition-colors hover:bg-sand/20 active:bg-sand/30"
-                      style={style}
-                    />
-                  );
-                })}
+                  {blocks.map((block) => {
+                    const top = toY(Math.max(block.startMinutes, GRID_START_MINUTES));
+                    const bottom = toY(Math.min(block.endMinutes, GRID_END_MINUTES));
+                    const blockIsPast =
+                      isPastDay || (dayNowMinutes !== null && block.endMinutes <= dayNowMinutes);
+                    const style = { top, height: Math.max(bottom - top, 18) };
+                    const content = (
+                      <>
+                        <p className="truncate font-medium">
+                          {block.isMine ? myName : dict.booked}
+                        </p>
+                        <p className="truncate opacity-80">
+                          {minutesToTime(block.startMinutes)}–{minutesToTime(block.endMinutes)}
+                        </p>
+                      </>
+                    );
 
-                {blocks.map((block) => {
-                  const top = toY(Math.max(block.startMinutes, GRID_START_MINUTES));
-                  const bottom = toY(Math.min(block.endMinutes, GRID_END_MINUTES));
-                  const blockIsPast =
-                    isPastDay || (dayNowMinutes !== null && block.endMinutes <= dayNowMinutes);
-                  const style = { top, height: Math.max(bottom - top, 18) };
-                  const content = (
-                    <>
-                      <p className="truncate font-medium">
-                        {block.isMine ? myName : dict.booked}
-                      </p>
-                      <p className="truncate opacity-80">
-                        {minutesToTime(block.startMinutes)}–{minutesToTime(block.endMinutes)}
-                      </p>
-                    </>
-                  );
+                    if (block.isMine && !blockIsPast) {
+                      return (
+                        <button
+                          key={block.id}
+                          type="button"
+                          onClick={() => goToDay(date)}
+                          className="absolute left-0.5 right-0.5 overflow-hidden rounded-lg bg-brown-dark/15 px-1.5 py-1 text-left text-[10px] text-brown-dark transition-colors hover:bg-brown-dark/25"
+                          style={style}
+                        >
+                          {content}
+                        </button>
+                      );
+                    }
 
-                  if (block.isMine && !blockIsPast) {
                     return (
-                      <button
+                      <div
                         key={block.id}
-                        type="button"
-                        onClick={() => goToDay(date)}
-                        className="absolute left-0.5 right-0.5 overflow-hidden rounded-lg bg-brown-dark/15 px-1.5 py-1 text-left text-[10px] text-brown-dark transition-colors hover:bg-brown-dark/25"
+                        className={`absolute left-0.5 right-0.5 overflow-hidden rounded-lg px-1.5 py-1 text-[10px] ${
+                          block.isMine
+                            ? "bg-brown-dark/15 text-brown-dark"
+                            : "bg-warm-gray/20 text-warm-gray"
+                        }`}
                         style={style}
                       >
                         {content}
-                      </button>
+                      </div>
                     );
-                  }
-
-                  return (
-                    <div
-                      key={block.id}
-                      className={`absolute left-0.5 right-0.5 overflow-hidden rounded-lg px-1.5 py-1 text-[10px] ${
-                        block.isMine
-                          ? "bg-brown-dark/15 text-brown-dark"
-                          : "bg-warm-gray/20 text-warm-gray"
-                      }`}
-                      style={style}
-                    >
-                      {content}
-                    </div>
-                  );
-                })}
-              </div>
-            );
-          })}
+                  })}
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
 
