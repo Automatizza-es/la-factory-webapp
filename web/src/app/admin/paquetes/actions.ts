@@ -76,7 +76,7 @@ export async function registerPackage(input: RegisterPackageInput): Promise<Acti
           <h2>${recipientDict.packages.emailSubject}</h2>
           <p>${recipientDict.packages.emailGreeting(recipient.first_name)}</p>
           <p>${recipientDict.packages.emailBody}</p>
-          <p style="color:#8a7a6d;font-size:14px;">${whenText}</p>
+          <p style="color:#8a7a6d;font-size:14px;">${whenText} · ${recipientDict.packages.receivedBy(current.coworker.firstName)}</p>
           <p><a href="${input.appOrigin}/paquetes" style="display:inline-block;background:#5b4636;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;">${recipientDict.packages.emailCta}</a></p>
         </div>
       `,
