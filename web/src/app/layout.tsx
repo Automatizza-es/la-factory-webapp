@@ -16,7 +16,9 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     title: "La Factory",
-    statusBarStyle: "default",
+    // iOS only allows white/black bars, or a translucent one with white text
+    // over the page: we take translucent and paint the strip brown below.
+    statusBarStyle: "black-translucent",
   },
   icons: {
     apple: "/brand/icon-180.png",
@@ -27,8 +29,6 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  // Paints the iOS status bar with the app's cream background instead of black.
-  themeColor: "#f5f1e9",
 };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
@@ -37,6 +37,11 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang={locale} className={`${inter.variable} h-full`}>
       <body className="min-h-full bg-cream font-sans text-ink antialiased md:bg-sand/25">
+        {/* Brand-brown strip behind the iOS status bar (zero height elsewhere). */}
+        <div
+          aria-hidden
+          className="pointer-events-none fixed inset-x-0 top-0 z-50 h-[env(safe-area-inset-top,0px)] bg-brown-dark"
+        />
         <I18nProvider locale={locale}>{children}</I18nProvider>
       </body>
     </html>
