@@ -3,9 +3,9 @@ import { NextResponse, type NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 
 // Visiting a coworker's personal invite link: verify the token ourselves
-// (our own table, not Supabase's), then sign them in as that contact using
-// the same admin-generateLink + verify + setSession trick the temporary
-// login bypass uses, and hand off to the onboarding form.
+// (our own table, not Supabase's), then sign them in as that contact via
+// admin-generateLink + verify + setSession, and hand off to the onboarding
+// form.
 export async function GET(request: NextRequest, { params }: { params: Promise<{ token: string }> }) {
   const { token } = await params;
   const origin = request.nextUrl.origin;
