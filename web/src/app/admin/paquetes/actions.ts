@@ -7,6 +7,7 @@ import { sendTransactionalEmail } from "@/lib/email/resend";
 import { formatDateLong, minutesToTime } from "@/lib/format";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import { getLocale } from "@/lib/i18n/server";
+import { sendPushToContact } from "@/lib/push-server";
 import { createClient } from "@/lib/supabase/server";
 import { utcIsoToZonedDateAndMinutes } from "@/lib/timezone";
 
@@ -79,6 +80,25 @@ export async function registerPackage(input: RegisterPackageInput): Promise<Acti
           <p><a href="${input.appOrigin}/paquetes" style="display:inline-block;background:#5b4636;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;">${recipientDict.packages.emailCta}</a></p>
         </div>
       `,
+    });
+  }
+
+  // Same opt-out as the in-app notification: no preferences row means yes.
+  const { data: prefs } = await admin
+    .from("notification_preferences")
+    .select("packages")
+    .eq("contact_id", input.recipientContactId)
+    .maybeSingle();
+
+  if (prefs?.packages ?? true) {
+    await sendPushToContact(input.recipientContactId, (pushDict, pushLocale) => {
+      const zoned = utcIsoToZonedDateAndMinutes(pkg.received_at);
+      const when = `${formatDateLong(zoned.date, pushLocale)} · ${minutesToTime(zoned.minutes)}`;
+      return {
+        title: pushDict.notifications.packageReceivedTitle,
+        body: pushDict.notifications.packageReceivedBody(when),
+        url: "/paquetes",
+      };
     });
   }
 
