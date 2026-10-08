@@ -1,4 +1,4 @@
-import type { SupabaseClient } from "@supabase/supabase-js";
+import { createClient as createServiceClient, type SupabaseClient } from "@supabase/supabase-js";
 
 export interface PackageContactOption {
   id: string;
@@ -33,6 +33,8 @@ export interface PackageItem {
   note: string | null;
   status: "pending" | "collected";
   receivedAt: string;
+  // Whoever registered it when it arrived; null if unknown.
+  receivedByName: string | null;
   collectedAt: string | null;
 }
 
@@ -43,6 +45,7 @@ interface RawPackage {
   note: string | null;
   status: "pending" | "collected";
   received_at: string;
+  received_by: string | null;
   collected_at: string | null;
   contacts: { first_name: string; last_name: string | null } | null;
 }
@@ -63,7 +66,37 @@ async function signImageUrls(
   return urls;
 }
 
-function toPackageItem(row: RawPackage, imageUrl: string | undefined): PackageItem {
+// Names of whoever received each package. contacts RLS only lets a coworker
+// read their own row, so this lookup uses the service key and returns
+// nothing but first + last name.
+async function getReceiverNames(rows: RawPackage[]): Promise<Map<string, string>> {
+  const ids = [...new Set(rows.map((r) => r.received_by).filter((id): id is string => !!id))];
+  const names = new Map<string, string>();
+  if (ids.length === 0) return names;
+
+  const admin = createServiceClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  );
+  const { data } = await admin.from("contacts").select("id, first_name, last_name").in("id", ids);
+  for (const c of data ?? []) {
+    names.set(c.id, `${c.first_name} ${c.last_name ?? ""}`.trim());
+  }
+  return names;
+}
+
+async function toPackageItems(supabase: SupabaseClient, rows: RawPackage[]): Promise<PackageItem[]> {
+  const [urls, receivers] = await Promise.all([signImageUrls(supabase, rows), getReceiverNames(rows)]);
+  return rows.map((row) =>
+    toPackageItem(row, urls.get(row.id), row.received_by ? receivers.get(row.received_by) : undefined),
+  );
+}
+
+function toPackageItem(
+  row: RawPackage,
+  imageUrl: string | undefined,
+  receivedByName: string | undefined,
+): PackageItem {
   const contact = row.contacts;
   return {
     id: row.id,
@@ -73,6 +106,7 @@ function toPackageItem(row: RawPackage, imageUrl: string | undefined): PackageIt
     note: row.note,
     status: row.status,
     receivedAt: row.received_at,
+    receivedByName: receivedByName || null,
     collectedAt: row.collected_at,
   };
 }
@@ -83,13 +117,12 @@ export async function getMyPackages(
 ): Promise<PackageItem[]> {
   const { data } = await supabase
     .from("packages")
-    .select("id, recipient_contact_id, image_path, note, status, received_at, collected_at, contacts!recipient_contact_id(first_name, last_name)")
+    .select("id, recipient_contact_id, image_path, note, status, received_at, received_by, collected_at, contacts!recipient_contact_id(first_name, last_name)")
     .eq("recipient_contact_id", contactId)
     .order("received_at", { ascending: false });
 
   const rows = (data ?? []) as unknown as RawPackage[];
-  const urls = await signImageUrls(supabase, rows);
-  return rows.map((row) => toPackageItem(row, urls.get(row.id)));
+  return toPackageItems(supabase, rows);
 }
 
 export interface PendingPackagesSummary {
@@ -125,13 +158,12 @@ export async function getAdminPackages(
 ): Promise<PackageItem[]> {
   let query = supabase
     .from("packages")
-    .select("id, recipient_contact_id, image_path, note, status, received_at, collected_at, contacts!recipient_contact_id(first_name, last_name)")
+    .select("id, recipient_contact_id, image_path, note, status, received_at, received_by, collected_at, contacts!recipient_contact_id(first_name, last_name)")
     .order("received_at", { ascending: false });
 
   if (filter !== "all") query = query.eq("status", filter);
 
   const { data } = await query;
   const rows = (data ?? []) as unknown as RawPackage[];
-  const urls = await signImageUrls(supabase, rows);
-  return rows.map((row) => toPackageItem(row, urls.get(row.id)));
+  return toPackageItems(supabase, rows);
 }

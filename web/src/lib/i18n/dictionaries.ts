@@ -29,6 +29,8 @@ export interface Dictionary {
     receivedAt: string;
     collectedAt: string;
     note: string;
+    receivedByLabel: string;
+    receivedBy: (name: string) => string;
     view: string;
     homeBannerOne: string;
     homeBannerMany: (count: number) => string;
@@ -480,6 +482,8 @@ const es: Dictionary = {
     receivedAt: "Recibido",
     collectedAt: "Recogido",
     note: "Nota",
+    receivedByLabel: "Lo recibió",
+    receivedBy: (name) => `Lo recibió ${name}`,
     view: "Ver",
     homeBannerOne: "Tienes 1 paquete pendiente",
     homeBannerMany: (count) => `Tienes ${count} paquetes pendientes`,
@@ -929,6 +933,8 @@ const ca: Dictionary = {
     receivedAt: "Rebut",
     collectedAt: "Recollit",
     note: "Nota",
+    receivedByLabel: "El va rebre",
+    receivedBy: (name) => `El va rebre ${name}`,
     view: "Veure",
     homeBannerOne: "Tens 1 paquet pendent",
     homeBannerMany: (count) => `Tens ${count} paquets pendents`,
@@ -1378,6 +1384,8 @@ const en: Dictionary = {
     receivedAt: "Received",
     collectedAt: "Picked up",
     note: "Note",
+    receivedByLabel: "Received by",
+    receivedBy: (name) => `Received by ${name}`,
     view: "View",
     homeBannerOne: "You have 1 package waiting",
     homeBannerMany: (count) => `You have ${count} packages waiting`,

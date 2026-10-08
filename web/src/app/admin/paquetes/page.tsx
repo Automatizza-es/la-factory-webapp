@@ -86,6 +86,7 @@ export default async function AdminPackagesPage({ searchParams }: AdminPackagesP
                 <p className="truncate font-medium text-ink">{p.recipientName}</p>
                 <p className="text-xs text-warm-gray">
                   {dict.admin.packages.receivedAt}: {formatWhen(p.receivedAt, locale)}
+                  {p.receivedByName && ` · ${dict.packages.receivedBy(p.receivedByName)}`}
                 </p>
                 {p.status === "collected" && p.collectedAt && (
                   <p className="text-xs text-warm-gray">

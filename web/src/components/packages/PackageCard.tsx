@@ -90,6 +90,9 @@ export function PackageCard({ pkg }: PackageCardProps) {
             <p className="text-sm font-medium text-ink">
               {dict.packages.receivedAt} {formatWhen(pkg.receivedAt, locale)}
             </p>
+            {pkg.receivedByName && (
+              <p className="text-xs text-warm-gray">{dict.packages.receivedBy(pkg.receivedByName)}</p>
+            )}
             {pkg.status === "pending" ? (
               <p className="text-xs text-amber-700">{dict.packages.statusPending}</p>
             ) : (
@@ -136,6 +139,12 @@ export function PackageCard({ pkg }: PackageCardProps) {
               <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
                 <span className="text-warm-gray">{dict.packages.receivedAt}</span>
                 <span className="text-ink">{formatWhen(pkg.receivedAt, locale)}</span>
+                {pkg.receivedByName && (
+                  <>
+                    <span className="text-warm-gray">{dict.packages.receivedByLabel}</span>
+                    <span className="text-ink">{pkg.receivedByName}</span>
+                  </>
+                )}
                 {pkg.collectedAt && (
                   <>
                     <span className="text-warm-gray">{dict.packages.collectedAt}</span>
