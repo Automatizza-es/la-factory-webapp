@@ -26,7 +26,11 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   return (
     <div className="min-h-screen">
-      <AdminSidebar admin={current.coworker} signOutLabel={dict.perfil.signOut} />
+      <AdminSidebar
+        admin={current.coworker}
+        signOutLabel={dict.perfil.signOut}
+        changePasswordLabel={dict.perfil.changePassword}
+      />
 
       <div className="flex min-h-screen flex-col md:pl-60">
         <header className="flex items-center justify-between border-b border-sand/50 bg-white px-5 py-4 md:hidden">

@@ -172,15 +172,40 @@ export interface Dictionary {
     comingSoon: string;
     signOut: string;
     notifications: string;
+    changePassword: string;
   };
   login: {
     title: string;
     subtitle: string;
-    checkEmail: (email: string) => string;
     placeholder: string;
+    passwordPlaceholder: string;
+    submit: string;
+    submitting: string;
+    error: string;
+    linkExpired: string;
+    forgotPassword: string;
+  };
+  recover: {
+    title: string;
+    subtitle: string;
     submit: string;
     sending: string;
+    sent: (email: string) => string;
     error: string;
+    backToLogin: string;
+  };
+  password: {
+    title: string;
+    subtitle: string;
+    newPassword: string;
+    confirmPassword: string;
+    submit: string;
+    saving: string;
+    tooShort: string;
+    mismatch: string;
+    samePassword: string;
+    error: string;
+    back: string;
   };
   unlinked: {
     title: string;
@@ -208,6 +233,9 @@ export interface Dictionary {
     errorNotFound: string;
     errorExpired: string;
     errorCancelled: string;
+    password: string;
+    confirmPassword: string;
+    passwordHint: string;
   };
   language: {
     label: string;
@@ -589,15 +617,40 @@ const es: Dictionary = {
       "La edición de datos personales y las preferencias de comunicación estarán disponibles próximamente.",
     signOut: "Cerrar sesión",
     notifications: "Notificaciones",
+    changePassword: "Cambiar contraseña",
   },
   login: {
     title: "Entrar",
-    subtitle: "Te enviamos un enlace de acceso a tu email, sin contraseña.",
-    checkEmail: (email) => `Revisa ${email} y abre el enlace que te hemos enviado para entrar.`,
+    subtitle: "Accede con tu email y tu contraseña.",
     placeholder: "tu@email.com",
-    submit: "Enviar enlace de acceso",
+    passwordPlaceholder: "Contraseña",
+    submit: "Entrar",
+    submitting: "Entrando...",
+    error: "El email o la contraseña no son correctos.",
+    linkExpired: "El enlace ha caducado o ya se ha usado. Pide uno nuevo.",
+    forgotPassword: "¿Has olvidado tu contraseña?",
+  },
+  recover: {
+    title: "Recuperar contraseña",
+    subtitle: "Te enviaremos un email con un enlace para crear una contraseña nueva.",
+    submit: "Enviar email",
     sending: "Enviando...",
-    error: "No hemos podido enviar el enlace. Inténtalo de nuevo.",
+    sent: (email) => `Si hay una cuenta con ${email}, te hemos enviado un email con un enlace para crear una contraseña nueva.`,
+    error: "No hemos podido enviar el email. Inténtalo de nuevo en unos minutos.",
+    backToLogin: "Volver a entrar",
+  },
+  password: {
+    title: "Nueva contraseña",
+    subtitle: "Elige una contraseña de al menos 8 caracteres.",
+    newPassword: "Contraseña nueva",
+    confirmPassword: "Repite la contraseña",
+    submit: "Guardar contraseña",
+    saving: "Guardando...",
+    tooShort: "La contraseña debe tener al menos 8 caracteres.",
+    mismatch: "Las contraseñas no coinciden.",
+    samePassword: "La contraseña nueva tiene que ser distinta de la actual.",
+    error: "No hemos podido guardar la contraseña. Inténtalo de nuevo.",
+    back: "Volver",
   },
   unlinked: {
     title: "Tu cuenta todavía no está vinculada",
@@ -625,6 +678,9 @@ const es: Dictionary = {
     errorNotFound: "Este enlace de invitación no es válido.",
     errorExpired: "Este enlace de invitación ha caducado. Pide a tu administrador que te envíe uno nuevo.",
     errorCancelled: "Esta invitación ha sido cancelada.",
+    password: "Contraseña",
+    confirmPassword: "Repite la contraseña",
+    passwordHint: "Mínimo 8 caracteres. La usarás para entrar en la app.",
   },
   language: { label: "Idioma" },
   admin: {
@@ -1006,15 +1062,40 @@ const ca: Dictionary = {
       "L'edició de dades personals i les preferències de comunicació estaran disponibles properament.",
     signOut: "Tancar sessió",
     notifications: "Notificacions",
+    changePassword: "Canviar contrasenya",
   },
   login: {
     title: "Entrar",
-    subtitle: "T'enviem un enllaç d'accés al teu email, sense contrasenya.",
-    checkEmail: (email) => `Revisa ${email} i obre l'enllaç que t'hem enviat per entrar.`,
+    subtitle: "Accedeix amb el teu email i la teva contrasenya.",
     placeholder: "tu@email.com",
-    submit: "Enviar enllaç d'accés",
+    passwordPlaceholder: "Contrasenya",
+    submit: "Entrar",
+    submitting: "Entrant...",
+    error: "L'email o la contrasenya no són correctes.",
+    linkExpired: "L'enllaç ha caducat o ja s'ha fet servir. Demana'n un de nou.",
+    forgotPassword: "Has oblidat la contrasenya?",
+  },
+  recover: {
+    title: "Recuperar contrasenya",
+    subtitle: "T'enviarem un email amb un enllaç per crear una contrasenya nova.",
+    submit: "Enviar email",
     sending: "Enviant...",
-    error: "No hem pogut enviar l'enllaç. Torna-ho a provar.",
+    sent: (email) => `Si hi ha un compte amb ${email}, t'hem enviat un email amb un enllaç per crear una contrasenya nova.`,
+    error: "No hem pogut enviar l'email. Torna-ho a provar d'aquí a uns minuts.",
+    backToLogin: "Tornar a entrar",
+  },
+  password: {
+    title: "Nova contrasenya",
+    subtitle: "Tria una contrasenya d'almenys 8 caràcters.",
+    newPassword: "Contrasenya nova",
+    confirmPassword: "Repeteix la contrasenya",
+    submit: "Desar contrasenya",
+    saving: "Desant...",
+    tooShort: "La contrasenya ha de tenir almenys 8 caràcters.",
+    mismatch: "Les contrasenyes no coincideixen.",
+    samePassword: "La contrasenya nova ha de ser diferent de l'actual.",
+    error: "No hem pogut desar la contrasenya. Torna-ho a provar.",
+    back: "Tornar",
   },
   unlinked: {
     title: "El teu compte encara no està vinculat",
@@ -1042,6 +1123,9 @@ const ca: Dictionary = {
     errorNotFound: "Aquest enllaç d'invitació no és vàlid.",
     errorExpired: "Aquest enllaç d'invitació ha caducat. Demana a un administrador que te'n enviï un de nou.",
     errorCancelled: "Aquesta invitació ha estat cancel·lada.",
+    password: "Contrasenya",
+    confirmPassword: "Repeteix la contrasenya",
+    passwordHint: "Mínim 8 caràcters. La faràs servir per entrar a l'app.",
   },
   language: { label: "Idioma" },
   admin: {
@@ -1422,15 +1506,40 @@ const en: Dictionary = {
     comingSoon: "Editing personal details and communication preferences will be available soon.",
     signOut: "Sign out",
     notifications: "Notifications",
+    changePassword: "Change password",
   },
   login: {
     title: "Sign in",
-    subtitle: "We'll send a sign-in link to your email, no password needed.",
-    checkEmail: (email) => `Check ${email} and open the link we sent you to sign in.`,
+    subtitle: "Sign in with your email and password.",
     placeholder: "you@email.com",
-    submit: "Send sign-in link",
+    passwordPlaceholder: "Password",
+    submit: "Sign in",
+    submitting: "Signing in...",
+    error: "The email or password is incorrect.",
+    linkExpired: "That link has expired or was already used. Request a new one.",
+    forgotPassword: "Forgot your password?",
+  },
+  recover: {
+    title: "Reset password",
+    subtitle: "We'll email you a link to create a new password.",
+    submit: "Send email",
     sending: "Sending...",
-    error: "We couldn't send the link. Please try again.",
+    sent: (email) => `If there's an account for ${email}, we've emailed you a link to create a new password.`,
+    error: "We couldn't send the email. Please try again in a few minutes.",
+    backToLogin: "Back to sign in",
+  },
+  password: {
+    title: "New password",
+    subtitle: "Choose a password with at least 8 characters.",
+    newPassword: "New password",
+    confirmPassword: "Repeat password",
+    submit: "Save password",
+    saving: "Saving...",
+    tooShort: "The password must be at least 8 characters long.",
+    mismatch: "The passwords don't match.",
+    samePassword: "The new password must be different from your current one.",
+    error: "We couldn't save the password. Please try again.",
+    back: "Back",
   },
   unlinked: {
     title: "Your account isn't linked yet",
@@ -1458,6 +1567,9 @@ const en: Dictionary = {
     errorNotFound: "This invitation link isn't valid.",
     errorExpired: "This invitation link has expired. Ask your administrator to send you a new one.",
     errorCancelled: "This invitation has been cancelled.",
+    password: "Password",
+    confirmPassword: "Repeat password",
+    passwordHint: "At least 8 characters. You'll use it to sign in to the app.",
   },
   language: { label: "Language" },
   admin: {

@@ -1,4 +1,6 @@
 import Image from "next/image";
+import Link from "next/link";
+import { KeyRound } from "lucide-react";
 import { AdminNavLinks } from "@/components/admin/AdminNavItems";
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
 import { SignOutButton } from "@/components/layout/SignOutButton";
@@ -7,9 +9,10 @@ import type { Coworker } from "@/types/domain";
 interface AdminSidebarProps {
   admin: Coworker;
   signOutLabel: string;
+  changePasswordLabel: string;
 }
 
-export function AdminSidebar({ admin, signOutLabel }: AdminSidebarProps) {
+export function AdminSidebar({ admin, signOutLabel, changePasswordLabel }: AdminSidebarProps) {
   return (
     <aside className="fixed left-0 top-0 hidden h-screen w-60 flex-col border-r border-sand/50 bg-white px-4 py-6 md:flex">
       <div className="flex items-center gap-2.5 px-2">
@@ -37,6 +40,13 @@ export function AdminSidebar({ admin, signOutLabel }: AdminSidebarProps) {
           </div>
           <LanguageSwitcher />
         </div>
+        <Link
+          href="/nueva-contrasena"
+          className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm text-warm-gray hover:bg-cream/60"
+        >
+          <KeyRound className="h-4 w-4" strokeWidth={1.75} />
+          {changePasswordLabel}
+        </Link>
         <SignOutButton label={signOutLabel} />
       </div>
     </aside>

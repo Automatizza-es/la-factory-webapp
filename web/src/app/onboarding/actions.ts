@@ -5,6 +5,7 @@ import { setLocale } from "@/lib/i18n/actions";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import { getLocale } from "@/lib/i18n/server";
 import { translateOnboardingError } from "@/lib/i18n/onboarding-errors";
+import { MIN_PASSWORD_LENGTH, passwordErrorMessage } from "@/lib/password";
 import { createClient } from "@/lib/supabase/server";
 import type { Locale } from "@/lib/i18n/config";
 
@@ -17,6 +18,7 @@ export interface CompleteOnboardingInput {
   phone: string;
   preferredLocale: Locale;
   marketingConsent: boolean;
+  password: string;
 }
 
 export interface CompleteOnboardingResult {
@@ -28,6 +30,16 @@ export async function completeOnboarding(
 ): Promise<CompleteOnboardingResult> {
   const dict = getDictionary(await getLocale());
   const supabase = await createClient();
+
+  // The invite link signed them in without a password: set it first, so a
+  // failure here leaves the onboarding untouched and they can just retry.
+  if (input.password.length < MIN_PASSWORD_LENGTH) {
+    return { error: dict.password.tooShort };
+  }
+  const { error: passwordError } = await supabase.auth.updateUser({ password: input.password });
+  if (passwordError) {
+    return { error: passwordErrorMessage(passwordError, dict.password) };
+  }
 
   const { error } = await supabase.rpc("complete_coworker_onboarding", {
     p_token: input.token,

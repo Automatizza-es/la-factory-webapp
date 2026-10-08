@@ -4,6 +4,7 @@ import { useState, type FormEvent } from "react";
 import { completeOnboarding } from "@/app/onboarding/actions";
 import { LOCALE_LABELS, locales } from "@/lib/i18n/config";
 import { useI18n } from "@/lib/i18n/context";
+import { validateNewPassword } from "@/lib/password";
 import type { Locale } from "@/lib/i18n/config";
 
 interface OnboardingFormProps {
@@ -23,11 +24,18 @@ export function OnboardingForm({ token, email }: OnboardingFormProps) {
   const [phone, setPhone] = useState("");
   const [preferredLocale, setPreferredLocale] = useState<Locale>(locale);
   const [marketingConsent, setMarketingConsent] = useState(false);
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    const invalidPassword = validateNewPassword(password, confirmPassword, dict.password);
+    if (invalidPassword) {
+      setError(invalidPassword);
+      return;
+    }
     setSubmitting(true);
     setError(null);
 
@@ -40,6 +48,7 @@ export function OnboardingForm({ token, email }: OnboardingFormProps) {
       phone,
       preferredLocale,
       marketingConsent,
+      password,
     });
 
     if (result.error) {
@@ -121,6 +130,37 @@ export function OnboardingForm({ token, email }: OnboardingFormProps) {
           {dict.onboarding.email}
         </label>
         <input id="email" value={email} disabled readOnly className={`${inputClass} bg-cream text-warm-gray`} />
+      </div>
+
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor="password" className="text-sm font-medium text-ink">
+          {dict.onboarding.password} *
+        </label>
+        <input
+          id="password"
+          type="password"
+          required
+          autoComplete="new-password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className={inputClass}
+        />
+        <p className="text-xs text-warm-gray">{dict.onboarding.passwordHint}</p>
+      </div>
+
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor="confirmPassword" className="text-sm font-medium text-ink">
+          {dict.onboarding.confirmPassword} *
+        </label>
+        <input
+          id="confirmPassword"
+          type="password"
+          required
+          autoComplete="new-password"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          className={inputClass}
+        />
       </div>
 
       <div className="flex flex-col gap-1.5">
