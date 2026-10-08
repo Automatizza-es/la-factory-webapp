@@ -24,8 +24,9 @@ export function InvitationActions({ invitationId, token, dict }: InvitationActio
 
   async function handleResend() {
     setBusy(true);
-    await resendCoworkerInvitation(invitationId);
+    const result = await resendCoworkerInvitation(invitationId, window.location.origin);
     setBusy(false);
+    if (result.error) window.alert(result.error);
   }
 
   async function handleCancel() {

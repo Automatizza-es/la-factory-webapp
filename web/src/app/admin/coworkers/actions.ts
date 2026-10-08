@@ -16,6 +16,21 @@ function inviteUrl(origin: string, token: string) {
   return `${origin}/invite/${token}`;
 }
 
+function sendInvitationEmail(email: string, inviteLink: string) {
+  return sendTransactionalEmail({
+    to: email,
+    subject: "Bienvenido/a a La Factory Coworking",
+    html: `
+      <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto;">
+        <h2>Bienvenido/a a La Factory</h2>
+        <p>Te han dado de alta como coworker en La Factory Coworking. Completa tu registro para activar tu cuenta:</p>
+        <p><a href="${inviteLink}" style="display:inline-block;background:#5b4636;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;">Completar registro</a></p>
+        <p>O copia y pega este enlace en tu navegador:<br>${inviteLink}</p>
+      </div>
+    `,
+  });
+}
+
 export interface CreateInvitationInput {
   email: string;
   planCode: "fixed" | "hot_desk";
@@ -64,7 +79,11 @@ export async function createCoworkerInvitation(
   };
 }
 
-export async function resendCoworkerInvitation(invitationId: string): Promise<ActionResult> {
+// Extends the invitation another 14 days and emails the link again.
+export async function resendCoworkerInvitation(
+  invitationId: string,
+  origin: string,
+): Promise<ActionResult> {
   const dict = getDictionary(await getLocale());
   const current = await getCurrentCoworker();
   if (!current || current.role !== "admin") {
@@ -72,11 +91,28 @@ export async function resendCoworkerInvitation(invitationId: string): Promise<Ac
   }
 
   const supabase = await createClient();
-  const { error } = await supabase.rpc("admin_resend_coworker_invitation", {
-    p_invitation_id: invitationId,
-  });
+  const { data, error } = await supabase
+    .rpc("admin_resend_coworker_invitation", { p_invitation_id: invitationId })
+    .single();
 
-  if (error) return { error: dict.errors.unknown };
+  if (error || !data) return { error: dict.errors.unknown };
+
+  const row = data as { contact_id: string; token: string };
+  const { data: contact } = await supabase
+    .from("contacts")
+    .select("email")
+    .eq("id", row.contact_id)
+    .single();
+
+  if (!contact?.email) return { error: dict.errors.unknown };
+
+  const { error: sendError } = await sendInvitationEmail(
+    contact.email,
+    inviteUrl(origin, row.token),
+  );
+  if (sendError) return { error: dict.errors.unknown };
+
+  await supabase.rpc("admin_mark_invitation_sent", { p_invitation_id: invitationId });
   revalidatePath("/admin/coworkers");
   return { error: null };
 }
@@ -109,18 +145,7 @@ export async function sendCoworkerInvitationEmail(
     return { error: dict.errors.notAuthorized };
   }
 
-  const { error: sendError } = await sendTransactionalEmail({
-    to: email,
-    subject: "Bienvenido/a a La Factory Coworking",
-    html: `
-      <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto;">
-        <h2>Bienvenido/a a La Factory</h2>
-        <p>Te han dado de alta como coworker en La Factory Coworking. Completa tu registro para activar tu cuenta:</p>
-        <p><a href="${inviteLink}" style="display:inline-block;background:#5b4636;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;">Completar registro</a></p>
-        <p>O copia y pega este enlace en tu navegador:<br>${inviteLink}</p>
-      </div>
-    `,
-  });
+  const { error: sendError } = await sendInvitationEmail(email, inviteLink);
 
   if (sendError) {
     return { error: dict.errors.unknown };
