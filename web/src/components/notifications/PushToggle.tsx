@@ -13,6 +13,25 @@ import {
   type PushSupportState,
 } from "@/lib/push";
 
+// iOS only exposes Web Push to a web app opened from the Home Screen icon,
+// so in plain Safari it reports "unsupported" -- which is fixable.
+function isIosOutsideHomeScreen(): boolean {
+  if (typeof window === "undefined") return false;
+  const isIos =
+    /iPhone|iPad|iPod/.test(navigator.userAgent) ||
+    (navigator.userAgent.includes("Macintosh") && navigator.maxTouchPoints > 1);
+  const standalone =
+    window.matchMedia("(display-mode: standalone)").matches ||
+    (navigator as Navigator & { standalone?: boolean }).standalone === true;
+  return isIos && !standalone;
+}
+
+function Callout({ children }: { children: React.ReactNode }) {
+  return (
+    <p className="rounded-xl bg-amber-50 px-3 py-2.5 text-sm text-amber-900">{children}</p>
+  );
+}
+
 export function PushToggle() {
   const { dict } = useI18n();
   const t = dict.notificationSettings;
@@ -65,6 +84,7 @@ export function PushToggle() {
   if (support === "loading") return null;
 
   if (support === "unsupported") {
+    if (isIosOutsideHomeScreen()) return <Callout>{t.iosInstallHint}</Callout>;
     return <p className="text-sm text-warm-gray">{t.notSupported}</p>;
   }
 
@@ -93,7 +113,8 @@ export function PushToggle() {
   }
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-3">
+      <Callout>{t.pushNotActive}</Callout>
       <button
         type="button"
         onClick={handleActivate}

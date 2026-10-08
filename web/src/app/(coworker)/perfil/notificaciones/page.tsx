@@ -41,6 +41,7 @@ export default async function NotificationSettingsPage() {
 
       <section className="rounded-2xl bg-white p-4 shadow-sm">
         <h2 className="mb-1 text-sm font-semibold text-ink">{t.preferencesTitle}</h2>
+        <p className="text-xs text-warm-gray">{t.preferencesHint}</p>
         <PreferencesForm
           initial={{
             bookingReminders: preferences.booking_reminders,

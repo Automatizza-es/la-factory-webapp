@@ -13,6 +13,14 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "La Factory Coworking",
   description: "Reserva de salas y gestión de tu cuenta en La Factory Coworking.",
+  appleWebApp: {
+    capable: true,
+    title: "La Factory",
+    statusBarStyle: "default",
+  },
+  icons: {
+    apple: "/brand/icon-180.png",
+  },
 };
 
 export const viewport: Viewport = {

@@ -92,7 +92,10 @@ export interface Dictionary {
     deactivating: string;
     notSupported: string;
     permissionDenied: string;
+    pushNotActive: string;
+    iosInstallHint: string;
     preferencesTitle: string;
+    preferencesHint: string;
     bookingReminders: string;
     packages: string;
     events: string;
@@ -508,7 +511,10 @@ const es: Dictionary = {
     deactivating: "Desactivando...",
     notSupported: "Tu navegador no admite notificaciones push.",
     permissionDenied: "No hemos podido activarlas: el navegador denegó el permiso.",
+    pushNotActive: "Todavía no recibes notificaciones en este móvil. Pulsa el botón para activarlas.",
+    iosInstallHint: "En iPhone, primero añade la app a la pantalla de inicio: pulsa Compartir y luego «Añadir a pantalla de inicio». Después ábrela desde el icono y vuelve aquí para activarlas.",
     preferencesTitle: "Qué quiero recibir",
+    preferencesHint: "Elige qué avisos te interesan. Para que te lleguen al móvil, activa también las notificaciones push de arriba.",
     bookingReminders: "Recordatorios de reservas",
     packages: "Paquetes",
     events: "Eventos",
@@ -922,7 +928,10 @@ const ca: Dictionary = {
     deactivating: "Desactivant...",
     notSupported: "El teu navegador no admet notificacions push.",
     permissionDenied: "No les hem pogut activar: el navegador ha denegat el permís.",
+    pushNotActive: "Encara no reps notificacions en aquest mòbil. Prem el botó per activar-les.",
+    iosInstallHint: "A l'iPhone, primer afegeix l'app a la pantalla d'inici: prem Compartir i després «Afegir a la pantalla d'inici». Després obre-la des de la icona i torna aquí per activar-les.",
     preferencesTitle: "Què vull rebre",
+    preferencesHint: "Tria quins avisos t'interessen. Perquè t'arribin al mòbil, activa també les notificacions push de dalt.",
     bookingReminders: "Recordatoris de reserves",
     packages: "Paquets",
     events: "Esdeveniments",
@@ -1336,7 +1345,10 @@ const en: Dictionary = {
     deactivating: "Turning off...",
     notSupported: "Your browser doesn't support push notifications.",
     permissionDenied: "We couldn't turn them on: the browser denied permission.",
+    pushNotActive: "You're not getting notifications on this phone yet. Tap the button to turn them on.",
+    iosInstallHint: "On iPhone, first add the app to your Home Screen: tap Share, then “Add to Home Screen”. Then open it from the icon and come back here to turn them on.",
     preferencesTitle: "What I want to receive",
+    preferencesHint: "Pick which alerts you care about. To get them on your phone, also turn on push notifications above.",
     bookingReminders: "Booking reminders",
     packages: "Packages",
     events: "Events",

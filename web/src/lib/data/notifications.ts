@@ -76,17 +76,22 @@ function renderNotification(
   };
 }
 
+// The bell only shows what's recent: anything older than this is noise.
+const NOTIFICATION_WINDOW_DAYS = 30;
+
 export async function getMyNotifications(
   supabase: SupabaseClient,
   contactId: string,
   dict: Dictionary["notifications"],
   locale: Locale,
-  limit = 20,
+  limit = 10,
 ): Promise<NotificationItem[]> {
+  const since = new Date(Date.now() - NOTIFICATION_WINDOW_DAYS * 24 * 60 * 60 * 1000).toISOString();
   const { data } = await supabase
     .from("notifications")
     .select("id, type, link_path, related_id, read_at, created_at")
     .eq("recipient_contact_id", contactId)
+    .gte("created_at", since)
     .order("created_at", { ascending: false })
     .limit(limit);
 
