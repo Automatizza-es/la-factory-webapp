@@ -1,4 +1,4 @@
-import { PackageCard } from "@/components/packages/PackageCard";
+import { CollectButton, PackageCard } from "@/components/packages/PackageCard";
 import { getCurrentCoworker } from "@/lib/data/coworker";
 import { getMyPackages } from "@/lib/data/packages";
 import { getDictionary } from "@/lib/i18n/dictionaries";
@@ -34,6 +34,12 @@ export default async function PaquetesPage() {
             pending.map((p) => <PackageCard key={p.id} pkg={p} />)
           )}
         </div>
+        {pending.length > 1 && (
+          <CollectButton
+            packageIds={pending.map((p) => p.id)}
+            label={dict.packages.markAllCollected}
+          />
+        )}
       </section>
 
       <section className="flex flex-col gap-3">

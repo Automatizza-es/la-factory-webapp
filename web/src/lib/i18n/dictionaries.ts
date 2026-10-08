@@ -39,6 +39,10 @@ export interface Dictionary {
     emailGreeting: (name: string) => string;
     emailBody: string;
     emailCta: string;
+    markCollected: string;
+    markAllCollected: string;
+    marking: string;
+    markError: string;
   };
   notifications: {
     title: string;
@@ -486,6 +490,10 @@ const es: Dictionary = {
     emailGreeting: (name) => `Hola ${name},`,
     emailBody: "Ha llegado un paquete para ti a La Factory. Puedes recogerlo cuando quieras.",
     emailCta: "Ver paquete",
+    markCollected: "Ya lo he recogido",
+    markAllCollected: "Los he recogido todos",
+    marking: "Guardando...",
+    markError: "No hemos podido guardarlo. Inténtalo de nuevo.",
   },
   notifications: {
     title: "Notificaciones",
@@ -931,6 +939,10 @@ const ca: Dictionary = {
     emailGreeting: (name) => `Hola ${name},`,
     emailBody: "Ha arribat un paquet per a tu a La Factory. Pots recollir-lo quan vulguis.",
     emailCta: "Veure paquet",
+    markCollected: "Ja l'he recollit",
+    markAllCollected: "Els he recollit tots",
+    marking: "Desant...",
+    markError: "No ho hem pogut desar. Torna-ho a provar.",
   },
   notifications: {
     title: "Notificacions",
@@ -1376,6 +1388,10 @@ const en: Dictionary = {
     emailGreeting: (name) => `Hi ${name},`,
     emailBody: "A package has arrived for you at La Factory. Pick it up whenever you like.",
     emailCta: "View package",
+    markCollected: "I've picked it up",
+    markAllCollected: "I've picked them all up",
+    marking: "Saving...",
+    markError: "We couldn't save that. Please try again.",
   },
   notifications: {
     title: "Notifications",

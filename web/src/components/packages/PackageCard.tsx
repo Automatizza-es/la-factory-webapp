@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { Package, X } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Check, Package, X } from "lucide-react";
+import { markMyPackagesCollected } from "@/app/(coworker)/paquetes/actions";
 import { formatDateLong, minutesToTime } from "@/lib/format";
 import { useI18n } from "@/lib/i18n/context";
 import { utcIsoToZonedDateAndMinutes } from "@/lib/timezone";
@@ -17,37 +19,88 @@ function formatWhen(iso: string, locale: Parameters<typeof formatDateLong>[1]) {
   return `${formatDateLong(zoned.date, locale)} · ${minutesToTime(zoned.minutes)}`;
 }
 
+export function CollectButton({
+  packageIds,
+  label,
+  onDone,
+  className = "",
+}: {
+  packageIds: string[];
+  label: string;
+  onDone?: () => void;
+  className?: string;
+}) {
+  const router = useRouter();
+  const { dict } = useI18n();
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function handleClick() {
+    setSaving(true);
+    setError(null);
+    const result = await markMyPackagesCollected(packageIds);
+    setSaving(false);
+    if (result.error) {
+      setError(result.error);
+      return;
+    }
+    onDone?.();
+    router.refresh();
+  }
+
+  return (
+    <div className={`flex flex-col gap-1.5 ${className}`}>
+      <button
+        type="button"
+        onClick={handleClick}
+        disabled={saving}
+        className="flex w-full items-center justify-center gap-1.5 rounded-xl bg-brown-dark py-2.5 text-sm font-medium text-white disabled:opacity-60"
+      >
+        <Check className="h-4 w-4" strokeWidth={2.25} />
+        {saving ? dict.packages.marking : label}
+      </button>
+      {error && <p className="text-center text-xs text-red-600">{error}</p>}
+    </div>
+  );
+}
+
 export function PackageCard({ pkg }: PackageCardProps) {
   const { locale, dict } = useI18n();
   const [open, setOpen] = useState(false);
+  const isPending = pkg.status === "pending";
 
   return (
     <>
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
-        className="flex w-full items-center gap-3 rounded-2xl bg-white p-4 text-left shadow-sm"
-      >
-        <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-sand/50">
-          {pkg.imageUrl ? (
-            <Image src={pkg.imageUrl} alt="" fill className="object-cover" unoptimized />
-          ) : (
-            <div className="flex h-full w-full items-center justify-center">
-              <Package className="h-5 w-5 text-warm-gray" strokeWidth={1.5} />
-            </div>
-          )}
-        </div>
-        <div className="min-w-0 flex-1">
-          <p className="text-sm font-medium text-ink">
-            {dict.packages.receivedAt} {formatWhen(pkg.receivedAt, locale)}
-          </p>
-          {pkg.status === "pending" ? (
-            <p className="text-xs text-amber-700">{dict.packages.statusPending}</p>
-          ) : (
-            <p className="text-xs text-warm-gray">{dict.packages.statusCollected}</p>
-          )}
-        </div>
-      </button>
+      <div className="flex flex-col gap-3 rounded-2xl bg-white p-4 shadow-sm">
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          className="flex w-full items-center gap-3 text-left"
+        >
+          <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-sand/50">
+            {pkg.imageUrl ? (
+              <Image src={pkg.imageUrl} alt="" fill className="object-cover" unoptimized />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center">
+                <Package className="h-5 w-5 text-warm-gray" strokeWidth={1.5} />
+              </div>
+            )}
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="text-sm font-medium text-ink">
+              {dict.packages.receivedAt} {formatWhen(pkg.receivedAt, locale)}
+            </p>
+            {pkg.status === "pending" ? (
+              <p className="text-xs text-amber-700">{dict.packages.statusPending}</p>
+            ) : (
+              <p className="text-xs text-warm-gray">{dict.packages.statusCollected}</p>
+            )}
+          </div>
+        </button>
+        {isPending && (
+          <CollectButton packageIds={[pkg.id]} label={dict.packages.markCollected} />
+        )}
+      </div>
 
       {open && (
         <div className="fixed inset-0 z-30 flex items-end justify-center">
@@ -96,6 +149,14 @@ export function PackageCard({ pkg }: PackageCardProps) {
                   </>
                 )}
               </div>
+              {isPending && (
+                <CollectButton
+                  packageIds={[pkg.id]}
+                  label={dict.packages.markCollected}
+                  onDone={() => setOpen(false)}
+                  className="mt-5"
+                />
+              )}
             </div>
           </div>
         </div>
