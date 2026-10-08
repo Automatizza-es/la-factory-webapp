@@ -72,7 +72,9 @@ export default async function AdminCoworkersPage() {
               </thead>
               <tbody>
                 {coworkers.map((c) => {
-                  const isPending = c.stage === "invited" || c.stage === "onboarding";
+                  // Expired invitations keep their actions so "Reenviar" can revive them.
+                  const isPending =
+                    c.stage === "invited" || c.stage === "onboarding" || c.stage === "invite_expired";
                   const name = `${c.firstName} ${c.lastName ?? ""}`.trim() || c.email || "—";
 
                   return (
