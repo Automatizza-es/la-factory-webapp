@@ -1,7 +1,8 @@
 // Thin wrapper around Resend's HTTP API for our own transactional emails
 // (not Supabase's auth SMTP, which is locked to its own auth templates).
-// Sandboxed to Resend's verified address until the sending domain is
-// verified -- same limitation as the onboarding invite email.
+// Sent from the hub subdomain, which is the domain verified in Resend.
+const FROM_ADDRESS = "La Factory Coworking <no-reply@hub.lafactorycoworking.com>";
+
 export interface SendEmailInput {
   to: string;
   subject: string;
@@ -23,7 +24,7 @@ export async function sendTransactionalEmail(input: SendEmailInput): Promise<Sen
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      from: "onboarding@resend.dev",
+      from: FROM_ADDRESS,
       to: input.to,
       subject: input.subject,
       html: input.html,
