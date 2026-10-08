@@ -1,4 +1,5 @@
 import { createClient as createServiceClient, type SupabaseClient } from "@supabase/supabase-js";
+import { historySinceIso } from "@/lib/retention";
 
 export interface PackageContactOption {
   id: string;
@@ -41,7 +42,8 @@ export interface PackageItem {
 interface RawPackage {
   id: string;
   recipient_contact_id: string;
-  image_path: string;
+  // null once the nightly cleanup has deleted the photo.
+  image_path: string | null;
   note: string | null;
   status: "pending" | "collected";
   received_at: string;
@@ -57,6 +59,7 @@ async function signImageUrls(
   const urls = new Map<string, string>();
   await Promise.all(
     rows.map(async (row) => {
+      if (!row.image_path) return;
       const { data } = await supabase.storage
         .from("packages")
         .createSignedUrl(row.image_path, 60 * 60);
@@ -119,6 +122,8 @@ export async function getMyPackages(
     .from("packages")
     .select("id, recipient_contact_id, image_path, note, status, received_at, received_by, collected_at, contacts!recipient_contact_id(first_name, last_name)")
     .eq("recipient_contact_id", contactId)
+    // Pending ones always show, however old; picked-up ones only recently.
+    .or(`status.eq.pending,received_at.gte.${historySinceIso()}`)
     .order("received_at", { ascending: false });
 
   const rows = (data ?? []) as unknown as RawPackage[];
@@ -161,7 +166,16 @@ export async function getAdminPackages(
     .select("id, recipient_contact_id, image_path, note, status, received_at, received_by, collected_at, contacts!recipient_contact_id(first_name, last_name)")
     .order("received_at", { ascending: false });
 
-  if (filter !== "all") query = query.eq("status", filter);
+  if (filter === "pending") {
+    query = query.eq("status", "pending");
+  } else {
+    // Pending ones always show, however old; picked-up ones only recently.
+    const since = historySinceIso();
+    query =
+      filter === "collected"
+        ? query.eq("status", "collected").gte("received_at", since)
+        : query.or(`status.eq.pending,received_at.gte.${since}`);
+  }
 
   const { data } = await query;
   const rows = (data ?? []) as unknown as RawPackage[];

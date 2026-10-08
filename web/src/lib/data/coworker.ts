@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { INTL_LOCALE, type Locale } from "@/lib/i18n/config";
 import { utcIsoToZonedDateAndMinutes } from "@/lib/timezone";
 import type { Booking, Coworker, QuotaSummary, Room } from "@/types/domain";
+import { historySinceIso } from "@/lib/retention";
 
 function initialsFor(firstName: string, lastName: string | null) {
   const first = firstName.trim().charAt(0);
@@ -221,6 +222,7 @@ export async function getBookings(
     .from("bookings")
     .select("id, room_id, starts_at, ends_at, status, rooms(name, image_path)")
     .eq("contact_id", contactId)
+    .gte("starts_at", historySinceIso())
     .order("starts_at", { ascending: false });
 
   const now = new Date();
