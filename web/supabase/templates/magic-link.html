@@ -1,0 +1,19 @@
+<!-- Supabase → Authentication → Emails → Templates → Magic Link.
+     Subject: Tu enlace para entrar en La Factory Hub
+     Links to /auth/callback with a token_hash so it works from any browser or device. -->
+<div style="background:#f6f1ea;padding:32px 16px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;">
+  <div style="max-width:480px;margin:0 auto;background:#ffffff;border-radius:16px;padding:32px;text-align:center;">
+    <img src="https://hub.lafactorycoworking.com/brand/logo-cuadrado-original.jpg" alt="La Factory Coworking" width="56" height="56" style="border-radius:12px;">
+    <h2 style="color:#2b211b;font-size:20px;margin:24px 0 8px;">Entra en La Factory Hub</h2>
+    <p style="color:#5f5249;font-size:15px;line-height:1.5;margin:0 0 24px;">
+      Pulsa el botón para acceder. El enlace caduca pronto y solo se puede usar una vez.
+    </p>
+    <a href="{{ .RedirectTo }}?token_hash={{ .TokenHash }}&type=email"
+       style="display:inline-block;background:#5b4636;color:#ffffff;padding:12px 24px;border-radius:10px;text-decoration:none;font-weight:600;font-size:15px;">
+      Entrar
+    </a>
+    <p style="color:#8a7a6d;font-size:13px;line-height:1.5;margin:24px 0 0;">
+      Si no has pedido este enlace, puedes ignorar este email.
+    </p>
+  </div>
+</div>

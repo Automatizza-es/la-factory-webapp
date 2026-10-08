@@ -50,6 +50,8 @@ export default function LoginPage() {
       email,
       options: {
         emailRedirectTo: `${window.location.origin}/auth/callback`,
+        // Accounts are only created through an admin invitation.
+        shouldCreateUser: false,
       },
     });
 
