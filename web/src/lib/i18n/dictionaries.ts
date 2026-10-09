@@ -179,6 +179,8 @@ export interface Dictionary {
     signOut: string;
     notifications: string;
     changePassword: string;
+    adminPanel: string;
+    coworkerSpace: string;
   };
   login: {
     title: string;
@@ -630,6 +632,8 @@ const es: Dictionary = {
     signOut: "Cerrar sesión",
     notifications: "Notificaciones",
     changePassword: "Cambiar contraseña",
+    adminPanel: "Panel de admin",
+    coworkerSpace: "Mi espacio de coworker",
   },
   login: {
     title: "Entrar",
@@ -1081,6 +1085,8 @@ const ca: Dictionary = {
     signOut: "Tancar sessió",
     notifications: "Notificacions",
     changePassword: "Canviar contrasenya",
+    adminPanel: "Panell d'admin",
+    coworkerSpace: "El meu espai de coworker",
   },
   login: {
     title: "Entrar",
@@ -1531,6 +1537,8 @@ const en: Dictionary = {
     signOut: "Sign out",
     notifications: "Notifications",
     changePassword: "Change password",
+    adminPanel: "Admin panel",
+    coworkerSpace: "My coworker space",
   },
   login: {
     title: "Sign in",

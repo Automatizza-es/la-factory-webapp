@@ -1,4 +1,13 @@
-import { Bell, CalendarRange, ChevronRight, KeyRound, Mail, Package, ShieldCheck } from "lucide-react";
+import {
+  Bell,
+  CalendarRange,
+  ChevronRight,
+  KeyRound,
+  LayoutDashboard,
+  Mail,
+  Package,
+  ShieldCheck,
+} from "lucide-react";
 import Link from "next/link";
 import { SignOutButton } from "@/components/layout/SignOutButton";
 import { getCurrentCoworker, getQuotaSummary } from "@/lib/data/coworker";
@@ -29,6 +38,20 @@ export default async function PerfilPage() {
           <p className="text-sm text-warm-gray">{auth.data.user?.email}</p>
         </div>
       </div>
+
+      {current.role === "admin" && (
+        // Plain <a>: /modo/admin is a route handler that sets a cookie, so it
+        // must not be prefetched.
+        // eslint-disable-next-line @next/next/no-html-link-for-pages
+        <a
+          href="/modo/admin"
+          className="flex items-center gap-3 rounded-2xl bg-brown-dark p-4 text-white shadow-sm"
+        >
+          <LayoutDashboard className="h-5 w-5" strokeWidth={1.75} />
+          <span className="flex-1 font-medium">{dict.perfil.adminPanel}</span>
+          <ChevronRight className="h-4 w-4" strokeWidth={2} />
+        </a>
+      )}
 
       <section className="flex flex-col divide-y divide-sand/40 rounded-2xl bg-white shadow-sm">
         <div className="flex items-center gap-3 p-4">

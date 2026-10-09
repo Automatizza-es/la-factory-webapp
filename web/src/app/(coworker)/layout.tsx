@@ -1,7 +1,8 @@
 import { redirect } from "next/navigation";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { BottomNav } from "@/components/layout/BottomNav";
-import { getCurrentCoworker } from "@/lib/data/coworker";
+import { getAppMode } from "@/lib/app-mode";
+import { getCurrentCoworker, hasActiveMembership } from "@/lib/data/coworker";
 import { getMyNotifications } from "@/lib/data/notifications";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import { getLocale } from "@/lib/i18n/server";
@@ -12,8 +13,13 @@ export default async function CoworkerLayout({ children }: { children: React.Rea
   const locale = await getLocale();
   const dict = getDictionary(locale);
 
+  // Admins live in the admin panel, unless they also have a plan and chose
+  // their coworker space (see /modo/[mode]).
   if (current?.role === "admin") {
-    redirect("/admin");
+    const isAlsoCoworker = await hasActiveMembership(await createClient(), current.contactId);
+    if (!isAlsoCoworker || (await getAppMode()) !== "coworker") {
+      redirect("/admin");
+    }
   }
 
   if (!current) {
