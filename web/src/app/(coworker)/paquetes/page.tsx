@@ -25,9 +25,9 @@ export default async function PaquetesPage() {
 
       <section className="flex flex-col gap-3">
         <h2 className="text-lg font-semibold text-ink">{dict.packages.pending}</h2>
-        <div className="flex flex-col gap-3">
+        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
           {pending.length === 0 ? (
-            <p className="rounded-2xl bg-white p-4 text-sm text-warm-gray shadow-sm">
+            <p className="col-span-full rounded-2xl bg-white p-4 text-sm text-warm-gray shadow-sm">
               {dict.packages.noPending}
             </p>
           ) : (
@@ -38,15 +38,16 @@ export default async function PaquetesPage() {
           <CollectButton
             packageIds={pending.map((p) => p.id)}
             label={dict.packages.markAllCollected}
+            className="md:max-w-xs"
           />
         )}
       </section>
 
       <section className="flex flex-col gap-3">
         <h2 className="text-lg font-semibold text-ink">{dict.packages.history}</h2>
-        <div className="flex flex-col gap-3">
+        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
           {history.length === 0 ? (
-            <p className="rounded-2xl bg-white p-4 text-sm text-warm-gray shadow-sm">
+            <p className="col-span-full rounded-2xl bg-white p-4 text-sm text-warm-gray shadow-sm">
               {dict.packages.noHistory}
             </p>
           ) : (

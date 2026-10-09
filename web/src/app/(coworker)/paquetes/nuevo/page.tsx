@@ -14,7 +14,7 @@ export default async function NewPackagePage() {
   const contacts = await getActiveContactsForPicker(supabase);
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="mx-auto flex w-full max-w-2xl flex-col gap-6">
       <div>
         <h1 className="text-2xl font-bold text-ink">{dict.admin.newPackageForm.title}</h1>
       </div>

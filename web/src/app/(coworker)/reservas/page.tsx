@@ -26,9 +26,9 @@ export default async function ReservasPage() {
 
       <section className="flex flex-col gap-3">
         <h2 className="text-lg font-semibold text-ink">{dict.reservas.upcoming}</h2>
-        <div className="flex flex-col gap-3">
+        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
           {upcoming.length === 0 ? (
-            <p className="rounded-2xl bg-white p-4 text-sm text-warm-gray shadow-sm">
+            <p className="col-span-full rounded-2xl bg-white p-4 text-sm text-warm-gray shadow-sm">
               {dict.reservas.noUpcoming}
             </p>
           ) : (
@@ -39,9 +39,9 @@ export default async function ReservasPage() {
 
       <section className="flex flex-col gap-3">
         <h2 className="text-lg font-semibold text-ink">{dict.reservas.history}</h2>
-        <div className="flex flex-col gap-3">
+        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
           {history.length === 0 ? (
-            <p className="rounded-2xl bg-white p-4 text-sm text-warm-gray shadow-sm">
+            <p className="col-span-full rounded-2xl bg-white p-4 text-sm text-warm-gray shadow-sm">
               {dict.reservas.noHistory}
             </p>
           ) : (

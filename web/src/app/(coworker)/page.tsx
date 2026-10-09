@@ -73,89 +73,97 @@ export default async function HomePage() {
         </Link>
       )}
 
-      {quota ? (
-        <QuotaCard quota={quota} dict={dict.quota} />
-      ) : (
-        <p className="rounded-2xl bg-white p-4 text-sm text-warm-gray shadow-sm">
-          {dict.home.noActivePlan}
-        </p>
-      )}
-
-      <Link
-        href="/paquetes/nuevo"
-        className="flex items-center gap-3 rounded-2xl bg-white p-4 shadow-sm"
-      >
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-cream">
-          <Package className="h-5 w-5 text-brown-dark" strokeWidth={1.75} />
+      {/* Phones: one column in source order. Desktop: rooms and bookings on
+          the wide left, quota / register package / events on the right. */}
+      <div className="flex flex-col gap-6 lg:grid lg:grid-cols-3 lg:items-start">
+        <div className="lg:col-start-3 lg:row-start-1">
+          {quota ? (
+            <QuotaCard quota={quota} dict={dict.quota} />
+          ) : (
+            <p className="rounded-2xl bg-white p-4 text-sm text-warm-gray shadow-sm">
+              {dict.home.noActivePlan}
+            </p>
+          )}
         </div>
-        <div className="min-w-0 flex-1">
-          <p className="font-semibold text-ink">{dict.packages.registerAction}</p>
-          <p className="text-xs text-warm-gray">{dict.packages.registerActionSubtitle}</p>
-        </div>
-        <ChevronRight className="h-4 w-4 shrink-0 text-warm-gray" strokeWidth={2} />
-      </Link>
 
-      {upcomingEvents.length > 0 && (
-        <section className="flex flex-col gap-3">
+        <div className="flex flex-col gap-6 lg:col-start-3 lg:row-start-2">
+          <Link
+            href="/paquetes/nuevo"
+            className="flex items-center gap-3 rounded-2xl bg-white p-4 shadow-sm"
+          >
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-cream">
+              <Package className="h-5 w-5 text-brown-dark" strokeWidth={1.75} />
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="font-semibold text-ink">{dict.packages.registerAction}</p>
+              <p className="text-xs text-warm-gray">{dict.packages.registerActionSubtitle}</p>
+            </div>
+            <ChevronRight className="h-4 w-4 shrink-0 text-warm-gray" strokeWidth={2} />
+          </Link>
+
+          {upcomingEvents.length > 0 && (
+            <section className="flex flex-col gap-3">
+              <div className="flex items-center justify-between">
+                <h2 className="text-lg font-semibold text-ink">{dict.events.homeTitle}</h2>
+                <Link
+                  href="/eventos"
+                  className="flex items-center gap-0.5 text-sm font-medium text-brown-dark"
+                >
+                  {dict.events.viewAll}
+                  <ChevronRight className="h-4 w-4" strokeWidth={2.25} />
+                </Link>
+              </div>
+              <div className="flex flex-col gap-3">
+                {upcomingEvents.map((event) => (
+                  <EventCard key={event.id} event={event} dict={dict.events} locale={locale} />
+                ))}
+              </div>
+            </section>
+          )}
+        </div>
+
+        <section className="flex flex-col gap-3 lg:col-span-2 lg:col-start-1 lg:row-start-1">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-ink">{dict.events.homeTitle}</h2>
+            <h2 className="text-lg font-semibold text-ink">{dict.home.bookRoom}</h2>
             <Link
-              href="/eventos"
+              href="/calendario"
               className="flex items-center gap-0.5 text-sm font-medium text-brown-dark"
             >
-              {dict.events.viewAll}
+              {dict.home.viewCalendar}
               <ChevronRight className="h-4 w-4" strokeWidth={2.25} />
             </Link>
           </div>
-          <div className="flex flex-col gap-3">
-            {upcomingEvents.map((event) => (
-              <EventCard key={event.id} event={event} dict={dict.events} locale={locale} />
+          <div className="grid grid-cols-2 gap-3">
+            {rooms.map((room) => (
+              <RoomCard key={room.id} room={room} dict={dict.room} />
             ))}
           </div>
         </section>
-      )}
 
-      <section className="flex flex-col gap-3">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-ink">{dict.home.bookRoom}</h2>
-          <Link
-            href="/calendario"
-            className="flex items-center gap-0.5 text-sm font-medium text-brown-dark"
-          >
-            {dict.home.viewCalendar}
-            <ChevronRight className="h-4 w-4" strokeWidth={2.25} />
-          </Link>
-        </div>
-        <div className="grid grid-cols-2 gap-3">
-          {rooms.map((room) => (
-            <RoomCard key={room.id} room={room} dict={dict.room} />
-          ))}
-        </div>
-      </section>
-
-      <section className="flex flex-col gap-3">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-ink">{dict.home.upcomingBookings}</h2>
-          <Link
-            href="/reservas"
-            className="flex items-center gap-0.5 text-sm font-medium text-brown-dark"
-          >
-            {dict.home.viewAll}
-            <ChevronRight className="h-4 w-4" strokeWidth={2.25} />
-          </Link>
-        </div>
-        <div className="flex flex-col gap-3">
-          {upcomingBookings.length === 0 ? (
-            <p className="rounded-2xl bg-white p-4 text-sm text-warm-gray shadow-sm">
-              {dict.home.noUpcoming}
-            </p>
-          ) : (
-            upcomingBookings.map((booking) => (
-              <BookingCard key={booking.id} booking={booking} />
-            ))
-          )}
-        </div>
-      </section>
+        <section className="flex flex-col gap-3 lg:col-span-2 lg:col-start-1 lg:row-start-2">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-ink">{dict.home.upcomingBookings}</h2>
+            <Link
+              href="/reservas"
+              className="flex items-center gap-0.5 text-sm font-medium text-brown-dark"
+            >
+              {dict.home.viewAll}
+              <ChevronRight className="h-4 w-4" strokeWidth={2.25} />
+            </Link>
+          </div>
+          <div className="grid gap-3 md:grid-cols-2">
+            {upcomingBookings.length === 0 ? (
+              <p className="rounded-2xl bg-white p-4 text-sm text-warm-gray shadow-sm md:col-span-2">
+                {dict.home.noUpcoming}
+              </p>
+            ) : (
+              upcomingBookings.map((booking) => (
+                <BookingCard key={booking.id} booking={booking} />
+              ))
+            )}
+          </div>
+        </section>
+      </div>
     </div>
   );
 }

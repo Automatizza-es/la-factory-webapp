@@ -46,7 +46,7 @@ export default async function EventDetailPage({ params }: EventDetailPageProps) 
       : null;
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="mx-auto flex w-full max-w-2xl flex-col gap-5">
       <Link href="/eventos" className="flex items-center gap-1 text-sm font-medium text-brown-dark">
         <ChevronLeft className="h-4 w-4" strokeWidth={2.25} />
         {dict.events.back}

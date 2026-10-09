@@ -10,7 +10,10 @@ export function BottomNav({ role }: { role: AppRole }) {
   const { bottom } = useNavItems(role);
 
   return (
-    <nav className="sticky bottom-0 border-t border-sand/60 bg-cream/95 px-2 pb-[max(env(safe-area-inset-bottom,0px),8px)] pt-2 backdrop-blur-sm md:hidden">
+    <nav
+      data-bottom-nav
+      className="sticky bottom-0 border-t border-sand/60 bg-cream/95 px-2 pb-[max(env(safe-area-inset-bottom,0px),8px)] pt-2 backdrop-blur-sm md:hidden"
+    >
       <ul className="grid grid-cols-4">
         {bottom.map((item) => {
           const { href, label, icon: Icon } = item;

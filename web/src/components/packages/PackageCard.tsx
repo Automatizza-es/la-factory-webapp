@@ -106,14 +106,14 @@ export function PackageCard({ pkg }: PackageCardProps) {
       </div>
 
       {open && (
-        <div className="fixed inset-0 z-30 flex items-end justify-center">
+        <div className="fixed inset-0 z-30 flex items-end justify-center md:items-center md:p-6">
           <button
             type="button"
             aria-label="Close"
             onClick={() => setOpen(false)}
             className="absolute inset-0 bg-ink/30"
           />
-          <div className="relative w-full max-w-[480px] overflow-hidden rounded-t-3xl bg-white pb-[max(env(safe-area-inset-bottom,0px),20px)] shadow-xl">
+          <div className="relative w-full max-w-[480px] overflow-hidden rounded-t-3xl md:rounded-3xl bg-white pb-[max(env(safe-area-inset-bottom,0px),20px)] shadow-xl">
             <div className="relative h-52 w-full bg-sand/50">
               {pkg.imageUrl && (
                 <Image src={pkg.imageUrl} alt="" fill className="object-cover" unoptimized />

@@ -27,7 +27,7 @@ export default async function PerfilPage() {
   ]);
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="mx-auto flex w-full max-w-2xl flex-col gap-6">
       <div className="flex flex-col items-center gap-3 pt-2 text-center">
         <div className="flex h-20 w-20 items-center justify-center rounded-full bg-sand text-2xl font-semibold text-brown-dark">
           {current.coworker.initials}

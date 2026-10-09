@@ -6,6 +6,9 @@ import { utcIsoToZonedDateAndMinutes } from "@/lib/timezone";
 const LEAD_MINUTES = 60;
 // Never shrink the scroll box below this, even on very short screens.
 const MIN_HEIGHT_PX = 320;
+// The part of `reserveBelowPx` that's there for the phone's bottom tab bar;
+// given back when that bar is hidden (tablet/desktop).
+const BOTTOM_NAV_ALLOWANCE_PX = 96;
 
 // The hour grid lives in its own scroll box so the page header, date picker
 // and room/day headings stay put. This sizes that box to fill the screen down
@@ -24,7 +27,10 @@ export function useScrollToNow(
 
     function fit() {
       if (!box) return;
-      const available = window.innerHeight - box.getBoundingClientRect().top - reserveBelowPx;
+      const nav = document.querySelector<HTMLElement>("[data-bottom-nav]");
+      const navShown = !!nav && nav.offsetHeight > 0;
+      const reserve = navShown ? reserveBelowPx : reserveBelowPx - BOTTOM_NAV_ALLOWANCE_PX;
+      const available = window.innerHeight - box.getBoundingClientRect().top - reserve;
       box.style.maxHeight = `${Math.max(available, MIN_HEIGHT_PX)}px`;
     }
     fit();

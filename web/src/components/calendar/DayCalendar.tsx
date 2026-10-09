@@ -386,14 +386,14 @@ export function DayCalendar({
       </div>
 
       {selection && selectedRoom && (
-        <div className="fixed inset-0 z-30 flex items-end justify-center">
+        <div className="fixed inset-0 z-30 flex items-end justify-center md:items-center md:p-6">
           <button
             type="button"
             aria-label="Close"
             onClick={closeSheet}
             className="absolute inset-0 bg-ink/30"
           />
-          <div className="relative max-h-[85vh] w-full max-w-[480px] overflow-y-auto rounded-t-3xl bg-white p-5 pb-[max(env(safe-area-inset-bottom,0px),20px)] shadow-xl">
+          <div className="relative max-h-[85vh] w-full max-w-[480px] overflow-y-auto rounded-t-3xl md:rounded-3xl bg-white p-5 pb-[max(env(safe-area-inset-bottom,0px),20px)] shadow-xl">
             <div className="mb-1 flex items-center justify-between">
               <h3 className="text-lg font-bold text-ink">
                 {selection.bookingId ? dict.editBooking : dict.newBooking}

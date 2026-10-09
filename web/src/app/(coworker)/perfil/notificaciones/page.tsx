@@ -23,7 +23,7 @@ export default async function NotificationSettingsPage() {
   } | null) ?? { booking_reminders: true, packages: true, events: true };
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="mx-auto flex w-full max-w-2xl flex-col gap-6">
       <Link href="/perfil" className="flex items-center gap-1 text-sm font-medium text-brown-dark">
         <ChevronLeft className="h-4 w-4" strokeWidth={2.25} />
         {t.back}
