@@ -54,7 +54,6 @@ export default async function AdminCoworkersPage() {
               bulk
               contactIds={withoutAccess}
               label={dict.admin.coworkers.sendWelcomeAll(withoutAccess.length)}
-              dict={dict.admin.coworkers}
             />
           )}
           <Link
@@ -131,14 +130,12 @@ export default async function AdminCoworkersPage() {
                           <WelcomeButton
                             contactIds={[c.contactId]}
                             label={dict.admin.coworkers.sendWelcome}
-                            dict={dict.admin.coworkers}
                           />
                         )}
                         {isPending && c.invitation && (
                           <InvitationActions
                             invitationId={c.invitation.id}
                             token={c.invitation.token}
-                            dict={dict.admin.coworkers}
                           />
                         )}
                       </td>

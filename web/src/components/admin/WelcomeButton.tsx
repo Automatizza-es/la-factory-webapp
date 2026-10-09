@@ -4,17 +4,19 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Send } from "lucide-react";
 import { sendWelcomeInvitations } from "@/app/admin/coworkers/actions";
-import type { Dictionary } from "@/lib/i18n/dictionaries";
+import { useI18n } from "@/lib/i18n/context";
 
 interface WelcomeButtonProps {
   contactIds: string[];
   label: string;
-  dict: Dictionary["admin"]["coworkers"];
   // The "everyone" button asks first and is styled as the primary action.
   bulk?: boolean;
 }
 
-export function WelcomeButton({ contactIds, label, dict, bulk = false }: WelcomeButtonProps) {
+// Strings come from useI18n here rather than as a prop: this section of the
+// dictionary has functions, which can't cross from a Server Component.
+export function WelcomeButton({ contactIds, label, bulk = false }: WelcomeButtonProps) {
+  const dict = useI18n().dict.admin.coworkers;
   const router = useRouter();
   const [sending, setSending] = useState(false);
 

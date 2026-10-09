@@ -3,15 +3,15 @@
 import { useState } from "react";
 import { Check, Copy, RotateCw, X } from "lucide-react";
 import { cancelCoworkerInvitation, resendCoworkerInvitation } from "@/app/admin/coworkers/actions";
-import type { Dictionary } from "@/lib/i18n/dictionaries";
+import { useI18n } from "@/lib/i18n/context";
 
 interface InvitationActionsProps {
   invitationId: string;
   token: string;
-  dict: Dictionary["admin"]["coworkers"];
 }
 
-export function InvitationActions({ invitationId, token, dict }: InvitationActionsProps) {
+export function InvitationActions({ invitationId, token }: InvitationActionsProps) {
+  const dict = useI18n().dict.admin.coworkers;
   const [copied, setCopied] = useState(false);
   const [busy, setBusy] = useState(false);
 
