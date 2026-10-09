@@ -1,6 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
 import type { IncidentCategory, IncidentStatus } from "@/lib/data/incidents";
+import { pickAnnouncementText, type AnnouncementText } from "@/lib/announcements";
 import { formatDateLong, minutesToTime } from "@/lib/format";
 import type { Locale } from "@/lib/i18n/config";
 import { utcIsoToZonedDateAndMinutes } from "@/lib/timezone";
@@ -35,6 +36,7 @@ function renderNotification(
   booking: { roomName: string; startsAt: string; endsAt: string } | undefined,
   incident: { category: IncidentCategory; status: IncidentStatus; description: string } | undefined,
   incidentsDict: Dictionary["incidents"],
+  announcement: AnnouncementText | undefined,
 ): NotificationItem {
   let title = dict.genericTitle;
   let body = dict.genericBody;
@@ -55,6 +57,9 @@ function renderNotification(
     } else {
       body = dict.eventNewBody("", "");
     }
+  } else if (row.type === "announcement") {
+    title = announcement?.title ?? dict.genericTitle;
+    body = announcement?.body ?? "";
   } else if (row.type === "incident_new") {
     title = dict.incidentNewTitle;
     body = incident
@@ -155,6 +160,29 @@ export async function getMyNotifications(
     }
   }
 
+  // Admin announcements, in the reader's language when it was written.
+  const announcementIds = rows
+    .filter((r) => r.type === "announcement" && r.related_id)
+    .map((r) => r.related_id as string);
+  const announcementById = new Map<string, AnnouncementText>();
+  if (announcementIds.length > 0) {
+    const { data: announcementRows } = await supabase
+      .from("announcements")
+      .select("id, title_es, body_es, title_ca, body_ca, title_en, body_en")
+      .in("id", announcementIds);
+    for (const a of announcementRows ?? []) {
+      const text = pickAnnouncementText(
+        {
+          es: { title: a.title_es ?? "", body: a.body_es ?? "" },
+          ca: { title: a.title_ca ?? "", body: a.body_ca ?? "" },
+          en: { title: a.title_en ?? "", body: a.body_en ?? "" },
+        },
+        locale,
+      );
+      if (text) announcementById.set(a.id, text);
+    }
+  }
+
   return rows.map((row) =>
     renderNotification(
       row,
@@ -165,6 +193,7 @@ export async function getMyNotifications(
       row.related_id ? bookingById.get(row.related_id) : undefined,
       row.related_id ? incidentById.get(row.related_id) : undefined,
       incidentsDict,
+      row.related_id ? announcementById.get(row.related_id) : undefined,
     ),
   );
 }

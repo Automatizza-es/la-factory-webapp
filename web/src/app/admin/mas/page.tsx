@@ -3,6 +3,7 @@ import {
   Building2,
   ChevronRight,
   KeyRound,
+  Megaphone,
   Package,
   PartyPopper,
   Receipt,
@@ -22,6 +23,7 @@ export default async function AdminMorePage() {
 
   const sections = [
     { href: "/admin/incidencias", label: nav.incidents, icon: Wrench },
+    { href: "/admin/comunicados", label: nav.announcements, icon: Megaphone },
     { href: "/admin/empresas", label: nav.companies, icon: Building2 },
     { href: "/admin/eventos", label: nav.events, icon: PartyPopper },
     { href: "/admin/paquetes", label: nav.packages, icon: Package },

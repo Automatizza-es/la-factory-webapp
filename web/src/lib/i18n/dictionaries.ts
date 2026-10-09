@@ -338,6 +338,7 @@ export interface Dictionary {
       billing: string;
       settings: string;
       incidents: string;
+      announcements: string;
     };
     dashboard: {
       title: string;
@@ -508,6 +509,31 @@ export interface Dictionary {
       startsMidMonth: (date: string) => string;
       endsMidMonth: (date: string) => string;
       setPrices: string;
+    };
+    announcements: {
+      title: string;
+      subtitle: string;
+      audience: string;
+      audienceAll: string;
+      audienceCoworkers: string;
+      audienceGuests: string;
+      audiencePlan: string;
+      audienceContacts: string;
+      choosePlan: string;
+      searchPeople: string;
+      selected: (count: number) => string;
+      languagesHint: string;
+      titleLabel: string;
+      bodyLabel: string;
+      sendEmail: string;
+      sendEmailHint: string;
+      send: string;
+      sending: string;
+      confirm: string;
+      sent: (count: number) => string;
+      noRecipients: string;
+      textRequired: string;
+      openApp: string;
     };
     settings: {
       title: string;
@@ -1043,6 +1069,7 @@ const es: Dictionary = {
       billing: "Facturación",
       settings: "Configuración",
       incidents: "Incidencias",
+      announcements: "Comunicados",
     },
     dashboard: {
       title: "Dashboard",
@@ -1216,6 +1243,31 @@ const es: Dictionary = {
       startsMidMonth: (date) => `Alta el ${date}`,
       endsMidMonth: (date) => `Baja el ${date}`,
       setPrices: "Poner precios",
+    },
+    announcements: {
+      title: "Comunicados",
+      subtitle: "Envía un aviso a la comunidad: llega a la campanita y por push.",
+      audience: "¿A quién?",
+      audienceAll: "Toda la comunidad",
+      audienceCoworkers: "Coworkers",
+      audienceGuests: "Invitados",
+      audiencePlan: "Una tarifa",
+      audienceContacts: "Personas concretas",
+      choosePlan: "Elige tarifa",
+      searchPeople: "Buscar persona",
+      selected: (count) => (count === 1 ? "1 persona seleccionada" : `${count} personas seleccionadas`),
+      languagesHint: "Escríbelo en al menos un idioma. Cada persona lo recibe en el suyo; si no lo has escrito en su idioma, le llega en el que hayas escrito.",
+      titleLabel: "Título",
+      bodyLabel: "Mensaje",
+      sendEmail: "Enviar también por email",
+      sendEmailHint: "Para avisos importantes: cortes, cambios de horario, cierres...",
+      send: "Enviar comunicado",
+      sending: "Enviando...",
+      confirm: "¿Enviar este comunicado ahora?",
+      sent: (count) => (count === 1 ? "Enviado a 1 persona." : `Enviado a ${count} personas.`),
+      noRecipients: "No hay nadie en ese grupo.",
+      textRequired: "Escribe el título y el mensaje en al menos un idioma.",
+      openApp: "Abrir la app",
     },
     settings: {
       title: "Configuración",
@@ -1753,6 +1805,7 @@ const ca: Dictionary = {
       billing: "Facturació",
       settings: "Configuració",
       incidents: "Incidències",
+      announcements: "Comunicats",
     },
     dashboard: {
       title: "Dashboard",
@@ -1926,6 +1979,31 @@ const ca: Dictionary = {
       startsMidMonth: (date) => `Alta el ${date}`,
       endsMidMonth: (date) => `Baixa el ${date}`,
       setPrices: "Posar preus",
+    },
+    announcements: {
+      title: "Comunicats",
+      subtitle: "Envia un avís a la comunitat: arriba a la campaneta i per push.",
+      audience: "A qui?",
+      audienceAll: "Tota la comunitat",
+      audienceCoworkers: "Coworkers",
+      audienceGuests: "Convidats",
+      audiencePlan: "Una tarifa",
+      audienceContacts: "Persones concretes",
+      choosePlan: "Tria tarifa",
+      searchPeople: "Cercar persona",
+      selected: (count) => (count === 1 ? "1 persona seleccionada" : `${count} persones seleccionades`),
+      languagesHint: "Escriu-lo en almenys un idioma. Cada persona el rep en el seu; si no l'has escrit en el seu idioma, li arriba en el que hagis escrit.",
+      titleLabel: "Títol",
+      bodyLabel: "Missatge",
+      sendEmail: "Enviar també per email",
+      sendEmailHint: "Per a avisos importants: talls, canvis d'horari, tancaments...",
+      send: "Enviar comunicat",
+      sending: "Enviant...",
+      confirm: "Enviar aquest comunicat ara?",
+      sent: (count) => (count === 1 ? "Enviat a 1 persona." : `Enviat a ${count} persones.`),
+      noRecipients: "No hi ha ningú en aquest grup.",
+      textRequired: "Escriu el títol i el missatge en almenys un idioma.",
+      openApp: "Obrir l'app",
     },
     settings: {
       title: "Configuració",
@@ -2462,6 +2540,7 @@ const en: Dictionary = {
       billing: "Billing",
       settings: "Settings",
       incidents: "Issues",
+      announcements: "Announcements",
     },
     dashboard: {
       title: "Dashboard",
@@ -2635,6 +2714,31 @@ const en: Dictionary = {
       startsMidMonth: (date) => `Starts ${date}`,
       endsMidMonth: (date) => `Ends ${date}`,
       setPrices: "Set prices",
+    },
+    announcements: {
+      title: "Announcements",
+      subtitle: "Send a notice to the community: it arrives in the bell and as a push.",
+      audience: "Who to?",
+      audienceAll: "The whole community",
+      audienceCoworkers: "Coworkers",
+      audienceGuests: "Guests",
+      audiencePlan: "One plan",
+      audienceContacts: "Specific people",
+      choosePlan: "Choose a plan",
+      searchPeople: "Search for someone",
+      selected: (count) => (count === 1 ? "1 person selected" : `${count} people selected`),
+      languagesHint: "Write it in at least one language. Everyone gets their own; if you didn't write theirs, they get the one you wrote.",
+      titleLabel: "Title",
+      bodyLabel: "Message",
+      sendEmail: "Also send by email",
+      sendEmailHint: "For important notices: outages, opening-hours changes, closures...",
+      send: "Send announcement",
+      sending: "Sending...",
+      confirm: "Send this announcement now?",
+      sent: (count) => (count === 1 ? "Sent to 1 person." : `Sent to ${count} people.`),
+      noRecipients: "Nobody is in that group.",
+      textRequired: "Write the title and message in at least one language.",
+      openApp: "Open the app",
     },
     settings: {
       title: "Settings",

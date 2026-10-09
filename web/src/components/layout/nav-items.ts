@@ -3,6 +3,7 @@
 import {
   Building2,
   CalendarDays,
+  Megaphone,
   Wrench,
   Receipt,
   Settings,
@@ -60,6 +61,7 @@ export function useNavItems(role: AppRole): { bottom: NavItem[]; sidebar: NavIte
             "/admin/eventos",
             "/admin/paquetes",
             "/admin/incidencias",
+            "/admin/comunicados",
             "/admin/empresas",
             "/admin/facturacion",
             "/admin/configuracion",
@@ -71,6 +73,7 @@ export function useNavItems(role: AppRole): { bottom: NavItem[]; sidebar: NavIte
         bookings,
         users,
         { href: "/admin/incidencias", label: nav.incidents, icon: Wrench },
+        { href: "/admin/comunicados", label: nav.announcements, icon: Megaphone },
         { href: "/admin/empresas", label: nav.companies, icon: Building2 },
         { href: "/admin/eventos", label: nav.events, icon: PartyPopper },
         { href: "/admin/paquetes", label: nav.packages, icon: Package },
