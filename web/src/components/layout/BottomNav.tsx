@@ -2,25 +2,19 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CalendarDays, Home, ListChecks, User } from "lucide-react";
-import { useI18n } from "@/lib/i18n/context";
+import { isNavItemActive, useNavItems, type AppRole } from "@/components/layout/nav-items";
 
-export function BottomNav() {
+// Phone-only tab bar; tablet and desktop use the Sidebar instead.
+export function BottomNav({ role }: { role: AppRole }) {
   const pathname = usePathname();
-  const { dict } = useI18n();
-
-  const NAV_ITEMS = [
-    { href: "/", label: dict.nav.home, icon: Home },
-    { href: "/calendario", label: dict.nav.book, icon: CalendarDays },
-    { href: "/reservas", label: dict.nav.bookings, icon: ListChecks },
-    { href: "/perfil", label: dict.nav.profile, icon: User },
-  ];
+  const { bottom } = useNavItems(role);
 
   return (
-    <nav className="sticky bottom-0 border-t border-sand/60 bg-cream/95 px-2 pb-[max(env(safe-area-inset-bottom,0px),8px)] pt-2 backdrop-blur-sm">
+    <nav className="sticky bottom-0 border-t border-sand/60 bg-cream/95 px-2 pb-[max(env(safe-area-inset-bottom,0px),8px)] pt-2 backdrop-blur-sm md:hidden">
       <ul className="grid grid-cols-4">
-        {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
-          const isActive = pathname === href;
+        {bottom.map((item) => {
+          const { href, label, icon: Icon } = item;
+          const isActive = isNavItemActive(item, pathname);
           return (
             <li key={href}>
               <Link
@@ -30,10 +24,7 @@ export function BottomNav() {
                 }`}
                 aria-current={isActive ? "page" : undefined}
               >
-                <Icon
-                  className="h-5 w-5"
-                  strokeWidth={isActive ? 2.25 : 1.75}
-                />
+                <Icon className="h-5 w-5" strokeWidth={isActive ? 2.25 : 1.75} />
                 <span className={isActive ? "font-semibold" : ""}>{label}</span>
               </Link>
             </li>

@@ -42,7 +42,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
 
   return (
     <html lang={locale} className={`${inter.variable} h-full`}>
-      <body className="min-h-full bg-cream font-sans text-ink antialiased md:bg-sand/25">
+      <body className="min-h-full bg-cream font-sans text-ink antialiased">
         <I18nProvider locale={locale}>{children}</I18nProvider>
       </body>
     </html>

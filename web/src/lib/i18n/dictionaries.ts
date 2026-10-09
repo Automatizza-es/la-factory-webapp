@@ -6,6 +6,8 @@ export interface Dictionary {
     book: string;
     bookings: string;
     profile: string;
+    events: string;
+    packages: string;
   };
   home: {
     greeting: string;
@@ -179,8 +181,6 @@ export interface Dictionary {
     signOut: string;
     notifications: string;
     changePassword: string;
-    adminPanel: string;
-    coworkerSpace: string;
   };
   login: {
     title: string;
@@ -268,7 +268,18 @@ export interface Dictionary {
     label: string;
   };
   admin: {
-    nav: { dashboard: string; calendar: string; coworkers: string; book: string; packages: string; events: string };
+    nav: {
+      dashboard: string;
+      calendar: string;
+      coworkers: string;
+      book: string;
+      packages: string;
+      events: string;
+      bookings: string;
+      users: string;
+      more: string;
+      account: string;
+    };
     dashboard: {
       title: string;
       subtitle: string;
@@ -488,7 +499,14 @@ export interface Dictionary {
 }
 
 const es: Dictionary = {
-  nav: { home: "Inicio", book: "Reservar", bookings: "Mis reservas", profile: "Perfil" },
+  nav: {
+    home: "Inicio",
+    book: "Reservar",
+    bookings: "Mis reservas",
+    profile: "Perfil",
+    events: "Eventos",
+    packages: "Mis paquetes",
+  },
   home: {
     greeting: "Hola",
     subtitle: "Qué bueno tenerte por aquí",
@@ -659,8 +677,6 @@ const es: Dictionary = {
     signOut: "Cerrar sesión",
     notifications: "Notificaciones",
     changePassword: "Cambiar contraseña",
-    adminPanel: "Panel de admin",
-    coworkerSpace: "Mi espacio de coworker",
   },
   login: {
     title: "Entrar",
@@ -746,7 +762,18 @@ const es: Dictionary = {
   },
   language: { label: "Idioma" },
   admin: {
-    nav: { dashboard: "Dashboard", calendar: "Calendario", coworkers: "Coworkers", book: "Reservar", packages: "Paquetería", events: "Eventos" },
+    nav: {
+      dashboard: "Dashboard",
+      calendar: "Calendario",
+      coworkers: "Coworkers",
+      book: "Nueva reserva",
+      packages: "Paquetería",
+      events: "Eventos",
+      bookings: "Reservas",
+      users: "Usuarios",
+      more: "Más",
+      account: "Cuenta",
+    },
     dashboard: {
       title: "Dashboard",
       subtitle: "Resumen de hoy en La Factory.",
@@ -969,7 +996,14 @@ const es: Dictionary = {
 };
 
 const ca: Dictionary = {
-  nav: { home: "Inici", book: "Reservar", bookings: "Les meves reserves", profile: "Perfil" },
+  nav: {
+    home: "Inici",
+    book: "Reservar",
+    bookings: "Les meves reserves",
+    profile: "Perfil",
+    events: "Esdeveniments",
+    packages: "Els meus paquets",
+  },
   home: {
     greeting: "Hola",
     subtitle: "Que bé tenir-te per aquí",
@@ -1140,8 +1174,6 @@ const ca: Dictionary = {
     signOut: "Tancar sessió",
     notifications: "Notificacions",
     changePassword: "Canviar contrasenya",
-    adminPanel: "Panell d'admin",
-    coworkerSpace: "El meu espai de coworker",
   },
   login: {
     title: "Entrar",
@@ -1227,7 +1259,18 @@ const ca: Dictionary = {
   },
   language: { label: "Idioma" },
   admin: {
-    nav: { dashboard: "Dashboard", calendar: "Calendari", coworkers: "Coworkers", book: "Reservar", packages: "Paqueteria", events: "Esdeveniments" },
+    nav: {
+      dashboard: "Dashboard",
+      calendar: "Calendari",
+      coworkers: "Coworkers",
+      book: "Nova reserva",
+      packages: "Paqueteria",
+      events: "Esdeveniments",
+      bookings: "Reserves",
+      users: "Usuaris",
+      more: "Més",
+      account: "Compte",
+    },
     dashboard: {
       title: "Dashboard",
       subtitle: "Resum d'avui a La Factory.",
@@ -1450,7 +1493,14 @@ const ca: Dictionary = {
 };
 
 const en: Dictionary = {
-  nav: { home: "Home", book: "Book", bookings: "My bookings", profile: "Profile" },
+  nav: {
+    home: "Home",
+    book: "Book",
+    bookings: "My bookings",
+    profile: "Profile",
+    events: "Events",
+    packages: "My packages",
+  },
   home: {
     greeting: "Hi",
     subtitle: "Great to have you here",
@@ -1620,8 +1670,6 @@ const en: Dictionary = {
     signOut: "Sign out",
     notifications: "Notifications",
     changePassword: "Change password",
-    adminPanel: "Admin panel",
-    coworkerSpace: "My coworker space",
   },
   login: {
     title: "Sign in",
@@ -1707,7 +1755,18 @@ const en: Dictionary = {
   },
   language: { label: "Language" },
   admin: {
-    nav: { dashboard: "Dashboard", calendar: "Calendar", coworkers: "Coworkers", book: "Book", packages: "Packages", events: "Events" },
+    nav: {
+      dashboard: "Dashboard",
+      calendar: "Calendar",
+      coworkers: "Coworkers",
+      book: "New booking",
+      packages: "Packages",
+      events: "Events",
+      bookings: "Bookings",
+      users: "Users",
+      more: "More",
+      account: "Account",
+    },
     dashboard: {
       title: "Dashboard",
       subtitle: "Today's summary at La Factory.",

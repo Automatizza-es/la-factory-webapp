@@ -56,25 +56,6 @@ function capitalize(text: string) {
   return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
-// Whether the contact has a plan right now -- for admins, this is what
-// decides if they also get a coworker space.
-export async function hasActiveMembership(
-  supabase: SupabaseClient,
-  contactId: string,
-): Promise<boolean> {
-  const todayIso = new Date().toISOString().slice(0, 10);
-  const { data } = await supabase
-    .from("memberships")
-    .select("id")
-    .eq("contact_id", contactId)
-    .eq("status", "active")
-    .lte("start_date", todayIso)
-    .or(`end_date.is.null,end_date.gte.${todayIso}`)
-    .limit(1)
-    .maybeSingle();
-  return !!data;
-}
-
 export async function getQuotaSummary(
   supabase: SupabaseClient,
   contactId: string,
