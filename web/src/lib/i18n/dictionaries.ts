@@ -290,6 +290,23 @@ export interface Dictionary {
       incidents: string;
       noIncidents: string;
       noBookingsToday: string;
+      roomsNow: string;
+      busyUntil: (time: string) => string;
+      freeUntil: (time: string) => string;
+      freeRestOfDay: string;
+      packagesTitle: string;
+      pendingPackages: (count: number) => string;
+      noPendingPackages: string;
+      latestPackages: string;
+      nextEvent: string;
+      noUpcomingEvents: string;
+      registered: (count: number, capacity: number | null) => string;
+      quickActions: string;
+      newBooking: string;
+      newCoworker: string;
+      registerPackage: string;
+      newEvent: string;
+      seeAll: string;
     };
     calendar: {
       title: string;
@@ -797,6 +814,25 @@ const es: Dictionary = {
       incidents: "Incidencias",
       noIncidents: "Sin incidencias.",
       noBookingsToday: "No hay reservas para hoy.",
+      roomsNow: "Salas ahora",
+      busyUntil: (time) => `Ocupada hasta las ${time}`,
+      freeUntil: (time) => `Libre hasta las ${time}`,
+      freeRestOfDay: "Libre el resto del día",
+      packagesTitle: "Paquetería",
+      pendingPackages: (count) =>
+        count === 1 ? "1 paquete pendiente de recoger" : `${count} paquetes pendientes de recoger`,
+      noPendingPackages: "Ningún paquete pendiente.",
+      latestPackages: "Últimos recibidos",
+      nextEvent: "Próximo evento",
+      noUpcomingEvents: "No hay eventos próximos.",
+      registered: (count, capacity) =>
+        capacity ? `${count} de ${capacity} plazas` : count === 1 ? "1 inscrito" : `${count} inscritos`,
+      quickActions: "Accesos rápidos",
+      newBooking: "Nueva reserva",
+      newCoworker: "Nuevo coworker",
+      registerPackage: "Registrar paquete",
+      newEvent: "Crear evento",
+      seeAll: "Ver todo",
     },
     calendar: {
       title: "Calendario",
@@ -1307,6 +1343,25 @@ const ca: Dictionary = {
       incidents: "Incidències",
       noIncidents: "Sense incidències.",
       noBookingsToday: "No hi ha reserves per avui.",
+      roomsNow: "Sales ara",
+      busyUntil: (time) => `Ocupada fins a les ${time}`,
+      freeUntil: (time) => `Lliure fins a les ${time}`,
+      freeRestOfDay: "Lliure la resta del dia",
+      packagesTitle: "Paqueteria",
+      pendingPackages: (count) =>
+        count === 1 ? "1 paquet pendent de recollir" : `${count} paquets pendents de recollir`,
+      noPendingPackages: "Cap paquet pendent.",
+      latestPackages: "Últims rebuts",
+      nextEvent: "Proper esdeveniment",
+      noUpcomingEvents: "No hi ha esdeveniments propers.",
+      registered: (count, capacity) =>
+        capacity ? `${count} de ${capacity} places` : count === 1 ? "1 inscrit" : `${count} inscrits`,
+      quickActions: "Accessos ràpids",
+      newBooking: "Nova reserva",
+      newCoworker: "Nou coworker",
+      registerPackage: "Registrar paquet",
+      newEvent: "Crear esdeveniment",
+      seeAll: "Veure-ho tot",
     },
     calendar: {
       title: "Calendari",
@@ -1816,6 +1871,25 @@ const en: Dictionary = {
       incidents: "Incidents",
       noIncidents: "No incidents.",
       noBookingsToday: "No bookings for today.",
+      roomsNow: "Rooms right now",
+      busyUntil: (time) => `Busy until ${time}`,
+      freeUntil: (time) => `Free until ${time}`,
+      freeRestOfDay: "Free for the rest of the day",
+      packagesTitle: "Packages",
+      pendingPackages: (count) =>
+        count === 1 ? "1 package waiting to be picked up" : `${count} packages waiting to be picked up`,
+      noPendingPackages: "No packages waiting.",
+      latestPackages: "Latest received",
+      nextEvent: "Next event",
+      noUpcomingEvents: "No upcoming events.",
+      registered: (count, capacity) =>
+        capacity ? `${count} of ${capacity} spots` : count === 1 ? "1 attendee" : `${count} attendees`,
+      quickActions: "Quick actions",
+      newBooking: "New booking",
+      newCoworker: "New coworker",
+      registerPackage: "Register package",
+      newEvent: "Create event",
+      seeAll: "See all",
     },
     calendar: {
       title: "Calendar",

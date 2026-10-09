@@ -181,3 +181,40 @@ export async function getAdminPackages(
   const rows = (data ?? []) as unknown as RawPackage[];
   return toPackageItems(supabase, rows);
 }
+
+export interface AdminPackagesSummary {
+  pendingCount: number;
+  latest: { id: string; recipientName: string; receivedAt: string; status: "pending" | "collected" }[];
+}
+
+// Dashboard card: just counts and names, no photos (so no signed URLs).
+export async function getAdminPackagesSummary(
+  supabase: SupabaseClient,
+  latestLimit = 3,
+): Promise<AdminPackagesSummary> {
+  const [{ count }, { data }] = await Promise.all([
+    supabase.from("packages").select("id", { count: "exact", head: true }).eq("status", "pending"),
+    supabase
+      .from("packages")
+      .select("id, status, received_at, contacts!recipient_contact_id(first_name, last_name)")
+      .order("received_at", { ascending: false })
+      .limit(latestLimit),
+  ]);
+
+  const rows = (data ?? []) as unknown as {
+    id: string;
+    status: "pending" | "collected";
+    received_at: string;
+    contacts: { first_name: string; last_name: string | null } | null;
+  }[];
+
+  return {
+    pendingCount: count ?? 0,
+    latest: rows.map((row) => ({
+      id: row.id,
+      recipientName: row.contacts ? `${row.contacts.first_name} ${row.contacts.last_name ?? ""}`.trim() : "",
+      receivedAt: row.received_at,
+      status: row.status,
+    })),
+  };
+}
