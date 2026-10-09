@@ -214,6 +214,25 @@ export interface Dictionary {
     samePassword: string;
     error: string;
     back: string;
+    welcomeTitle: string;
+    welcomeSubtitle: string;
+  };
+  emails: {
+    greeting: (name: string) => string;
+    linkFallback: string;
+    invite: {
+      subject: string;
+      heading: string;
+      body: string;
+      cta: string;
+    };
+    welcome: {
+      subject: string;
+      heading: string;
+      body: string;
+      cta: string;
+      validity: string;
+    };
   };
   unlinked: {
     title: string;
@@ -296,6 +315,14 @@ export interface Dictionary {
       cancelInvitation: string;
       linkCopied: string;
       cancelConfirm: string;
+      statusNoAccess: string;
+      statusWelcomeSent: string;
+      sendWelcome: string;
+      sendingWelcome: string;
+      sendWelcomeAll: (count: number) => string;
+      sendWelcomeConfirm: (count: number) => string;
+      welcomeSent: (count: number) => string;
+      welcomeError: string;
     };
     newCoworker: {
       title: string;
@@ -667,6 +694,25 @@ const es: Dictionary = {
     samePassword: "La contraseña nueva tiene que ser distinta de la actual.",
     error: "No hemos podido guardar la contraseña. Inténtalo de nuevo.",
     back: "Volver",
+    welcomeTitle: "Crea tu contraseña",
+    welcomeSubtitle: "Te damos la bienvenida al hub de La Factory. Elige una contraseña de al menos 8 caracteres para entrar.",
+  },
+  emails: {
+    greeting: (name) => (name ? `Hola ${name},` : "Hola,"),
+    linkFallback: "Si el botón no funciona, copia y pega este enlace en tu navegador:",
+    invite: {
+      subject: "Bienvenido/a a La Factory Coworking",
+      heading: "Completa tu registro",
+      body: "Te han dado de alta como coworker en La Factory Coworking. Completa tus datos y elige tu contraseña para empezar a usar la app: reservar salas, ver tus paquetes y enterarte de los eventos.",
+      cta: "Completar registro",
+    },
+    welcome: {
+      subject: "Ya tienes acceso al hub de La Factory",
+      heading: "Te damos la bienvenida al hub",
+      body: "Hemos estrenado una app para los coworkers de La Factory: desde aquí podrás reservar salas, ver tus paquetes y enterarte de los eventos. Ya tienes tu cuenta preparada; solo falta que crees tu contraseña.",
+      cta: "Crear mi contraseña",
+      validity: "El enlace es válido durante 14 días.",
+    },
   },
   unlinked: {
     title: "Tu cuenta todavía no está vinculada",
@@ -747,6 +793,15 @@ const es: Dictionary = {
       cancelInvitation: "Cancelar invitación",
       linkCopied: "Enlace copiado",
       cancelConfirm: "¿Seguro que quieres cancelar esta invitación?",
+      statusNoAccess: "Sin acceso",
+      statusWelcomeSent: "Bienvenida enviada",
+      sendWelcome: "Enviar bienvenida",
+      sendingWelcome: "Enviando...",
+      sendWelcomeAll: (count) => `Enviar bienvenida a todos (${count})`,
+      sendWelcomeConfirm: (count) =>
+        `Se enviará un email de bienvenida a ${count} ${count === 1 ? "coworker" : "coworkers"} para que creen su contraseña. ¿Continuar?`,
+      welcomeSent: (count) => `Bienvenida enviada a ${count} ${count === 1 ? "coworker" : "coworkers"}.`,
+      welcomeError: "No hemos podido enviar la bienvenida. Inténtalo de nuevo.",
     },
     newCoworker: {
       title: "Nuevo coworker",
@@ -1120,6 +1175,25 @@ const ca: Dictionary = {
     samePassword: "La contrasenya nova ha de ser diferent de l'actual.",
     error: "No hem pogut desar la contrasenya. Torna-ho a provar.",
     back: "Tornar",
+    welcomeTitle: "Crea la teva contrasenya",
+    welcomeSubtitle: "Et donem la benvinguda al hub de La Factory. Tria una contrasenya d'almenys 8 caràcters per entrar.",
+  },
+  emails: {
+    greeting: (name) => (name ? `Hola ${name},` : "Hola,"),
+    linkFallback: "Si el botó no funciona, copia i enganxa aquest enllaç al navegador:",
+    invite: {
+      subject: "Benvingut/da a La Factory Coworking",
+      heading: "Completa el teu registre",
+      body: "T'han donat d'alta com a coworker a La Factory Coworking. Completa les teves dades i tria la teva contrasenya per començar a fer servir l'app: reservar sales, veure els teus paquets i assabentar-te dels esdeveniments.",
+      cta: "Completar registre",
+    },
+    welcome: {
+      subject: "Ja tens accés al hub de La Factory",
+      heading: "Et donem la benvinguda al hub",
+      body: "Hem estrenat una app per als coworkers de La Factory: des d'aquí podràs reservar sales, veure els teus paquets i assabentar-te dels esdeveniments. Ja tens el compte preparat; només cal que creïs la teva contrasenya.",
+      cta: "Crear la meva contrasenya",
+      validity: "L'enllaç és vàlid durant 14 dies.",
+    },
   },
   unlinked: {
     title: "El teu compte encara no està vinculat",
@@ -1200,6 +1274,15 @@ const ca: Dictionary = {
       cancelInvitation: "Cancel·lar invitació",
       linkCopied: "Enllaç copiat",
       cancelConfirm: "Segur que vols cancel·lar aquesta invitació?",
+      statusNoAccess: "Sense accés",
+      statusWelcomeSent: "Benvinguda enviada",
+      sendWelcome: "Enviar benvinguda",
+      sendingWelcome: "Enviant...",
+      sendWelcomeAll: (count) => `Enviar benvinguda a tothom (${count})`,
+      sendWelcomeConfirm: (count) =>
+        `S'enviarà un email de benvinguda a ${count} ${count === 1 ? "coworker" : "coworkers"} perquè creïn la seva contrasenya. Continuar?`,
+      welcomeSent: (count) => `Benvinguda enviada a ${count} ${count === 1 ? "coworker" : "coworkers"}.`,
+      welcomeError: "No hem pogut enviar la benvinguda. Torna-ho a provar.",
     },
     newCoworker: {
       title: "Nou coworker",
@@ -1572,6 +1655,25 @@ const en: Dictionary = {
     samePassword: "The new password must be different from your current one.",
     error: "We couldn't save the password. Please try again.",
     back: "Back",
+    welcomeTitle: "Create your password",
+    welcomeSubtitle: "Welcome to the La Factory hub. Choose a password with at least 8 characters to sign in.",
+  },
+  emails: {
+    greeting: (name) => (name ? `Hi ${name},` : "Hi,"),
+    linkFallback: "If the button doesn't work, copy and paste this link into your browser:",
+    invite: {
+      subject: "Welcome to La Factory Coworking",
+      heading: "Complete your sign-up",
+      body: "You've been added as a coworker at La Factory Coworking. Fill in your details and choose your password to start using the app: book rooms, check your packages and keep up with events.",
+      cta: "Complete sign-up",
+    },
+    welcome: {
+      subject: "You now have access to the La Factory hub",
+      heading: "Welcome to the hub",
+      body: "We've launched an app for La Factory coworkers: book rooms, check your packages and keep up with events, all in one place. Your account is ready; you just need to create your password.",
+      cta: "Create my password",
+      validity: "The link is valid for 14 days.",
+    },
   },
   unlinked: {
     title: "Your account isn't linked yet",
@@ -1652,6 +1754,15 @@ const en: Dictionary = {
       cancelInvitation: "Cancel invitation",
       linkCopied: "Link copied",
       cancelConfirm: "Are you sure you want to cancel this invitation?",
+      statusNoAccess: "No access",
+      statusWelcomeSent: "Welcome sent",
+      sendWelcome: "Send welcome",
+      sendingWelcome: "Sending...",
+      sendWelcomeAll: (count) => `Send welcome to everyone (${count})`,
+      sendWelcomeConfirm: (count) =>
+        `A welcome email will go to ${count} ${count === 1 ? "coworker" : "coworkers"} so they can create their password. Continue?`,
+      welcomeSent: (count) => `Welcome sent to ${count} ${count === 1 ? "coworker" : "coworkers"}.`,
+      welcomeError: "We couldn't send the welcome email. Please try again.",
     },
     newCoworker: {
       title: "New coworker",

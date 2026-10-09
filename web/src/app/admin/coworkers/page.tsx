@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Plus } from "lucide-react";
 import { InvitationActions } from "@/components/admin/InvitationActions";
+import { WelcomeButton } from "@/components/admin/WelcomeButton";
 import { getAllCoworkers, type AdminCoworkerStage } from "@/lib/data/admin";
 import { formatMinutesAsHours } from "@/lib/format";
 import { getDictionary } from "@/lib/i18n/dictionaries";
@@ -9,6 +10,7 @@ import { createClient } from "@/lib/supabase/server";
 
 const STAGE_STYLE: Record<AdminCoworkerStage, string> = {
   active: "bg-sand/50 text-brown-dark",
+  no_access: "bg-amber-50 text-amber-700",
   invited: "bg-cream text-warm-gray",
   onboarding: "bg-amber-50 text-amber-700",
   invite_expired: "bg-red-50 text-red-600",
@@ -30,26 +32,39 @@ export default async function AdminCoworkersPage() {
 
   const stageLabel: Record<AdminCoworkerStage, string> = {
     active: dict.admin.coworkers.statusActive,
+    no_access: dict.admin.coworkers.statusNoAccess,
     invited: dict.admin.coworkers.statusInvited,
     onboarding: dict.admin.coworkers.statusOnboarding,
     invite_expired: dict.admin.coworkers.statusInviteExpired,
     invite_cancelled: dict.admin.coworkers.statusInviteCancelled,
   };
 
+  const withoutAccess = coworkers.filter((c) => c.stage === "no_access").map((c) => c.contactId);
+
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-start justify-between gap-3">
+      <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold text-ink">{dict.admin.coworkers.title}</h1>
           <p className="text-sm text-warm-gray">{dict.admin.coworkers.subtitle}</p>
         </div>
-        <Link
-          href="/admin/coworkers/new"
-          className="flex shrink-0 items-center gap-1.5 rounded-xl bg-brown-dark px-4 py-2.5 text-sm font-medium text-white"
-        >
-          <Plus className="h-4 w-4" strokeWidth={2.5} />
-          {dict.admin.coworkers.newCoworker}
-        </Link>
+        <div className="flex flex-wrap gap-2">
+          {withoutAccess.length > 0 && (
+            <WelcomeButton
+              bulk
+              contactIds={withoutAccess}
+              label={dict.admin.coworkers.sendWelcomeAll(withoutAccess.length)}
+              dict={dict.admin.coworkers}
+            />
+          )}
+          <Link
+            href="/admin/coworkers/new"
+            className="flex shrink-0 items-center gap-1.5 rounded-xl bg-brown-dark px-4 py-2.5 text-sm font-medium text-white"
+          >
+            <Plus className="h-4 w-4" strokeWidth={2.5} />
+            {dict.admin.coworkers.newCoworker}
+          </Link>
+        </div>
       </div>
 
       {coworkers.length === 0 ? (
@@ -98,7 +113,9 @@ export default async function AdminCoworkersPage() {
                         >
                           {c.stage === "active"
                             ? membershipStatusLabel[c.membershipStatus]
-                            : stageLabel[c.stage]}
+                            : c.stage === "invited" && c.invitation?.kind === "welcome"
+                              ? dict.admin.coworkers.statusWelcomeSent
+                              : stageLabel[c.stage]}
                         </span>
                       </td>
                       <td className="px-5 py-3 text-ink">
@@ -110,6 +127,13 @@ export default async function AdminCoworkersPage() {
                           : "—"}
                       </td>
                       <td className="px-5 py-3">
+                        {c.stage === "no_access" && (
+                          <WelcomeButton
+                            contactIds={[c.contactId]}
+                            label={dict.admin.coworkers.sendWelcome}
+                            dict={dict.admin.coworkers}
+                          />
+                        )}
                         {isPending && c.invitation && (
                           <InvitationActions
                             invitationId={c.invitation.id}

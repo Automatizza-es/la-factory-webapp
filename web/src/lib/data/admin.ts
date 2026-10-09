@@ -37,6 +37,9 @@ export async function getAllContacts(supabase: SupabaseClient): Promise<AdminCon
 
 export type AdminCoworkerStage =
   | "active"
+  // Has a plan but no login and no invitation yet (e.g. imported): needs a
+  // welcome email.
+  | "no_access"
   | "invited"
   | "onboarding"
   | "invite_expired"
@@ -56,6 +59,7 @@ export interface AdminCoworkerRow {
     id: string;
     token: string;
     status: "pending" | "completed" | "cancelled";
+    kind: "onboarding" | "welcome";
   } | null;
 }
 
@@ -80,7 +84,7 @@ export async function getAllCoworkers(
 
   const { data: invitationRows } = await supabase
     .from("coworker_invitations")
-    .select("id, contact_id, token, status, expires_at, created_at")
+    .select("id, contact_id, token, status, expires_at, kind, created_at")
     .in("contact_id", contactIds.length > 0 ? contactIds : ["00000000-0000-0000-0000-000000000000"])
     .order("created_at", { ascending: false });
 
@@ -119,15 +123,19 @@ export async function getAllCoworkers(
     }
 
     const invitation = latestInvitationByContact.get(row.contact_id) ?? null;
+    const hasLogin = linkedContactIds.has(row.contact_id);
     let stage: AdminCoworkerStage = "active";
-    if (invitation) {
+    if (!invitation || (invitation.kind === "welcome" && invitation.status === "cancelled")) {
+      // A cancelled welcome just means "not sent yet" again.
+      if (!hasLogin) stage = "no_access";
+    } else {
       if (invitation.status === "completed") {
         stage = "active";
       } else if (invitation.status === "cancelled") {
         stage = "invite_cancelled";
       } else if (new Date(invitation.expires_at) < new Date()) {
         stage = "invite_expired";
-      } else if (linkedContactIds.has(row.contact_id)) {
+      } else if (hasLogin && invitation.kind === "onboarding") {
         stage = "onboarding";
       } else {
         stage = "invited";
@@ -145,7 +153,12 @@ export async function getAllCoworkers(
       usedMinutes,
       stage,
       invitation: invitation
-        ? { id: invitation.id, token: invitation.token, status: invitation.status }
+        ? {
+            id: invitation.id,
+            token: invitation.token,
+            status: invitation.status,
+            kind: invitation.kind,
+          }
         : null,
     });
   }

@@ -5,7 +5,8 @@ import { createClient } from "@/lib/supabase/server";
 // Visiting a coworker's personal invite link: verify the token ourselves
 // (our own table, not Supabase's), then sign them in as that contact via
 // admin-generateLink + verify + setSession, and hand off to the onboarding
-// form.
+// form -- or, for a welcome invitation (existing coworker whose details we
+// already have), straight to creating their password.
 export async function GET(request: NextRequest, { params }: { params: Promise<{ token: string }> }) {
   const { token } = await params;
   const origin = request.nextUrl.origin;
@@ -19,7 +20,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   // so a bare `contacts(...)` embed is ambiguous -- same gotcha as bookings.
   const { data: invitation } = await admin
     .from("coworker_invitations")
-    .select("id, status, expires_at, contacts!coworker_invitations_contact_id_fkey(email)")
+    .select("id, status, expires_at, kind, contacts!coworker_invitations_contact_id_fkey(email)")
     .eq("token", token)
     .maybeSingle();
 
@@ -65,5 +66,6 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     return NextResponse.redirect(new URL("/onboarding?error=not_found", origin));
   }
 
-  return NextResponse.redirect(new URL("/onboarding", origin));
+  const next = invitation.kind === "welcome" ? "/nueva-contrasena?bienvenida=1" : "/onboarding";
+  return NextResponse.redirect(new URL(next, origin));
 }
