@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { adminActionContext } from "@/lib/admin-action";
+import { createClient } from "@/lib/supabase/server";
 import { utcIsoToZonedDateAndMinutes } from "@/lib/timezone";
 
 type Result = { error: string | null };
@@ -154,6 +155,29 @@ export async function setSharedHours(contactId: string, ownerContactId: string |
       .from("quota_account_members")
       .insert({ quota_account_id: owner.quota_account_id, contact_id: contactId });
     if (error) return { error: t.error };
+  }
+  refresh(contactId);
+  return { error: null };
+}
+
+// "Añadir / quitar horas" for this month. `hours` is positive to add,
+// negative to remove; stored in minutes in the same ledger as bookings.
+export async function adjustHours(contactId: string, hours: number, note: string): Promise<Result> {
+  const { dict, admin } = await adminActionContext();
+  if (!admin) return { error: dict.errors.notAuthorized };
+  const minutes = Math.round(hours * 60);
+  if (!Number.isFinite(minutes) || minutes === 0) return { error: dict.admin.coworkerDetail.invalidHours };
+
+  // Through the user's own session: the function checks it's an admin and
+  // records who made the adjustment.
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("admin_adjust_quota", {
+    p_contact_id: contactId,
+    p_delta_minutes: minutes,
+    p_note: note,
+  });
+  if (error) {
+    return { error: error.message === "NO_ACTIVE_PLAN" ? dict.errors.noActivePlan : dict.admin.userDetail.error };
   }
   refresh(contactId);
   return { error: null };

@@ -138,17 +138,23 @@ export async function getQuotaSummary(
     .maybeSingle();
 
   let availableMinutes = plan.monthly_minutes;
+  // Hours the admin added (or removed) by hand this month count towards the
+  // month's total, not as "used".
+  let adjustedMinutes = 0;
 
   if (period) {
     const { data: movements } = await supabase
       .from("quota_movements")
-      .select("delta_minutes")
+      .select("delta_minutes, reason_code")
       .eq("quota_period_id", period.id);
 
     availableMinutes = (movements ?? []).reduce((sum, m) => sum + m.delta_minutes, 0);
+    adjustedMinutes = (movements ?? [])
+      .filter((m) => m.reason_code === "manual_adjustment")
+      .reduce((sum, m) => sum + m.delta_minutes, 0);
   }
 
-  const totalMinutes = period?.allocated_minutes ?? plan.monthly_minutes;
+  const totalMinutes = (period?.allocated_minutes ?? plan.monthly_minutes) + adjustedMinutes;
 
   const monthLabelFormatter = new Intl.DateTimeFormat(INTL_LOCALE[locale], {
     month: "long",

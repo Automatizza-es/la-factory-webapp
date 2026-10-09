@@ -6,6 +6,7 @@ import { PersonBillingCard } from "@/components/admin/person/PersonBillingCard";
 import { PersonFieldsCard } from "@/components/admin/person/PersonFieldsCard";
 import { PersonFlagsCard } from "@/components/admin/person/PersonFlagsCard";
 import { PersonPlanCard } from "@/components/admin/person/PersonPlanCard";
+import { QuotaAdjustForm } from "@/components/admin/person/QuotaAdjustForm";
 import { QuotaCard } from "@/components/home/QuotaCard";
 import { getCoworkerDetail } from "@/lib/data/admin";
 import { formatMinutesAsHours } from "@/lib/format";
@@ -154,7 +155,10 @@ export default async function AdminCoworkerDetailPage({ params }: PageProps) {
       {detail.quota && (
         <section>
           <h2 className="mb-3 font-semibold text-ink">{dict.admin.coworkerDetail.quotaThisMonth}</h2>
-          <QuotaCard quota={detail.quota} dict={dict.quota} />
+          <div className="grid items-start gap-4 lg:grid-cols-2">
+            <QuotaCard quota={detail.quota} dict={dict.quota} />
+            <QuotaAdjustForm contactId={c.id} />
+          </div>
         </section>
       )}
 

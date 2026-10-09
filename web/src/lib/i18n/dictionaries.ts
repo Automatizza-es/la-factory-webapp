@@ -511,6 +511,14 @@ export interface Dictionary {
       reasonBooking: string;
       reasonCancellation: string;
       reasonManualAdjustment: string;
+      adjustTitle: string;
+      adjustHint: string;
+      hours: string;
+      reasonPlaceholder: string;
+      addHours: string;
+      removeHours: string;
+      invalidHours: string;
+      hoursUpdated: string;
       upcomingBookings: string;
       history: string;
       noUpcoming: string;
@@ -1164,6 +1172,14 @@ const es: Dictionary = {
       reasonBooking: "Reserva",
       reasonCancellation: "Cancelación",
       reasonManualAdjustment: "Ajuste manual",
+      adjustTitle: "Añadir o quitar horas",
+      adjustHint: "Se aplica a las horas de este mes.",
+      hours: "Horas",
+      reasonPlaceholder: "Motivo (opcional)",
+      addHours: "Añadir",
+      removeHours: "Quitar",
+      invalidHours: "Indica un número de horas mayor que cero.",
+      hoursUpdated: "Horas actualizadas.",
       upcomingBookings: "Próximas reservas",
       history: "Histórico",
       noUpcoming: "No tiene reservas próximas.",
@@ -1819,6 +1835,14 @@ const ca: Dictionary = {
       reasonBooking: "Reserva",
       reasonCancellation: "Cancel·lació",
       reasonManualAdjustment: "Ajust manual",
+      adjustTitle: "Afegir o treure hores",
+      adjustHint: "S'aplica a les hores d'aquest mes.",
+      hours: "Hores",
+      reasonPlaceholder: "Motiu (opcional)",
+      addHours: "Afegir",
+      removeHours: "Treure",
+      invalidHours: "Indica un nombre d'hores més gran que zero.",
+      hoursUpdated: "Hores actualitzades.",
       upcomingBookings: "Properes reserves",
       history: "Historial",
       noUpcoming: "No té reserves properes.",
@@ -2473,6 +2497,14 @@ const en: Dictionary = {
       reasonBooking: "Booking",
       reasonCancellation: "Cancellation",
       reasonManualAdjustment: "Manual adjustment",
+      adjustTitle: "Add or remove hours",
+      adjustHint: "Applies to this month's hours.",
+      hours: "Hours",
+      reasonPlaceholder: "Reason (optional)",
+      addHours: "Add",
+      removeHours: "Remove",
+      invalidHours: "Enter a number of hours above zero.",
+      hoursUpdated: "Hours updated.",
       upcomingBookings: "Upcoming bookings",
       history: "History",
       noUpcoming: "No upcoming bookings.",
