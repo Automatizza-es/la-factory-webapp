@@ -57,6 +57,24 @@ function renderNotification(
     } else {
       body = dict.eventNewBody("", "");
     }
+  } else if (row.type === "event_changed" || row.type === "event_cancelled" || row.type === "event_reminder") {
+    const when = event
+      ? (() => {
+          const zoned = utcIsoToZonedDateAndMinutes(event.startsAt);
+          return `${formatDateLong(zoned.date, locale)} · ${minutesToTime(zoned.minutes)}`;
+        })()
+      : "";
+    const eventTitle = event?.title ?? "";
+    if (row.type === "event_changed") {
+      title = dict.eventChangedTitle;
+      body = dict.eventChangedBody(eventTitle, when);
+    } else if (row.type === "event_cancelled") {
+      title = dict.eventCancelledTitle;
+      body = dict.eventCancelledBody(eventTitle);
+    } else {
+      title = dict.eventReminderTitle;
+      body = dict.eventReminderBody(eventTitle, when);
+    }
   } else if (row.type === "announcement") {
     title = announcement?.title ?? dict.genericTitle;
     body = announcement?.body ?? "";
@@ -124,7 +142,9 @@ export async function getMyNotifications(
     for (const p of packageRows ?? []) receivedAtById.set(p.id, p.received_at);
   }
 
-  const eventIds = rows.filter((r) => r.type === "event_new" && r.related_id).map((r) => r.related_id as string);
+  const eventIds = rows
+    .filter((r) => r.type.startsWith("event_") && r.related_id)
+    .map((r) => r.related_id as string);
   const eventById = new Map<string, { title: string; startsAt: string }>();
   if (eventIds.length > 0) {
     const { data: eventRows } = await supabase

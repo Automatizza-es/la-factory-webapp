@@ -11,7 +11,7 @@ export interface EventItem {
   capacity: number | null;
   registeredCount: number;
   registrationDeadline: string | null;
-  status: "published" | "cancelled";
+  status: "draft" | "published" | "cancelled";
   isRegistered: boolean;
 }
 
@@ -26,7 +26,7 @@ interface RawEvent {
   capacity: number | null;
   registered_count: number;
   registration_deadline: string | null;
-  status: "published" | "cancelled";
+  status: "draft" | "published" | "cancelled";
 }
 
 const EVENT_COLUMNS =

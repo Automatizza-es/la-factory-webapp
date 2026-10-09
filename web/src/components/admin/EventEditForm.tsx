@@ -35,6 +35,13 @@ export function EventEditForm({ event }: EventEditFormProps) {
       ? `${String(Math.floor(initialDeadline.minutes / 60)).padStart(2, "0")}:${String(initialDeadline.minutes % 60).padStart(2, "0")}`
       : "",
   );
+  const toTime = (minutes: number) =>
+    `${String(Math.floor(minutes / 60)).padStart(2, "0")}:${String(minutes % 60).padStart(2, "0")}`;
+  const initialStart = utcIsoToZonedDateAndMinutes(event.startsAt);
+  const initialEnd = utcIsoToZonedDateAndMinutes(event.endsAt);
+  const [date, setDate] = useState(initialStart.date);
+  const [startTime, setStartTime] = useState(toTime(initialStart.minutes));
+  const [endTime, setEndTime] = useState(toTime(initialEnd.minutes));
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -82,6 +89,9 @@ export function EventEditForm({ event }: EventEditFormProps) {
       capacity,
       registrationDeadlineDate: deadlineDate,
       registrationDeadlineTime: deadlineTime,
+      date,
+      startTime,
+      endTime,
     });
 
     setSubmitting(false);
@@ -142,6 +152,42 @@ export function EventEditForm({ event }: EventEditFormProps) {
             className="rounded-xl border border-sand bg-white px-3 py-2 text-ink outline-none focus:border-brown-dark"
           />
         </label>
+
+        <div className="mt-3 flex flex-col gap-3 rounded-2xl bg-cream/60 p-3">
+          <label className="flex flex-col gap-1 text-sm text-warm-gray">
+            {dict.dateLabel}
+            <input
+              type="date"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              required
+              className="rounded-xl border border-sand bg-white px-3 py-2 text-ink outline-none focus:border-brown-dark"
+            />
+          </label>
+          <div className="flex gap-3">
+            <label className="flex flex-1 flex-col gap-1 text-sm text-warm-gray">
+              {dict.startTimeLabel}
+              <input
+                type="time"
+                value={startTime}
+                onChange={(e) => setStartTime(e.target.value)}
+                required
+                className="rounded-xl border border-sand bg-white px-3 py-2 text-ink outline-none focus:border-brown-dark"
+              />
+            </label>
+            <label className="flex flex-1 flex-col gap-1 text-sm text-warm-gray">
+              {dict.endTimeLabel}
+              <input
+                type="time"
+                value={endTime}
+                onChange={(e) => setEndTime(e.target.value)}
+                required
+                className="rounded-xl border border-sand bg-white px-3 py-2 text-ink outline-none focus:border-brown-dark"
+              />
+            </label>
+          </div>
+          <p className="text-xs text-warm-gray">{dict.dateChangeNotice}</p>
+        </div>
 
         <label className="mt-3 flex flex-col gap-1 text-sm text-warm-gray">
           {dict.locationLabel}

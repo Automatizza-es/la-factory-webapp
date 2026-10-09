@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { PartyPopper, Plus } from "lucide-react";
 import { CancelEventButton } from "@/components/admin/CancelEventButton";
+import { PublishEventButton } from "@/components/admin/PublishEventButton";
 import { getAdminEvents } from "@/lib/data/events";
 import { formatDateLong, minutesToTime } from "@/lib/format";
 import { getDictionary } from "@/lib/i18n/dictionaries";
@@ -14,6 +15,24 @@ export default async function AdminEventsPage() {
   const dict = getDictionary(locale);
   const supabase = await createClient();
   const events = await getAdminEvents(supabase);
+
+  const t = dict.admin.events;
+  const now = new Date();
+  // "Finalizado" isn't stored: a published event whose end has passed.
+  const statusOf = (ev: (typeof events)[number]) =>
+    ev.status === "published" && new Date(ev.endsAt) < now ? "finished" : ev.status;
+  const STATUS_LABEL = {
+    draft: t.statusDraft,
+    published: t.statusPublished,
+    finished: t.statusFinished,
+    cancelled: t.statusCancelled,
+  };
+  const STATUS_STYLE = {
+    draft: "bg-amber-50 text-amber-700",
+    published: "bg-emerald-50 text-emerald-700",
+    finished: "bg-sand/50 text-warm-gray",
+    cancelled: "bg-red-50 text-red-600",
+  };
 
   function formatWhen(iso: string) {
     const zoned = utcIsoToZonedDateAndMinutes(iso);
@@ -54,7 +73,12 @@ export default async function AdminEventsPage() {
                 )}
               </div>
               <div className="min-w-0 flex-1">
-                <p className="truncate font-medium text-ink">{ev.title}</p>
+                <div className="flex flex-wrap items-center gap-2">
+                  <p className="truncate font-medium text-ink">{ev.title}</p>
+                  <span className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${STATUS_STYLE[statusOf(ev)]}`}>
+                    {STATUS_LABEL[statusOf(ev)]}
+                  </span>
+                </div>
                 <p className="text-xs text-warm-gray">{formatWhen(ev.startsAt)}</p>
                 <Link
                   href={`/admin/eventos/${ev.id}/asistentes`}
@@ -64,12 +88,11 @@ export default async function AdminEventsPage() {
                   {ev.capacity ? ` / ${ev.capacity}` : ` (${dict.admin.events.unlimitedCapacity})`}
                 </Link>
               </div>
-              {ev.status === "cancelled" ? (
-                <span className="shrink-0 rounded-full bg-sand/50 px-2.5 py-1 text-xs font-medium text-warm-gray">
-                  {dict.admin.events.statusCancelled}
-                </span>
-              ) : (
+              {statusOf(ev) === "cancelled" || statusOf(ev) === "finished" ? null : (
                 <div className="flex shrink-0 flex-col gap-1.5">
+                  {ev.status === "draft" && (
+                    <PublishEventButton eventId={ev.id} label={t.publish} confirmLabel={t.publishConfirm} />
+                  )}
                   <Link
                     href={`/admin/eventos/${ev.id}/editar`}
                     className="rounded-lg bg-cream px-3 py-1.5 text-center text-xs font-medium text-brown-dark"

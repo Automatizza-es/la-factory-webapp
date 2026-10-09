@@ -1,10 +1,10 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-// /api/push and /api/cleanup are called server-to-server by our own Supabase
-// pg_cron/pg_net jobs, not by a browser session -- they check their own
-// shared-secret header instead of a Supabase auth cookie, same reasoning as
-// /invite.
+// /api/push, /api/cleanup and /api/events/reminders are called
+// server-to-server by our own Supabase pg_cron/pg_net jobs, not by a browser
+// session -- they check their own shared-secret header instead of a
+// Supabase auth cookie, same reasoning as /invite.
 const PUBLIC_PATHS = [
   "/login",
   "/recuperar",
@@ -13,6 +13,7 @@ const PUBLIC_PATHS = [
   "/onboarding",
   "/api/push",
   "/api/cleanup",
+  "/api/events/reminders",
 ];
 
 export async function updateSession(request: NextRequest) {

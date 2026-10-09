@@ -21,7 +21,11 @@ export function EventCard({ event, dict, locale }: EventCardProps) {
   let statusLabel: string;
   let statusClass: string;
   if (event.status === "cancelled") {
-    statusLabel = dict.full;
+    statusLabel = dict.cancelledLabel;
+    statusClass = "bg-red-50 text-red-600";
+  } else if (new Date(event.endsAt) < new Date()) {
+    // Finished events aren't stored as such: their end time has passed.
+    statusLabel = dict.finishedLabel;
     statusClass = "bg-sand/50 text-warm-gray";
   } else if (event.isRegistered) {
     statusLabel = dict.joined;

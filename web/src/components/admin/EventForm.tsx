@@ -45,6 +45,8 @@ export function EventForm({ rooms, plans, contacts }: EventFormProps) {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  // Which button submitted the form: "Publicar" or "Guardar como borrador".
+  const publishRef = useRef(true);
 
   function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
     const selected = event.target.files?.[0];
@@ -96,6 +98,7 @@ export function EventForm({ rooms, plans, contacts }: EventFormProps) {
       audienceType,
       audiencePlanId: audiencePlanId || null,
       audienceContactIds,
+      publish: publishRef.current,
     });
 
     if (result.error) {
@@ -317,13 +320,24 @@ export function EventForm({ rooms, plans, contacts }: EventFormProps) {
       {error && <p className="rounded-2xl bg-red-50 p-3 text-sm text-red-600">{error}</p>}
       {success && <p className="rounded-2xl bg-sand/30 p-3 text-sm text-brown-dark">{dict.success}</p>}
 
-      <button
-        type="submit"
-        disabled={submitting}
-        className="rounded-xl bg-brown-dark py-3 text-sm font-medium text-white disabled:opacity-60"
-      >
-        {submitting ? dict.submitting : dict.submit}
-      </button>
+      <div className="flex flex-col gap-2 sm:flex-row-reverse">
+        <button
+          type="submit"
+          disabled={submitting}
+          onClick={() => (publishRef.current = true)}
+          className="rounded-xl bg-brown-dark px-6 py-3 text-sm font-medium text-white disabled:opacity-60"
+        >
+          {submitting ? dict.submitting : dict.submit}
+        </button>
+        <button
+          type="submit"
+          disabled={submitting}
+          onClick={() => (publishRef.current = false)}
+          className="rounded-xl bg-cream px-6 py-3 text-sm font-medium text-brown-dark disabled:opacity-60"
+        >
+          {dict.saveDraft}
+        </button>
+      </div>
     </form>
   );
 }

@@ -90,6 +90,12 @@ export interface Dictionary {
     incidentNewTitle: string;
     incidentUpdateTitle: string;
     incidentUpdateBody: (status: string) => string;
+    eventChangedTitle: string;
+    eventChangedBody: (title: string, when: string) => string;
+    eventCancelledTitle: string;
+    eventCancelledBody: (title: string) => string;
+    eventReminderTitle: string;
+    eventReminderBody: (title: string, when: string) => string;
     genericTitle: string;
     genericBody: string;
     packageReceivedTitle: string;
@@ -125,6 +131,8 @@ export interface Dictionary {
     errorNotAuthorized: string;
     errorGeneric: string;
     back: string;
+    cancelledLabel: string;
+    finishedLabel: string;
   };
   notificationSettings: {
     back: string;
@@ -667,6 +675,11 @@ export interface Dictionary {
       statusCancelled: string;
       unlimitedCapacity: string;
       edit: string;
+      statusDraft: string;
+      statusPublished: string;
+      statusFinished: string;
+      publish: string;
+      publishConfirm: string;
     };
     newEventForm: {
       title: string;
@@ -697,6 +710,8 @@ export interface Dictionary {
       editTitle: string;
       editSubmit: string;
       editSuccess: string;
+      saveDraft: string;
+      dateChangeNotice: string;
     };
     eventAttendees: {
       title: string;
@@ -825,6 +840,12 @@ const es: Dictionary = {
     incidentNewTitle: "🛠️ Nueva incidencia",
     incidentUpdateTitle: "🛠️ Tu incidencia se ha actualizado",
     incidentUpdateBody: (status) => `Estado: ${status}`,
+    eventChangedTitle: "📅 Cambio en un evento",
+    eventChangedBody: (title, when) => `${title} pasa a ser el ${when}.`,
+    eventCancelledTitle: "Evento cancelado",
+    eventCancelledBody: (title) => `${title} se ha cancelado.`,
+    eventReminderTitle: "⏰ Mañana tienes un evento",
+    eventReminderBody: (title, when) => `${title} · ${when}`,
     genericTitle: "Notificación",
     genericBody: "",
     packageReceivedTitle: "📦 Tienes un paquete",
@@ -859,6 +880,8 @@ const es: Dictionary = {
     errorClosed: "El plazo de inscripción ha finalizado.",
     errorNotAuthorized: "No tienes acceso a este evento.",
     errorGeneric: "No hemos podido completar la operación. Inténtalo de nuevo.",
+    cancelledLabel: "Cancelado",
+    finishedLabel: "Finalizado",
     back: "Volver a eventos",
   },
   notificationSettings: {
@@ -1400,6 +1423,11 @@ const es: Dictionary = {
       noEvents: "Todavía no hay eventos.",
       statusCancelled: "Cancelado",
       unlimitedCapacity: "Sin límite",
+      statusDraft: "Borrador",
+      statusPublished: "Publicado",
+      statusFinished: "Finalizado",
+      publish: "Publicar",
+      publishConfirm: "¿Publicar el evento? Se avisará a su público.",
       edit: "Editar",
     },
     newEventForm: {
@@ -1431,6 +1459,8 @@ const es: Dictionary = {
       editTitle: "Editar evento",
       editSubmit: "Guardar cambios",
       editSuccess: "Cambios guardados.",
+      saveDraft: "Guardar como borrador",
+      dateChangeNotice: "Si cambias la fecha u hora de un evento publicado, se avisará a los inscritos.",
     },
     eventAttendees: {
       title: "Asistentes",
@@ -1561,6 +1591,12 @@ const ca: Dictionary = {
     incidentNewTitle: "🛠️ Nova incidència",
     incidentUpdateTitle: "🛠️ La teva incidència s'ha actualitzat",
     incidentUpdateBody: (status) => `Estat: ${status}`,
+    eventChangedTitle: "📅 Canvi en un esdeveniment",
+    eventChangedBody: (title, when) => `${title} passa a ser el ${when}.`,
+    eventCancelledTitle: "Esdeveniment cancel·lat",
+    eventCancelledBody: (title) => `${title} s'ha cancel·lat.`,
+    eventReminderTitle: "⏰ Demà tens un esdeveniment",
+    eventReminderBody: (title, when) => `${title} · ${when}`,
     genericTitle: "Notificació",
     genericBody: "",
     packageReceivedTitle: "📦 Tens un paquet",
@@ -1595,6 +1631,8 @@ const ca: Dictionary = {
     errorClosed: "El termini d'inscripció ha finalitzat.",
     errorNotAuthorized: "No tens accés a aquest esdeveniment.",
     errorGeneric: "No hem pogut completar l'operació. Torna-ho a provar.",
+    cancelledLabel: "Cancel·lat",
+    finishedLabel: "Finalitzat",
     back: "Tornar a esdeveniments",
   },
   notificationSettings: {
@@ -2136,6 +2174,11 @@ const ca: Dictionary = {
       noEvents: "Encara no hi ha esdeveniments.",
       statusCancelled: "Cancel·lat",
       unlimitedCapacity: "Sense límit",
+      statusDraft: "Esborrany",
+      statusPublished: "Publicat",
+      statusFinished: "Finalitzat",
+      publish: "Publicar",
+      publishConfirm: "Publicar l'esdeveniment? S'avisarà el seu públic.",
       edit: "Editar",
     },
     newEventForm: {
@@ -2167,6 +2210,8 @@ const ca: Dictionary = {
       editTitle: "Editar esdeveniment",
       editSubmit: "Desar canvis",
       editSuccess: "Canvis desats.",
+      saveDraft: "Desar com a esborrany",
+      dateChangeNotice: "Si canvies la data o l'hora d'un esdeveniment publicat, s'avisarà els inscrits.",
     },
     eventAttendees: {
       title: "Assistents",
@@ -2297,6 +2342,12 @@ const en: Dictionary = {
     incidentNewTitle: "🛠️ New issue reported",
     incidentUpdateTitle: "🛠️ Your issue has been updated",
     incidentUpdateBody: (status) => `Status: ${status}`,
+    eventChangedTitle: "📅 An event has changed",
+    eventChangedBody: (title, when) => `${title} is now on ${when}.`,
+    eventCancelledTitle: "Event cancelled",
+    eventCancelledBody: (title) => `${title} has been cancelled.`,
+    eventReminderTitle: "⏰ You have an event tomorrow",
+    eventReminderBody: (title, when) => `${title} · ${when}`,
     genericTitle: "Notification",
     genericBody: "",
     packageReceivedTitle: "📦 You have a package",
@@ -2331,6 +2382,8 @@ const en: Dictionary = {
     errorClosed: "Registration has closed.",
     errorNotAuthorized: "You don't have access to this event.",
     errorGeneric: "We couldn't complete the operation. Please try again.",
+    cancelledLabel: "Cancelled",
+    finishedLabel: "Finished",
     back: "Back to events",
   },
   notificationSettings: {
@@ -2871,6 +2924,11 @@ const en: Dictionary = {
       noEvents: "No events yet.",
       statusCancelled: "Cancelled",
       unlimitedCapacity: "No limit",
+      statusDraft: "Draft",
+      statusPublished: "Published",
+      statusFinished: "Finished",
+      publish: "Publish",
+      publishConfirm: "Publish the event? Its audience will be notified.",
       edit: "Edit",
     },
     newEventForm: {
@@ -2902,6 +2960,8 @@ const en: Dictionary = {
       editTitle: "Edit event",
       editSubmit: "Save changes",
       editSuccess: "Changes saved.",
+      saveDraft: "Save as draft",
+      dateChangeNotice: "If you change the date or time of a published event, attendees will be notified.",
     },
     eventAttendees: {
       title: "Attendees",
