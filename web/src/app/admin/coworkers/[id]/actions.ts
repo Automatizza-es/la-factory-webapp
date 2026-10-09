@@ -182,3 +182,38 @@ export async function adjustHours(contactId: string, hours: number, note: string
   refresh(contactId);
   return { error: null };
 }
+
+// Changes the person's email everywhere at once: their contact record and,
+// if they have an app login, the login itself (already confirmed, so they
+// keep signing in with their usual password).
+export async function changeEmail(contactId: string, email: string): Promise<Result> {
+  const { dict, admin } = await adminActionContext();
+  if (!admin) return { error: dict.errors.notAuthorized };
+  const t = dict.admin.userDetail;
+
+  const next = email.trim().toLowerCase();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(next)) return { error: t.emailInvalid };
+
+  const { data: taken } = await admin
+    .from("contacts")
+    .select("id")
+    .ilike("email", next)
+    .neq("id", contactId)
+    .limit(1)
+    .maybeSingle();
+  if (taken) return { error: t.emailTaken };
+
+  const { data: userRow } = await admin.from("users").select("id").eq("contact_id", contactId).maybeSingle();
+  if (userRow) {
+    const { error: authError } = await admin.auth.admin.updateUserById(userRow.id, {
+      email: next,
+      email_confirm: true,
+    });
+    if (authError) return { error: authError.message.includes("already") ? t.emailTaken : t.error };
+  }
+
+  const { error } = await admin.from("contacts").update({ email: next }).eq("id", contactId);
+  if (error) return { error: t.error };
+  refresh(contactId);
+  return { error: null };
+}

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
 import { AdminBookingRow } from "@/components/admin/AdminBookingRow";
+import { EmailField } from "@/components/admin/person/EmailField";
 import { PersonBillingCard } from "@/components/admin/person/PersonBillingCard";
 import { PersonFieldsCard } from "@/components/admin/person/PersonFieldsCard";
 import { PersonFlagsCard } from "@/components/admin/person/PersonFlagsCard";
@@ -100,11 +101,7 @@ export default async function AdminCoworkerDetailPage({ params }: PageProps) {
             preferred_locale: c.preferredLocale,
           }}
         >
-          <div className="text-sm">
-            <p className="text-xs font-medium text-warm-gray">{u.email}</p>
-            <p className="text-ink">{c.email ?? "—"}</p>
-            <p className="mt-0.5 text-xs text-warm-gray">{u.emailHint}</p>
-          </div>
+          <EmailField contactId={c.id} email={c.email} />
         </PersonFieldsCard>
 
         <div className="flex flex-col gap-4">

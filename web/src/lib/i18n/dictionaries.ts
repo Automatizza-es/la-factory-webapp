@@ -442,6 +442,10 @@ export interface Dictionary {
       phone: string;
       email: string;
       emailHint: string;
+      changeEmail: string;
+      emailInvalid: string;
+      emailTaken: string;
+      emailChanged: string;
       company: string;
       language: string;
       sectionStatus: string;
@@ -1190,7 +1194,11 @@ const es: Dictionary = {
       nif: "NIF",
       phone: "Teléfono",
       email: "Email",
-      emailHint: "Es su usuario para entrar en la app; de momento no se cambia desde aquí.",
+      emailHint: "Es su usuario para entrar en la app: si lo cambias, entrará con el nuevo y su contraseña de siempre.",
+      changeEmail: "Cambiar email",
+      emailInvalid: "Ese email no es válido.",
+      emailTaken: "Ese email ya lo usa otra persona.",
+      emailChanged: "Email actualizado.",
       company: "Empresa",
       language: "Idioma",
       sectionStatus: "Estado y permisos",
@@ -1941,7 +1949,11 @@ const ca: Dictionary = {
       nif: "NIF",
       phone: "Telèfon",
       email: "Email",
-      emailHint: "És el seu usuari per entrar a l'app; de moment no es canvia des d'aquí.",
+      emailHint: "És el seu usuari per entrar a l'app: si el canvies, entrarà amb el nou i la contrasenya de sempre.",
+      changeEmail: "Canviar email",
+      emailInvalid: "Aquest email no és vàlid.",
+      emailTaken: "Aquest email ja el fa servir una altra persona.",
+      emailChanged: "Email actualitzat.",
       company: "Empresa",
       language: "Idioma",
       sectionStatus: "Estat i permisos",
@@ -2691,7 +2703,11 @@ const en: Dictionary = {
       nif: "Tax ID",
       phone: "Phone",
       email: "Email",
-      emailHint: "It's their app login; it can't be changed from here yet.",
+      emailHint: "It's their app login: if you change it, they sign in with the new one and their usual password.",
+      changeEmail: "Change email",
+      emailInvalid: "That email isn't valid.",
+      emailTaken: "Someone else already uses that email.",
+      emailChanged: "Email updated.",
       company: "Company",
       language: "Language",
       sectionStatus: "Status and permissions",
