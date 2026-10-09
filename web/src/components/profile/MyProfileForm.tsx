@@ -3,7 +3,6 @@
 import { useState, type FormEvent } from "react";
 import { setMyNewsletter, updateMyProfile, type MyProfileInput } from "@/app/(coworker)/perfil/datos/actions";
 import { Switch } from "@/components/admin/person/Switch";
-import { LOCALE_LABELS, locales } from "@/lib/i18n/config";
 import { useI18n } from "@/lib/i18n/context";
 
 const inputClass =
@@ -18,7 +17,8 @@ export function MyProfileForm({
   newsletter: boolean;
   initial: MyProfileInput;
 }) {
-  const t = useI18n().dict.perfil;
+  const { dict, locale } = useI18n();
+  const t = dict.perfil;
   const [subscribed, setSubscribed] = useState(newsletter);
   const [newsletterBusy, setNewsletterBusy] = useState(false);
 
@@ -41,15 +41,11 @@ export function MyProfileForm({
     event.preventDefault();
     setStatus("saving");
     setError(null);
-    const result = await updateMyProfile(values);
+    // Language comes from the switcher at the top, not from this form.
+    const result = await updateMyProfile({ ...values, preferredLocale: locale });
     if (result.error) {
       setError(result.error);
       setStatus("idle");
-      return;
-    }
-    // A language change needs a full reload to re-render everything in it.
-    if (values.preferredLocale !== initial.preferredLocale) {
-      window.location.reload();
       return;
     }
     setStatus("saved");
@@ -87,26 +83,6 @@ export function MyProfileForm({
         </label>
         <input id="email" value={email} disabled readOnly className={`${inputClass} bg-cream text-warm-gray`} />
         <p className="text-xs text-warm-gray">{t.emailHint}</p>
-      </div>
-
-      <div className="flex flex-col gap-1.5">
-        <span className="text-sm font-medium text-ink">{t.language}</span>
-        <div className="flex gap-2">
-          {locales.map((code) => (
-            <button
-              key={code}
-              type="button"
-              onClick={() => set({ preferredLocale: code })}
-              className={`flex-1 rounded-xl border px-3 py-2.5 text-sm font-medium transition-colors ${
-                values.preferredLocale === code
-                  ? "border-brown-dark bg-cream text-brown-dark"
-                  : "border-sand bg-white text-ink"
-              }`}
-            >
-              {LOCALE_LABELS[code].name}
-            </button>
-          ))}
-        </div>
       </div>
 
       <div className="flex items-center justify-between gap-4 border-t border-sand/40 pt-4">

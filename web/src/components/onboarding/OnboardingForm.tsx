@@ -2,10 +2,8 @@
 
 import { useState, type FormEvent } from "react";
 import { completeOnboarding } from "@/app/onboarding/actions";
-import { LOCALE_LABELS, locales } from "@/lib/i18n/config";
 import { useI18n } from "@/lib/i18n/context";
 import { validateNewPassword } from "@/lib/password";
-import type { Locale } from "@/lib/i18n/config";
 import { PasswordInput } from "@/components/auth/PasswordInput";
 
 interface OnboardingFormProps {
@@ -23,7 +21,6 @@ export function OnboardingForm({ token, email }: OnboardingFormProps) {
   const [nif, setNif] = useState("");
   const [companyName, setCompanyName] = useState("");
   const [phone, setPhone] = useState("");
-  const [preferredLocale, setPreferredLocale] = useState<Locale>(locale);
   const [marketingConsent, setMarketingConsent] = useState(false);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -47,7 +44,8 @@ export function OnboardingForm({ token, email }: OnboardingFormProps) {
       nif,
       companyName,
       phone,
-      preferredLocale,
+      // Whatever language they're viewing the form in (switcher at the top).
+      preferredLocale: locale,
       marketingConsent,
       password,
     });
@@ -160,26 +158,6 @@ export function OnboardingForm({ token, email }: OnboardingFormProps) {
           onChange={(e) => setConfirmPassword(e.target.value)}
           className={inputClass}
         />
-      </div>
-
-      <div className="flex flex-col gap-1.5">
-        <span className="text-sm font-medium text-ink">{dict.onboarding.language}</span>
-        <div className="flex gap-2">
-          {locales.map((code) => (
-            <button
-              key={code}
-              type="button"
-              onClick={() => setPreferredLocale(code)}
-              className={`flex-1 rounded-xl border px-3 py-2.5 text-sm font-medium transition-colors ${
-                preferredLocale === code
-                  ? "border-brown-dark bg-cream text-brown-dark"
-                  : "border-sand bg-white text-ink"
-              }`}
-            >
-              {LOCALE_LABELS[code].name}
-            </button>
-          ))}
-        </div>
       </div>
 
       <p className="text-xs text-warm-gray">

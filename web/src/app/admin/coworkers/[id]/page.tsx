@@ -11,7 +11,6 @@ import { QuotaAdjustForm } from "@/components/admin/person/QuotaAdjustForm";
 import { QuotaCard } from "@/components/home/QuotaCard";
 import { getCoworkerDetail } from "@/lib/data/admin";
 import { formatMinutesAsHours } from "@/lib/format";
-import { LOCALE_LABELS, locales } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import { getLocale } from "@/lib/i18n/server";
 import { createClient } from "@/lib/supabase/server";
@@ -85,12 +84,6 @@ export default async function AdminCoworkerDetailPage({ params }: PageProps) {
             { key: "nif", label: u.nif },
             { key: "phone", label: u.phone, kind: "tel" },
             { key: "company_name", label: u.company },
-            {
-              key: "preferred_locale",
-              label: u.language,
-              kind: "select",
-              options: locales.map((code) => ({ value: code, label: LOCALE_LABELS[code].name })),
-            },
           ]}
           initial={{
             first_name: c.firstName,
@@ -98,7 +91,6 @@ export default async function AdminCoworkerDetailPage({ params }: PageProps) {
             nif: c.nif ?? "",
             phone: c.phone ?? "",
             company_name: c.companyName ?? "",
-            preferred_locale: c.preferredLocale,
           }}
         >
           <EmailField contactId={c.id} email={c.email} />

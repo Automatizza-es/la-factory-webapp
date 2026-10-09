@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { redirect } from "next/navigation";
+import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
 import { OnboardingForm } from "@/components/onboarding/OnboardingForm";
 import { getMyOnboardingContext } from "@/lib/data/onboarding";
 import { getDictionary } from "@/lib/i18n/dictionaries";
@@ -34,6 +35,9 @@ export default async function OnboardingPage({ searchParams }: OnboardingPagePro
 
   return (
     <div className="relative mx-auto flex min-h-screen w-full max-w-[480px] flex-col items-center gap-6 px-6 py-10">
+      <div className="absolute right-6 top-6">
+        <LanguageSwitcher />
+      </div>
       <Image
         src="/brand/logo-cuadrado-original.jpg"
         alt="La Factory Coworking"

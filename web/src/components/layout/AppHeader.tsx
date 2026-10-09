@@ -16,8 +16,8 @@ interface AppHeaderProps {
   profileHref: string;
 }
 
-// On tablet/desktop the Sidebar already shows the logo and the language
-// switcher, so the header keeps only the bell and the avatar there.
+// On tablet/desktop the Sidebar already shows the logo, so the header keeps
+// the language switcher, the bell and the avatar there.
 export function AppHeader({
   coworker,
   notifications,
@@ -36,9 +36,7 @@ export function AppHeader({
         priority
       />
       <div className="flex items-center gap-3">
-        <div className="md:hidden">
-          <LanguageSwitcher />
-        </div>
+        <LanguageSwitcher />
         {notifications && (
           <NotificationBell
             notifications={notifications}

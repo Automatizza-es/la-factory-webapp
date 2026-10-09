@@ -5,7 +5,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { KeyRound } from "lucide-react";
 import { isNavItemActive, useNavItems, type AppRole } from "@/components/layout/nav-items";
-import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
 import { SignOutButton } from "@/components/layout/SignOutButton";
 import { useI18n } from "@/lib/i18n/context";
 import type { Coworker } from "@/types/domain";
@@ -51,14 +50,11 @@ export function Sidebar({ role, user }: { role: AppRole; user: Coworker }) {
       </nav>
 
       <div className="flex flex-col gap-3 border-t border-sand/50 pt-4">
-        <div className="flex items-center justify-between px-2">
-          <div className="flex min-w-0 items-center gap-2">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-sand text-xs font-semibold text-brown-dark">
-              {user.initials}
-            </div>
-            <span className="truncate text-sm font-medium text-ink">{user.firstName}</span>
+        <div className="flex min-w-0 items-center gap-2 px-2">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-sand text-xs font-semibold text-brown-dark">
+            {user.initials}
           </div>
-          <LanguageSwitcher />
+          <span className="truncate text-sm font-medium text-ink">{user.firstName}</span>
         </div>
         <Link
           href="/nueva-contrasena"
