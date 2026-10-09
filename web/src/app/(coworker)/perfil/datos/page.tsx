@@ -15,7 +15,7 @@ export default async function MyDetailsPage() {
   const supabase = await createClient();
   const { data: contact } = await supabase
     .from("contacts")
-    .select("first_name, last_name, email, phone, company_name, preferred_locale")
+    .select("first_name, last_name, email, phone, company_name, preferred_locale, marketing_consent")
     .eq("id", current.contactId)
     .single();
   if (!contact) return null;
@@ -29,6 +29,7 @@ export default async function MyDetailsPage() {
       <h1 className="text-2xl font-bold text-ink">{dict.perfil.myDetails}</h1>
       <MyProfileForm
         email={contact.email ?? ""}
+        newsletter={contact.marketing_consent}
         initial={{
           firstName: contact.first_name ?? "",
           lastName: contact.last_name ?? "",

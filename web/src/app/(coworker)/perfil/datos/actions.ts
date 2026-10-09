@@ -37,3 +37,14 @@ export async function updateMyProfile(input: MyProfileInput): Promise<{ error: s
   revalidatePath("/", "layout");
   return { error: null };
 }
+
+// Newsletter opt-in / opt-out: saved on its own, straight away.
+export async function setMyNewsletter(subscribed: boolean): Promise<{ error: string | null }> {
+  const dict = getDictionary(await getLocale());
+  const current = await getCurrentCoworker();
+  if (!current) return { error: dict.errors.notAuthorized };
+
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("set_my_newsletter", { p_subscribed: subscribed });
+  return { error: error ? dict.perfil.saveError : null };
+}

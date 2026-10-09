@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ChevronRight, KeyRound, Package, PartyPopper } from "lucide-react";
+import { Building2, ChevronRight, KeyRound, Package, PartyPopper } from "lucide-react";
 import { SignOutButton } from "@/components/layout/SignOutButton";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import { getLocale } from "@/lib/i18n/server";
@@ -12,6 +12,7 @@ export default async function AdminMorePage() {
   const nav = dict.admin.nav;
 
   const sections = [
+    { href: "/admin/empresas", label: nav.companies, icon: Building2 },
     { href: "/admin/eventos", label: nav.events, icon: PartyPopper },
     { href: "/admin/paquetes", label: nav.packages, icon: Package },
   ];

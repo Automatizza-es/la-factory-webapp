@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  Building2,
   CalendarDays,
   Home,
   LayoutDashboard,
@@ -52,13 +53,14 @@ export function useNavItems(role: AppRole): { bottom: NavItem[]; sidebar: NavIte
           href: "/admin/mas",
           label: nav.more,
           icon: Menu,
-          alsoActiveOn: ["/admin/eventos", "/admin/paquetes"],
+          alsoActiveOn: ["/admin/eventos", "/admin/paquetes", "/admin/empresas"],
         },
       ],
       sidebar: [
         dashboard,
         bookings,
         users,
+        { href: "/admin/empresas", label: nav.companies, icon: Building2 },
         { href: "/admin/eventos", label: nav.events, icon: PartyPopper },
         { href: "/admin/paquetes", label: nav.packages, icon: Package },
       ],

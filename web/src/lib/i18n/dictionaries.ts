@@ -195,6 +195,7 @@ export interface Dictionary {
     saved: string;
     firstNameRequired: string;
     saveError: string;
+    newsletter: string;
   };
   login: {
     title: string;
@@ -295,6 +296,7 @@ export interface Dictionary {
       users: string;
       more: string;
       account: string;
+      companies: string;
     };
     dashboard: {
       title: string;
@@ -367,6 +369,83 @@ export interface Dictionary {
       sendWelcomeConfirm: (count: number) => string;
       welcomeSent: (count: number) => string;
       welcomeError: string;
+      access: string;
+      filterAll: string;
+      filterCoworkers: string;
+      filterGuests: string;
+      filterAdmins: string;
+      filterArchived: string;
+      searchPlaceholder: string;
+      search: string;
+      kindAdmin: string;
+      kindCoworker: string;
+      kindGuest: string;
+      kindArchived: string;
+      sharedWith: (name: string) => string;
+      noResults: string;
+    };
+    userDetail: {
+      sectionPersonal: string;
+      firstName: string;
+      lastName: string;
+      nif: string;
+      phone: string;
+      email: string;
+      emailHint: string;
+      company: string;
+      language: string;
+      sectionStatus: string;
+      archived: string;
+      archivedHint: string;
+      canReceivePackages: string;
+      newsletter: string;
+      sectionPlan: string;
+      noPlan: string;
+      since: (date: string) => string;
+      until: (date: string) => string;
+      billable: string;
+      billableHint: string;
+      endPlan: string;
+      endDate: string;
+      newPlan: string;
+      plan: string;
+      startDate: string;
+      assign: string;
+      sharedWith: string;
+      sharedHint: string;
+      noShare: string;
+      sectionBilling: string;
+      billTo: string;
+      billToPerson: string;
+      billToCompany: string;
+      chooseCompany: string;
+      manageCompanies: string;
+      address: string;
+      city: string;
+      postalCode: string;
+      province: string;
+      country: string;
+      sectionAdmin: string;
+      holdedId: string;
+      internalNotes: string;
+      save: string;
+      saving: string;
+      saved: string;
+      error: string;
+      firstNameRequired: string;
+    };
+    companies: {
+      title: string;
+      subtitle: string;
+      newCompany: string;
+      noCompanies: string;
+      name: string;
+      taxId: string;
+      billingEmail: string;
+      notes: string;
+      people: (count: number) => string;
+      back: string;
+      nameRequired: string;
     };
     newCoworker: {
       title: string;
@@ -737,6 +816,7 @@ const es: Dictionary = {
     saved: "Datos guardados.",
     firstNameRequired: "El nombre es obligatorio.",
     saveError: "No hemos podido guardar los datos. Inténtalo de nuevo.",
+    newsletter: "Quiero recibir la newsletter de La Factory",
   },
   login: {
     title: "Entrar",
@@ -835,6 +915,7 @@ const es: Dictionary = {
       users: "Usuarios",
       more: "Más",
       account: "Cuenta",
+      companies: "Empresas",
     },
     dashboard: {
       title: "Dashboard",
@@ -879,14 +960,14 @@ const es: Dictionary = {
       eventLabel: "Evento",
     },
     coworkers: {
-      title: "Coworkers",
-      subtitle: "Listado de coworkers y su cuota mensual.",
+      title: "Usuarios",
+      subtitle: "Toda la comunidad: coworkers, invitados y admins.",
       name: "Nombre",
       plan: "Tarifa",
       status: "Estado",
       used: "Usadas",
       available: "Disponibles",
-      noCoworkers: "Todavía no hay coworkers.",
+      noCoworkers: "Todavía no hay nadie dado de alta.",
       statusActive: "Activa",
       statusEnded: "Finalizada",
       statusCancelled: "Cancelada",
@@ -910,6 +991,83 @@ const es: Dictionary = {
         `Se enviará un email de bienvenida a ${count} ${count === 1 ? "coworker" : "coworkers"} para que creen su contraseña. ¿Continuar?`,
       welcomeSent: (count) => `Bienvenida enviada a ${count} ${count === 1 ? "coworker" : "coworkers"}.`,
       welcomeError: "No hemos podido enviar la bienvenida. Inténtalo de nuevo.",
+      access: "Acceso a la app",
+      filterAll: "Todos",
+      filterCoworkers: "Coworkers",
+      filterGuests: "Invitados",
+      filterAdmins: "Admins",
+      filterArchived: "Archivados",
+      searchPlaceholder: "Buscar por nombre o email",
+      search: "Buscar",
+      kindAdmin: "Admin",
+      kindCoworker: "Coworker",
+      kindGuest: "Invitado",
+      kindArchived: "Archivado",
+      sharedWith: (name) => `Comparte con ${name}`,
+      noResults: "No hay nadie con estos filtros.",
+    },
+    userDetail: {
+      sectionPersonal: "Datos personales",
+      firstName: "Nombre",
+      lastName: "Apellidos",
+      nif: "NIF",
+      phone: "Teléfono",
+      email: "Email",
+      emailHint: "Es su usuario para entrar en la app; de momento no se cambia desde aquí.",
+      company: "Empresa",
+      language: "Idioma",
+      sectionStatus: "Estado y permisos",
+      archived: "Perfil archivado",
+      archivedHint: "No puede entrar en la app ni aparece en reservas, paquetes ni comunicaciones. Su historial se conserva.",
+      canReceivePackages: "Puede recibir paquetes",
+      newsletter: "Newsletter",
+      sectionPlan: "Tarifa",
+      noPlan: "Sin tarifa propia",
+      since: (date) => `Desde el ${date}`,
+      until: (date) => `hasta el ${date}`,
+      billable: "Facturable",
+      billableHint: "Desmárcalo para cortesías, socios o intercambios.",
+      endPlan: "Finalizar tarifa",
+      endDate: "Último día",
+      newPlan: "Asignar tarifa",
+      plan: "Tarifa",
+      startDate: "Fecha de inicio",
+      assign: "Asignar",
+      sharedWith: "Comparte las horas de",
+      sharedHint: "Reserva y gasta de las horas de otra persona, que es quien paga. No es facturable.",
+      noShare: "No comparte",
+      sectionBilling: "Facturación",
+      billTo: "Se factura a",
+      billToPerson: "La propia persona",
+      billToCompany: "Una empresa",
+      chooseCompany: "Elige empresa",
+      manageCompanies: "Gestionar empresas",
+      address: "Dirección",
+      city: "Población",
+      postalCode: "Código postal",
+      province: "Provincia",
+      country: "País",
+      sectionAdmin: "Administrativo",
+      holdedId: "ID de contacto en Holded",
+      internalNotes: "Observaciones internas",
+      save: "Guardar",
+      saving: "Guardando...",
+      saved: "Guardado.",
+      error: "No se ha podido guardar. Inténtalo de nuevo.",
+      firstNameRequired: "El nombre es obligatorio.",
+    },
+    companies: {
+      title: "Empresas",
+      subtitle: "Entidades a las que se facturan algunos coworkers.",
+      newCompany: "Nueva empresa",
+      noCompanies: "Todavía no hay empresas.",
+      name: "Razón social",
+      taxId: "CIF / NIF",
+      billingEmail: "Email de facturación",
+      notes: "Notas",
+      people: (count) => (count === 1 ? "1 persona" : `${count} personas`),
+      back: "Volver a empresas",
+      nameRequired: "La razón social es obligatoria.",
     },
     newCoworker: {
       title: "Nuevo coworker",
@@ -928,7 +1086,7 @@ const es: Dictionary = {
       backToList: "Volver a coworkers",
     },
     coworkerDetail: {
-      back: "Volver a coworkers",
+      back: "Volver a usuarios",
       personalData: "Datos personales",
       email: "Email",
       phone: "Teléfono",
@@ -1282,6 +1440,7 @@ const ca: Dictionary = {
     saved: "Dades desades.",
     firstNameRequired: "El nom és obligatori.",
     saveError: "No hem pogut desar les dades. Torna-ho a provar.",
+    newsletter: "Vull rebre la newsletter de La Factory",
   },
   login: {
     title: "Entrar",
@@ -1380,6 +1539,7 @@ const ca: Dictionary = {
       users: "Usuaris",
       more: "Més",
       account: "Compte",
+      companies: "Empreses",
     },
     dashboard: {
       title: "Dashboard",
@@ -1424,14 +1584,14 @@ const ca: Dictionary = {
       eventLabel: "Esdeveniment",
     },
     coworkers: {
-      title: "Coworkers",
-      subtitle: "Llistat de coworkers i la seva quota mensual.",
+      title: "Usuaris",
+      subtitle: "Tota la comunitat: coworkers, convidats i admins.",
       name: "Nom",
       plan: "Tarifa",
       status: "Estat",
       used: "Utilitzades",
       available: "Disponibles",
-      noCoworkers: "Encara no hi ha coworkers.",
+      noCoworkers: "Encara no hi ha ningú donat d'alta.",
       statusActive: "Activa",
       statusEnded: "Finalitzada",
       statusCancelled: "Cancel·lada",
@@ -1455,6 +1615,83 @@ const ca: Dictionary = {
         `S'enviarà un email de benvinguda a ${count} ${count === 1 ? "coworker" : "coworkers"} perquè creïn la seva contrasenya. Continuar?`,
       welcomeSent: (count) => `Benvinguda enviada a ${count} ${count === 1 ? "coworker" : "coworkers"}.`,
       welcomeError: "No hem pogut enviar la benvinguda. Torna-ho a provar.",
+      access: "Accés a l'app",
+      filterAll: "Tots",
+      filterCoworkers: "Coworkers",
+      filterGuests: "Convidats",
+      filterAdmins: "Admins",
+      filterArchived: "Arxivats",
+      searchPlaceholder: "Cerca per nom o email",
+      search: "Cercar",
+      kindAdmin: "Admin",
+      kindCoworker: "Coworker",
+      kindGuest: "Convidat",
+      kindArchived: "Arxivat",
+      sharedWith: (name) => `Comparteix amb ${name}`,
+      noResults: "No hi ha ningú amb aquests filtres.",
+    },
+    userDetail: {
+      sectionPersonal: "Dades personals",
+      firstName: "Nom",
+      lastName: "Cognoms",
+      nif: "NIF",
+      phone: "Telèfon",
+      email: "Email",
+      emailHint: "És el seu usuari per entrar a l'app; de moment no es canvia des d'aquí.",
+      company: "Empresa",
+      language: "Idioma",
+      sectionStatus: "Estat i permisos",
+      archived: "Perfil arxivat",
+      archivedHint: "No pot entrar a l'app ni apareix en reserves, paquets ni comunicacions. El seu historial es conserva.",
+      canReceivePackages: "Pot rebre paquets",
+      newsletter: "Newsletter",
+      sectionPlan: "Tarifa",
+      noPlan: "Sense tarifa pròpia",
+      since: (date) => `Des del ${date}`,
+      until: (date) => `fins al ${date}`,
+      billable: "Facturable",
+      billableHint: "Desmarca-ho per a cortesies, socis o intercanvis.",
+      endPlan: "Finalitzar tarifa",
+      endDate: "Últim dia",
+      newPlan: "Assignar tarifa",
+      plan: "Tarifa",
+      startDate: "Data d'inici",
+      assign: "Assignar",
+      sharedWith: "Comparteix les hores de",
+      sharedHint: "Reserva i gasta de les hores d'una altra persona, que és qui paga. No és facturable.",
+      noShare: "No comparteix",
+      sectionBilling: "Facturació",
+      billTo: "Es factura a",
+      billToPerson: "La mateixa persona",
+      billToCompany: "Una empresa",
+      chooseCompany: "Tria empresa",
+      manageCompanies: "Gestionar empreses",
+      address: "Adreça",
+      city: "Població",
+      postalCode: "Codi postal",
+      province: "Província",
+      country: "País",
+      sectionAdmin: "Administratiu",
+      holdedId: "ID de contacte a Holded",
+      internalNotes: "Observacions internes",
+      save: "Desar",
+      saving: "Desant...",
+      saved: "Desat.",
+      error: "No s'ha pogut desar. Torna-ho a provar.",
+      firstNameRequired: "El nom és obligatori.",
+    },
+    companies: {
+      title: "Empreses",
+      subtitle: "Entitats a les quals es facturen alguns coworkers.",
+      newCompany: "Nova empresa",
+      noCompanies: "Encara no hi ha empreses.",
+      name: "Raó social",
+      taxId: "CIF / NIF",
+      billingEmail: "Email de facturació",
+      notes: "Notes",
+      people: (count) => (count === 1 ? "1 persona" : `${count} persones`),
+      back: "Tornar a empreses",
+      nameRequired: "La raó social és obligatòria.",
     },
     newCoworker: {
       title: "Nou coworker",
@@ -1473,7 +1710,7 @@ const ca: Dictionary = {
       backToList: "Tornar a coworkers",
     },
     coworkerDetail: {
-      back: "Tornar a coworkers",
+      back: "Tornar a usuaris",
       personalData: "Dades personals",
       email: "Email",
       phone: "Telèfon",
@@ -1826,6 +2063,7 @@ const en: Dictionary = {
     saved: "Details saved.",
     firstNameRequired: "First name is required.",
     saveError: "We couldn't save your details. Please try again.",
+    newsletter: "I want to receive the La Factory newsletter",
   },
   login: {
     title: "Sign in",
@@ -1924,6 +2162,7 @@ const en: Dictionary = {
       users: "Users",
       more: "More",
       account: "Account",
+      companies: "Companies",
     },
     dashboard: {
       title: "Dashboard",
@@ -1968,14 +2207,14 @@ const en: Dictionary = {
       eventLabel: "Event",
     },
     coworkers: {
-      title: "Coworkers",
-      subtitle: "List of coworkers and their monthly quota.",
+      title: "Users",
+      subtitle: "The whole community: coworkers, guests and admins.",
       name: "Name",
       plan: "Plan",
       status: "Status",
       used: "Used",
       available: "Available",
-      noCoworkers: "There are no coworkers yet.",
+      noCoworkers: "Nobody has been added yet.",
       statusActive: "Active",
       statusEnded: "Ended",
       statusCancelled: "Cancelled",
@@ -1999,6 +2238,83 @@ const en: Dictionary = {
         `A welcome email will go to ${count} ${count === 1 ? "coworker" : "coworkers"} so they can create their password. Continue?`,
       welcomeSent: (count) => `Welcome sent to ${count} ${count === 1 ? "coworker" : "coworkers"}.`,
       welcomeError: "We couldn't send the welcome email. Please try again.",
+      access: "App access",
+      filterAll: "All",
+      filterCoworkers: "Coworkers",
+      filterGuests: "Guests",
+      filterAdmins: "Admins",
+      filterArchived: "Archived",
+      searchPlaceholder: "Search by name or email",
+      search: "Search",
+      kindAdmin: "Admin",
+      kindCoworker: "Coworker",
+      kindGuest: "Guest",
+      kindArchived: "Archived",
+      sharedWith: (name) => `Shares with ${name}`,
+      noResults: "Nobody matches these filters.",
+    },
+    userDetail: {
+      sectionPersonal: "Personal details",
+      firstName: "First name",
+      lastName: "Last name",
+      nif: "Tax ID",
+      phone: "Phone",
+      email: "Email",
+      emailHint: "It's their app login; it can't be changed from here yet.",
+      company: "Company",
+      language: "Language",
+      sectionStatus: "Status and permissions",
+      archived: "Archived profile",
+      archivedHint: "Can't sign in and doesn't appear in bookings, packages or communications. Their history is kept.",
+      canReceivePackages: "Can receive packages",
+      newsletter: "Newsletter",
+      sectionPlan: "Plan",
+      noPlan: "No plan of their own",
+      since: (date) => `Since ${date}`,
+      until: (date) => `until ${date}`,
+      billable: "Billable",
+      billableHint: "Untick it for courtesies, partners or exchanges.",
+      endPlan: "End plan",
+      endDate: "Last day",
+      newPlan: "Assign plan",
+      plan: "Plan",
+      startDate: "Start date",
+      assign: "Assign",
+      sharedWith: "Shares the hours of",
+      sharedHint: "Books and uses someone else's hours; that person pays. Not billable.",
+      noShare: "Doesn't share",
+      sectionBilling: "Billing",
+      billTo: "Invoice goes to",
+      billToPerson: "The person themselves",
+      billToCompany: "A company",
+      chooseCompany: "Choose a company",
+      manageCompanies: "Manage companies",
+      address: "Address",
+      city: "City",
+      postalCode: "Postcode",
+      province: "Province",
+      country: "Country",
+      sectionAdmin: "Admin",
+      holdedId: "Holded contact ID",
+      internalNotes: "Internal notes",
+      save: "Save",
+      saving: "Saving...",
+      saved: "Saved.",
+      error: "Couldn't save. Please try again.",
+      firstNameRequired: "First name is required.",
+    },
+    companies: {
+      title: "Companies",
+      subtitle: "Entities some coworkers are invoiced to.",
+      newCompany: "New company",
+      noCompanies: "No companies yet.",
+      name: "Company name",
+      taxId: "Tax ID",
+      billingEmail: "Billing email",
+      notes: "Notes",
+      people: (count) => (count === 1 ? "1 person" : `${count} people`),
+      back: "Back to companies",
+      nameRequired: "The company name is required.",
     },
     newCoworker: {
       title: "New coworker",
@@ -2017,7 +2333,7 @@ const en: Dictionary = {
       backToList: "Back to coworkers",
     },
     coworkerDetail: {
-      back: "Back to coworkers",
+      back: "Back to users",
       personalData: "Personal details",
       email: "Email",
       phone: "Phone",

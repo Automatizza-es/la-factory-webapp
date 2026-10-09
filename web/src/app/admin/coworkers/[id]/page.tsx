@@ -2,9 +2,14 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
 import { AdminBookingRow } from "@/components/admin/AdminBookingRow";
+import { PersonBillingCard } from "@/components/admin/person/PersonBillingCard";
+import { PersonFieldsCard } from "@/components/admin/person/PersonFieldsCard";
+import { PersonFlagsCard } from "@/components/admin/person/PersonFlagsCard";
+import { PersonPlanCard } from "@/components/admin/person/PersonPlanCard";
 import { QuotaCard } from "@/components/home/QuotaCard";
 import { getCoworkerDetail } from "@/lib/data/admin";
 import { formatMinutesAsHours } from "@/lib/format";
+import { LOCALE_LABELS, locales } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import { getLocale } from "@/lib/i18n/server";
 import { createClient } from "@/lib/supabase/server";
@@ -21,12 +26,17 @@ export default async function AdminCoworkerDetailPage({ params }: PageProps) {
   const detail = await getCoworkerDetail(supabase, id, locale);
 
   if (!detail) notFound();
+  const c = detail.contact;
+  const u = dict.admin.userDetail;
+  const kindLabel =
+    c.status === "archived"
+      ? dict.admin.coworkers.kindArchived
+      : detail.role === "admin"
+        ? dict.admin.coworkers.kindAdmin
+        : detail.quota
+          ? dict.admin.coworkers.kindCoworker
+          : dict.admin.coworkers.kindGuest;
 
-  const membershipStatusLabel: Record<string, string> = {
-    active: dict.admin.coworkers.statusActive,
-    ended: dict.admin.coworkers.statusEnded,
-    cancelled: dict.admin.coworkers.statusCancelled,
-  };
 
   const reasonLabel: Record<string, string> = {
     monthly_grant: dict.admin.coworkerDetail.reasonMonthlyGrant,
@@ -54,45 +64,91 @@ export default async function AdminCoworkerDetailPage({ params }: PageProps) {
         {dict.admin.coworkerDetail.back}
       </Link>
 
-      <div className="grid gap-4 md:grid-cols-2">
-        <section className="rounded-3xl bg-white p-5 shadow-sm">
-          <h2 className="font-semibold text-ink">{dict.admin.coworkerDetail.personalData}</h2>
-          <div className="mt-3 flex flex-col gap-2 text-sm">
-            <p className="text-ink">
-              <span className="font-medium">
-                {detail.contact.firstName} {detail.contact.lastName ?? ""}
-              </span>
-            </p>
-            <p className="text-warm-gray">
-              {dict.admin.coworkerDetail.email}: {detail.contact.email ?? "—"}
-            </p>
-            <p className="text-warm-gray">
-              {dict.admin.coworkerDetail.phone}: {detail.contact.phone ?? "—"}
-            </p>
-          </div>
-        </section>
+      <div className="flex flex-wrap items-center gap-3">
+        <h1 className="text-2xl font-bold text-ink">
+          {`${c.firstName} ${c.lastName ?? ""}`.trim() || c.email}
+        </h1>
+        <span className="rounded-full bg-sand/50 px-2.5 py-1 text-xs font-medium text-brown-dark">
+          {kindLabel}
+        </span>
+      </div>
 
-        <section className="rounded-3xl bg-white p-5 shadow-sm">
-          <h2 className="font-semibold text-ink">{dict.admin.coworkerDetail.plan}</h2>
-          {detail.membership ? (
-            <div className="mt-3 flex flex-col gap-2 text-sm">
-              <p className="text-ink">{detail.membership.planLabel}</p>
-              <p className="text-warm-gray">
-                {dict.admin.coworkerDetail.status}:{" "}
-                {membershipStatusLabel[detail.membership.status] ?? detail.membership.status}
-              </p>
-              <p className="text-warm-gray">
-                {dict.admin.coworkerDetail.startDate}: {detail.membership.startDate}
-              </p>
-              <p className="text-warm-gray">
-                {dict.admin.coworkerDetail.endDate}:{" "}
-                {detail.membership.endDate ?? dict.admin.coworkerDetail.ongoing}
-              </p>
-            </div>
-          ) : (
-            <p className="mt-3 text-sm text-warm-gray">{dict.admin.coworkers.statusNone}</p>
+      <div className="grid items-start gap-4 lg:grid-cols-2">
+        <PersonFieldsCard
+          contactId={c.id}
+          title={u.sectionPersonal}
+          fields={[
+            { key: "first_name", label: u.firstName },
+            { key: "last_name", label: u.lastName },
+            { key: "nif", label: u.nif },
+            { key: "phone", label: u.phone, kind: "tel" },
+            { key: "company_name", label: u.company },
+            {
+              key: "preferred_locale",
+              label: u.language,
+              kind: "select",
+              options: locales.map((code) => ({ value: code, label: LOCALE_LABELS[code].name })),
+            },
+          ]}
+          initial={{
+            first_name: c.firstName,
+            last_name: c.lastName ?? "",
+            nif: c.nif ?? "",
+            phone: c.phone ?? "",
+            company_name: c.companyName ?? "",
+            preferred_locale: c.preferredLocale,
+          }}
+        >
+          <div className="text-sm">
+            <p className="text-xs font-medium text-warm-gray">{u.email}</p>
+            <p className="text-ink">{c.email ?? "—"}</p>
+            <p className="mt-0.5 text-xs text-warm-gray">{u.emailHint}</p>
+          </div>
+        </PersonFieldsCard>
+
+        <div className="flex flex-col gap-4">
+          <PersonFlagsCard
+            contactId={c.id}
+            archived={c.status === "archived"}
+            canReceivePackages={c.canReceivePackages}
+            newsletter={c.newsletter}
+          />
+          {detail.role !== "admin" && (
+            <PersonPlanCard
+              contactId={c.id}
+              membership={detail.membership}
+              sharedWith={detail.sharedWith}
+              plans={detail.plans}
+              shareCandidates={detail.shareCandidates}
+            />
           )}
-        </section>
+        </div>
+
+        <PersonBillingCard
+          contactId={c.id}
+          billingCompanyId={c.billingCompanyId}
+          address={{
+            address: c.address,
+            city: c.city,
+            postalCode: c.postalCode,
+            province: c.province,
+            country: c.country,
+          }}
+          companies={detail.companies}
+        />
+
+        <PersonFieldsCard
+          contactId={c.id}
+          title={u.sectionAdmin}
+          fields={[
+            { key: "holded_contact_id", label: u.holdedId, wide: true },
+            { key: "internal_notes", label: u.internalNotes, kind: "textarea" },
+          ]}
+          initial={{
+            holded_contact_id: c.holdedContactId ?? "",
+            internal_notes: c.internalNotes ?? "",
+          }}
+        />
       </div>
 
       {detail.quota && (

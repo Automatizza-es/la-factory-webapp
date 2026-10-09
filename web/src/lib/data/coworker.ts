@@ -79,22 +79,31 @@ export async function getCurrentCoworker(): Promise<CurrentCoworker | null> {
   return (await getCurrentAccount()).current;
 }
 
-// A plan in force today (Madrid date): coworker rather than guest.
+interface EffectiveMembership {
+  id: string;
+  contact_id: string;
+  plan_id: string;
+  quota_account_id: string;
+}
+
+// The plan in force today for this person: their own, or the one they share
+// (authorised on someone else's hours, e.g. a partner who pays). Null if
+// neither. Same rule the database applies when booking.
+export async function getEffectiveMembership(
+  supabase: SupabaseClient,
+  contactId: string,
+): Promise<EffectiveMembership | null> {
+  const { data } = await supabase.rpc("effective_membership", { p_contact_id: contactId });
+  const row = data as EffectiveMembership | null;
+  return row?.id ? row : null;
+}
+
+// A plan in force today, own or shared: coworker rather than guest.
 export async function hasActiveMembership(
   supabase: SupabaseClient,
   contactId: string,
 ): Promise<boolean> {
-  const today = utcIsoToZonedDateAndMinutes(new Date().toISOString()).date;
-  const { data } = await supabase
-    .from("memberships")
-    .select("id")
-    .eq("contact_id", contactId)
-    .eq("status", "active")
-    .lte("start_date", today)
-    .or(`end_date.is.null,end_date.gte.${today}`)
-    .limit(1)
-    .maybeSingle();
-  return !!data;
+  return (await getEffectiveMembership(supabase, contactId)) !== null;
 }
 
 function capitalize(text: string) {
@@ -110,17 +119,7 @@ export async function getQuotaSummary(
   const todayIso = today.toISOString().slice(0, 10);
   const periodStart = `${todayIso.slice(0, 7)}-01`;
 
-  const { data: membership } = await supabase
-    .from("memberships")
-    .select("plan_id, quota_account_id")
-    .eq("contact_id", contactId)
-    .eq("status", "active")
-    .lte("start_date", todayIso)
-    .or(`end_date.is.null,end_date.gte.${todayIso}`)
-    .order("start_date", { ascending: false })
-    .limit(1)
-    .maybeSingle();
-
+  const membership = await getEffectiveMembership(supabase, contactId);
   if (!membership) return null;
 
   const { data: plan } = await supabase

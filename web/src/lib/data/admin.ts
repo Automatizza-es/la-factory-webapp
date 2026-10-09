@@ -46,13 +46,20 @@ export type AdminCoworkerStage =
   | "invite_expired"
   | "invite_cancelled";
 
+// What someone is to the coworking right now. Coworker vs guest is derived
+// from having a plan in force (own or shared), never stored.
+export type PersonKind = "admin" | "coworker" | "guest" | "archived";
+
 export interface AdminCoworkerRow {
   contactId: string;
   firstName: string;
   lastName: string | null;
   email: string | null;
+  kind: PersonKind;
+  // Own plan in force today, if any.
   planLabel: string | null;
-  membershipStatus: "active" | "ended" | "cancelled" | "none";
+  // Set when they book on someone else's plan ("caso Anabella").
+  sharedWithName: string | null;
   totalMinutes: number;
   usedMinutes: number;
   stage: AdminCoworkerStage;
@@ -64,123 +71,153 @@ export interface AdminCoworkerRow {
   } | null;
 }
 
+// Everyone in contacts (the whole community, not only people with a plan),
+// with what they are today and where their app access stands.
 export async function getAllCoworkers(
   supabase: SupabaseClient,
   locale: Locale,
 ): Promise<AdminCoworkerRow[]> {
-  const { data: membershipRows } = await supabase
-    .from("memberships")
-    .select("contact_id, status, start_date, contacts(first_name, last_name, email), plans(name)")
-    .order("start_date", { ascending: false });
+  const today = utcIsoToZonedDateAndMinutes(new Date().toISOString()).date;
+  const [{ data: contacts }, { data: memberships }, { data: shares }, { data: users }, { data: invitations }] =
+    await Promise.all([
+      supabase.from("contacts").select("id, first_name, last_name, email, status").order("first_name"),
+      supabase
+        .from("memberships")
+        .select("contact_id, quota_account_id, plans(name)")
+        .eq("status", "active")
+        .lte("start_date", today)
+        .or(`end_date.is.null,end_date.gte.${today}`),
+      supabase.from("quota_account_members").select("contact_id, quota_account_id"),
+      supabase.from("users").select("contact_id, role"),
+      supabase
+        .from("coworker_invitations")
+        .select("id, contact_id, token, status, expires_at, kind, created_at")
+        .order("created_at", { ascending: false }),
+    ]);
 
-  const memberships = membershipRows ?? [];
-  const latestByContact = new Map<string, (typeof memberships)[number]>();
-  for (const row of memberships) {
-    if (!latestByContact.has(row.contact_id)) {
-      latestByContact.set(row.contact_id, row);
+  const nameById = new Map(
+    (contacts ?? []).map((c) => [c.id, `${c.first_name} ${c.last_name ?? ""}`.trim()]),
+  );
+  const ownPlanByContact = new Map<string, { planName: string; quotaAccountId: string }>();
+  const ownerByAccount = new Map<string, string>();
+  for (const m of memberships ?? []) {
+    const planName = (m.plans as unknown as { name: string } | null)?.name ?? "";
+    if (!ownPlanByContact.has(m.contact_id)) {
+      ownPlanByContact.set(m.contact_id, { planName, quotaAccountId: m.quota_account_id });
     }
+    ownerByAccount.set(m.quota_account_id, m.contact_id);
   }
-
-  const contactIds = Array.from(latestByContact.keys());
-
-  const { data: invitationRows } = await supabase
-    .from("coworker_invitations")
-    .select("id, contact_id, token, status, expires_at, kind, created_at")
-    .in("contact_id", contactIds.length > 0 ? contactIds : ["00000000-0000-0000-0000-000000000000"])
-    .order("created_at", { ascending: false });
-
-  const latestInvitationByContact = new Map<string, NonNullable<typeof invitationRows>[number]>();
-  for (const inv of invitationRows ?? []) {
-    if (!latestInvitationByContact.has(inv.contact_id)) {
-      latestInvitationByContact.set(inv.contact_id, inv);
-    }
+  const sharedOwnerByContact = new Map<string, string>();
+  for (const share of shares ?? []) {
+    const owner = ownerByAccount.get(share.quota_account_id);
+    if (owner && owner !== share.contact_id) sharedOwnerByContact.set(share.contact_id, owner);
   }
-
-  const { data: userRows } = await supabase
-    .from("users")
-    .select("contact_id")
-    .in("contact_id", contactIds.length > 0 ? contactIds : ["00000000-0000-0000-0000-000000000000"]);
-
-  const linkedContactIds = new Set((userRows ?? []).map((u) => u.contact_id));
+  const roleByContact = new Map((users ?? []).map((u) => [u.contact_id as string, u.role as string]));
+  const latestInvitationByContact = new Map<string, NonNullable<typeof invitations>[number]>();
+  for (const inv of invitations ?? []) {
+    if (!latestInvitationByContact.has(inv.contact_id)) latestInvitationByContact.set(inv.contact_id, inv);
+  }
 
   const rows: AdminCoworkerRow[] = [];
-  for (const row of latestByContact.values()) {
-    const contact = row.contacts as unknown as {
-      first_name: string;
-      last_name: string | null;
-      email: string | null;
-    } | null;
-    const plan = row.plans as unknown as { name: string } | null;
-    if (!contact) continue;
+  for (const contact of contacts ?? []) {
+    const ownPlan = ownPlanByContact.get(contact.id);
+    const sharedOwner = ownPlan ? undefined : sharedOwnerByContact.get(contact.id);
+    const role = roleByContact.get(contact.id);
+    const kind: PersonKind =
+      contact.status === "archived"
+        ? "archived"
+        : role === "admin"
+          ? "admin"
+          : ownPlan || sharedOwner
+            ? "coworker"
+            : "guest";
 
     let totalMinutes = 0;
     let usedMinutes = 0;
-    if (row.status === "active") {
-      const quota = await getQuotaSummary(supabase, row.contact_id, locale);
+    if (kind === "coworker") {
+      const quota = await getQuotaSummary(supabase, contact.id, locale);
       if (quota) {
         totalMinutes = quota.totalMinutes;
         usedMinutes = quota.usedMinutes;
       }
     }
 
-    const invitation = latestInvitationByContact.get(row.contact_id) ?? null;
-    const hasLogin = linkedContactIds.has(row.contact_id);
+    const invitation = latestInvitationByContact.get(contact.id) ?? null;
+    const hasLogin = roleByContact.has(contact.id);
     let stage: AdminCoworkerStage = "active";
     if (!invitation || (invitation.kind === "welcome" && invitation.status === "cancelled")) {
       // A cancelled welcome just means "not sent yet" again.
       if (!hasLogin) stage = "no_access";
+    } else if (invitation.status === "completed") {
+      stage = "active";
+    } else if (invitation.status === "cancelled") {
+      stage = "invite_cancelled";
+    } else if (new Date(invitation.expires_at) < new Date()) {
+      stage = "invite_expired";
+    } else if (hasLogin && invitation.kind === "onboarding") {
+      stage = "onboarding";
     } else {
-      if (invitation.status === "completed") {
-        stage = "active";
-      } else if (invitation.status === "cancelled") {
-        stage = "invite_cancelled";
-      } else if (new Date(invitation.expires_at) < new Date()) {
-        stage = "invite_expired";
-      } else if (hasLogin && invitation.kind === "onboarding") {
-        stage = "onboarding";
-      } else {
-        stage = "invited";
-      }
+      stage = "invited";
     }
 
     rows.push({
-      contactId: row.contact_id,
+      contactId: contact.id,
       firstName: contact.first_name,
       lastName: contact.last_name,
       email: contact.email,
-      planLabel: plan?.name ?? null,
-      membershipStatus: row.status,
+      kind,
+      planLabel: ownPlan?.planName ?? null,
+      sharedWithName: sharedOwner ? (nameById.get(sharedOwner) ?? null) : null,
       totalMinutes,
       usedMinutes,
       stage,
       invitation: invitation
-        ? {
-            id: invitation.id,
-            token: invitation.token,
-            status: invitation.status,
-            kind: invitation.kind,
-          }
+        ? { id: invitation.id, token: invitation.token, status: invitation.status, kind: invitation.kind }
         : null,
     });
   }
 
-  return rows.sort((a, b) => (a.firstName || a.email || "").localeCompare(b.firstName || b.email || ""));
+  return rows;
+}
+
+export interface AdminPersonContact {
+  id: string;
+  firstName: string;
+  lastName: string | null;
+  email: string | null;
+  phone: string | null;
+  nif: string | null;
+  companyName: string | null;
+  preferredLocale: string;
+  status: "active" | "archived";
+  canReceivePackages: boolean;
+  newsletter: boolean;
+  address: string | null;
+  city: string | null;
+  postalCode: string | null;
+  province: string | null;
+  country: string | null;
+  billingCompanyId: string | null;
+  holdedContactId: string | null;
+  internalNotes: string | null;
 }
 
 export interface AdminCoworkerDetail {
-  contact: {
-    id: string;
-    firstName: string;
-    lastName: string | null;
-    email: string | null;
-    phone: string | null;
-  };
+  contact: AdminPersonContact;
+  role: "admin" | "coworker" | null;
+  // Their own most recent membership (in force or not).
   membership: {
+    id: string;
+    planId: string;
     planLabel: string;
     status: string;
     startDate: string;
     endDate: string | null;
+    billable: boolean;
+    inForce: boolean;
   } | null;
+  // Set when they book on someone else's plan.
+  sharedWith: { contactId: string; name: string } | null;
   quota: QuotaSummary | null;
   movements: {
     id: string;
@@ -190,6 +227,10 @@ export interface AdminCoworkerDetail {
     createdAt: string;
   }[];
   bookings: Booking[];
+  plans: { id: string; name: string }[];
+  companies: { id: string; name: string }[];
+  // People with their own plan in force, whose hours this person could share.
+  shareCandidates: { contactId: string; name: string }[];
 }
 
 export async function getCoworkerDetail(
@@ -197,40 +238,77 @@ export async function getCoworkerDetail(
   contactId: string,
   locale: Locale,
 ): Promise<AdminCoworkerDetail | null> {
-  const { data: contact } = await supabase
+  const { data: c } = await supabase
     .from("contacts")
-    .select("id, first_name, last_name, email, phone")
+    .select(
+      "id, first_name, last_name, email, phone, nif, company_name, preferred_locale, status, can_receive_packages, marketing_consent, address, city, postal_code, province, country, billing_company_id, holded_contact_id, internal_notes",
+    )
     .eq("id", contactId)
     .maybeSingle();
 
-  if (!contact) return null;
+  if (!c) return null;
 
-  const { data: membershipRow } = await supabase
-    .from("memberships")
-    .select("status, start_date, end_date, quota_account_id, plans(name)")
-    .eq("contact_id", contactId)
-    .order("start_date", { ascending: false })
-    .limit(1)
-    .maybeSingle();
+  const today = utcIsoToZonedDateAndMinutes(new Date().toISOString()).date;
+  const [{ data: membershipRow }, { data: userRow }, { data: shareRow }, { data: planRows }, { data: companyRows }, { data: ownerRows }] =
+    await Promise.all([
+      supabase
+        .from("memberships")
+        .select("id, plan_id, status, start_date, end_date, billable, quota_account_id, plans(name)")
+        .eq("contact_id", contactId)
+        .order("start_date", { ascending: false })
+        .limit(1)
+        .maybeSingle(),
+      supabase.from("users").select("role").eq("contact_id", contactId).maybeSingle(),
+      supabase.from("quota_account_members").select("quota_account_id").eq("contact_id", contactId).maybeSingle(),
+      supabase.from("plans").select("id, name").eq("is_active", true).order("name"),
+      supabase.from("companies").select("id, name").order("name"),
+      supabase
+        .from("memberships")
+        .select("contact_id, quota_account_id, contacts!memberships_contact_id_fkey(first_name, last_name, status)")
+        .eq("status", "active")
+        .lte("start_date", today)
+        .or(`end_date.is.null,end_date.gte.${today}`),
+    ]);
 
   const membership = membershipRow
     ? {
+        id: membershipRow.id,
+        planId: membershipRow.plan_id,
         planLabel: (membershipRow.plans as unknown as { name: string } | null)?.name ?? "",
         status: membershipRow.status,
         startDate: membershipRow.start_date,
         endDate: membershipRow.end_date,
+        billable: membershipRow.billable,
+        inForce:
+          membershipRow.status === "active" &&
+          membershipRow.start_date <= today &&
+          (!membershipRow.end_date || membershipRow.end_date >= today),
       }
     : null;
 
-  const quota =
-    membershipRow?.status === "active" ? await getQuotaSummary(supabase, contactId, locale) : null;
+  const owners = ((ownerRows ?? []) as unknown as {
+    contact_id: string;
+    quota_account_id: string;
+    contacts: { first_name: string; last_name: string | null; status: string } | null;
+  }[]).filter((o) => o.contacts?.status === "active");
+  const nameOf = (o: (typeof owners)[number]) =>
+    `${o.contacts?.first_name ?? ""} ${o.contacts?.last_name ?? ""}`.trim();
+  const sharedOwner = shareRow
+    ? owners.find((o) => o.quota_account_id === shareRow.quota_account_id && o.contact_id !== contactId)
+    : undefined;
 
+  const quota = await getQuotaSummary(supabase, contactId, locale);
+
+  // Movements of whichever pool of hours they use: their own or the shared one.
+  const quotaAccountId = membership?.inForce
+    ? membershipRow?.quota_account_id
+    : (shareRow?.quota_account_id ?? membershipRow?.quota_account_id);
   let movements: AdminCoworkerDetail["movements"] = [];
-  if (membershipRow?.quota_account_id) {
+  if (quotaAccountId) {
     const { data: movementRows } = await supabase
       .from("quota_movements")
       .select("id, delta_minutes, reason_code, note, created_at")
-      .eq("quota_account_id", membershipRow.quota_account_id)
+      .eq("quota_account_id", quotaAccountId)
       .order("created_at", { ascending: false })
       .limit(50);
 
@@ -247,16 +325,38 @@ export async function getCoworkerDetail(
 
   return {
     contact: {
-      id: contact.id,
-      firstName: contact.first_name,
-      lastName: contact.last_name,
-      email: contact.email,
-      phone: contact.phone,
+      id: c.id,
+      firstName: c.first_name,
+      lastName: c.last_name,
+      email: c.email,
+      phone: c.phone,
+      nif: c.nif,
+      companyName: c.company_name,
+      preferredLocale: c.preferred_locale,
+      status: c.status,
+      canReceivePackages: c.can_receive_packages,
+      newsletter: c.marketing_consent,
+      address: c.address,
+      city: c.city,
+      postalCode: c.postal_code,
+      province: c.province,
+      country: c.country,
+      billingCompanyId: c.billing_company_id,
+      holdedContactId: c.holded_contact_id,
+      internalNotes: c.internal_notes,
     },
+    role: (userRow?.role as "admin" | "coworker" | undefined) ?? null,
     membership,
+    sharedWith: sharedOwner ? { contactId: sharedOwner.contact_id, name: nameOf(sharedOwner) } : null,
     quota,
     movements,
     bookings,
+    plans: planRows ?? [],
+    companies: companyRows ?? [],
+    shareCandidates: owners
+      .filter((o) => o.contact_id !== contactId)
+      .map((o) => ({ contactId: o.contact_id, name: nameOf(o) }))
+      .sort((a, b) => a.name.localeCompare(b.name)),
   };
 }
 
