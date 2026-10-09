@@ -86,11 +86,11 @@ export function OnboardingForm({ token, email }: OnboardingFormProps) {
 
       <div className="flex flex-col gap-1.5">
         <label htmlFor="nif" className="text-sm font-medium text-ink">
-          {dict.onboarding.nif} *
+          {dict.onboarding.nif}{" "}
+          <span className="font-normal text-warm-gray">({dict.onboarding.optional})</span>
         </label>
         <input
           id="nif"
-          required
           value={nif}
           onChange={(e) => setNif(e.target.value)}
           className={inputClass}
