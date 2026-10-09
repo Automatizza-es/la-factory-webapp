@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
 import { NotificationBell } from "@/components/layout/NotificationBell";
 import type { NotificationItem } from "@/lib/data/notifications";
@@ -10,6 +11,9 @@ interface AppHeaderProps {
   notifications?: NotificationItem[];
   notificationsTitle: string;
   notificationsEmpty: string;
+  // Where tapping the avatar goes: the coworker's profile, or the admin's
+  // "Más" page (which holds their account actions).
+  profileHref: string;
 }
 
 // On tablet/desktop the Sidebar already shows the logo and the language
@@ -19,6 +23,7 @@ export function AppHeader({
   notifications,
   notificationsTitle,
   notificationsEmpty,
+  profileHref,
 }: AppHeaderProps) {
   return (
     <header className="flex items-center justify-between px-5 pt-6 md:justify-end md:px-8">
@@ -41,12 +46,13 @@ export function AppHeader({
             emptyLabel={notificationsEmpty}
           />
         )}
-        <div
-          className="flex h-10 w-10 items-center justify-center rounded-full bg-sand text-sm font-semibold text-brown-dark"
+        <Link
+          href={profileHref}
+          className="flex h-10 w-10 items-center justify-center rounded-full bg-sand text-sm font-semibold text-brown-dark transition-colors hover:bg-sand/80"
           aria-label={coworker.firstName}
         >
           {coworker.initials}
-        </div>
+        </Link>
       </div>
     </header>
   );
