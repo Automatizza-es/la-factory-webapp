@@ -13,6 +13,7 @@ export interface Dictionary {
     greeting: string;
     subtitle: string;
     noActivePlan: string;
+    guestNotice: string;
     bookRoom: string;
     viewCalendar: string;
     upcomingBookings: string;
@@ -181,6 +182,19 @@ export interface Dictionary {
     signOut: string;
     notifications: string;
     changePassword: string;
+    myDetails: string;
+    firstName: string;
+    lastName: string;
+    phone: string;
+    company: string;
+    language: string;
+    email: string;
+    emailHint: string;
+    save: string;
+    saving: string;
+    saved: string;
+    firstNameRequired: string;
+    saveError: string;
   };
   login: {
     title: string;
@@ -237,6 +251,8 @@ export interface Dictionary {
   unlinked: {
     title: string;
     body: string;
+    archivedTitle: string;
+    archivedBody: string;
   };
   onboarding: {
     title: string;
@@ -541,6 +557,7 @@ const es: Dictionary = {
     greeting: "Hola",
     subtitle: "Qué bueno tenerte por aquí",
     noActivePlan: "No tienes una tarifa activa este mes.",
+    guestNotice: "Ahora mismo no tienes una tarifa activa, pero sigues formando parte de la comunidad: eventos, paquetes y avisos.",
     bookRoom: "Reservar una sala",
     viewCalendar: "Ver calendario",
     upcomingBookings: "Próximas reservas",
@@ -707,6 +724,19 @@ const es: Dictionary = {
     signOut: "Cerrar sesión",
     notifications: "Notificaciones",
     changePassword: "Cambiar contraseña",
+    myDetails: "Mis datos",
+    firstName: "Nombre",
+    lastName: "Apellidos",
+    phone: "Teléfono",
+    company: "Empresa",
+    language: "Idioma",
+    email: "Email",
+    emailHint: "Para cambiar tu email, escríbenos a hola@lafactorycoworking.com.",
+    save: "Guardar",
+    saving: "Guardando...",
+    saved: "Datos guardados.",
+    firstNameRequired: "El nombre es obligatorio.",
+    saveError: "No hemos podido guardar los datos. Inténtalo de nuevo.",
   },
   login: {
     title: "Entrar",
@@ -763,6 +793,8 @@ const es: Dictionary = {
   unlinked: {
     title: "Tu cuenta todavía no está vinculada",
     body: "Hemos verificado tu email pero no encontramos ningún coworker asociado. Contacta con La Factory para activarlo.",
+    archivedTitle: "Tu cuenta está archivada",
+    archivedBody: "Ya no tienes acceso a la app. Si crees que es un error, escríbenos a hola@lafactorycoworking.com.",
   },
   onboarding: {
     title: "Bienvenido/a a La Factory",
@@ -1070,6 +1102,7 @@ const ca: Dictionary = {
     greeting: "Hola",
     subtitle: "Que bé tenir-te per aquí",
     noActivePlan: "No tens cap tarifa activa aquest mes.",
+    guestNotice: "Ara mateix no tens cap tarifa activa, però continues formant part de la comunitat: esdeveniments, paquets i avisos.",
     bookRoom: "Reservar una sala",
     viewCalendar: "Veure calendari",
     upcomingBookings: "Properes reserves",
@@ -1236,6 +1269,19 @@ const ca: Dictionary = {
     signOut: "Tancar sessió",
     notifications: "Notificacions",
     changePassword: "Canviar contrasenya",
+    myDetails: "Les meves dades",
+    firstName: "Nom",
+    lastName: "Cognoms",
+    phone: "Telèfon",
+    company: "Empresa",
+    language: "Idioma",
+    email: "Email",
+    emailHint: "Per canviar el teu email, escriu-nos a hola@lafactorycoworking.com.",
+    save: "Desar",
+    saving: "Desant...",
+    saved: "Dades desades.",
+    firstNameRequired: "El nom és obligatori.",
+    saveError: "No hem pogut desar les dades. Torna-ho a provar.",
   },
   login: {
     title: "Entrar",
@@ -1292,6 +1338,8 @@ const ca: Dictionary = {
   unlinked: {
     title: "El teu compte encara no està vinculat",
     body: "Hem verificat el teu email però no hem trobat cap coworker associat. Contacta amb La Factory per activar-lo.",
+    archivedTitle: "El teu compte està arxivat",
+    archivedBody: "Ja no tens accés a l'app. Si creus que és un error, escriu-nos a hola@lafactorycoworking.com.",
   },
   onboarding: {
     title: "Benvingut/da a La Factory",
@@ -1599,6 +1647,7 @@ const en: Dictionary = {
     greeting: "Hi",
     subtitle: "Great to have you here",
     noActivePlan: "You don't have an active plan this month.",
+    guestNotice: "You don't have an active plan right now, but you're still part of the community: events, packages and notices.",
     bookRoom: "Book a room",
     viewCalendar: "View calendar",
     upcomingBookings: "Upcoming bookings",
@@ -1764,6 +1813,19 @@ const en: Dictionary = {
     signOut: "Sign out",
     notifications: "Notifications",
     changePassword: "Change password",
+    myDetails: "My details",
+    firstName: "First name",
+    lastName: "Last name",
+    phone: "Phone",
+    company: "Company",
+    language: "Language",
+    email: "Email",
+    emailHint: "To change your email, write to us at hola@lafactorycoworking.com.",
+    save: "Save",
+    saving: "Saving...",
+    saved: "Details saved.",
+    firstNameRequired: "First name is required.",
+    saveError: "We couldn't save your details. Please try again.",
   },
   login: {
     title: "Sign in",
@@ -1820,6 +1882,8 @@ const en: Dictionary = {
   unlinked: {
     title: "Your account isn't linked yet",
     body: "We verified your email but couldn't find a matching coworker. Contact La Factory to activate it.",
+    archivedTitle: "Your account is archived",
+    archivedBody: "You no longer have access to the app. If you think this is a mistake, write to us at hola@lafactorycoworking.com.",
   },
   onboarding: {
     title: "Welcome to La Factory",

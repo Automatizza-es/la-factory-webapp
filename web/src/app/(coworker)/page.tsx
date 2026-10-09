@@ -30,6 +30,10 @@ export default async function HomePage() {
 
   // Bookings come back soonest-last (starts_at desc); reverse before slicing
   // so "next up" actually shows the soonest ones, not the furthest out.
+  // Guests (no plan right now) get the community side only: no quota,
+  // rooms or bookings.
+  const isGuest = current.access === "guest";
+
   const upcomingBookings = bookings
     .filter((b) => b.status === "upcoming")
     .reverse()
@@ -75,9 +79,15 @@ export default async function HomePage() {
 
       {/* Phones: one column in source order. Desktop: rooms and bookings on
           the wide left, quota / register package / events on the right. */}
-      <div className="flex flex-col gap-6 lg:grid lg:grid-cols-3 lg:items-start">
+      <div
+        className={
+          isGuest ? "flex flex-col gap-6" : "flex flex-col gap-6 lg:grid lg:grid-cols-3 lg:items-start"
+        }
+      >
         <div className="lg:col-start-3 lg:row-start-1">
-          {quota ? (
+          {isGuest ? (
+            <p className="rounded-2xl bg-white p-4 text-sm text-ink shadow-sm">{dict.home.guestNotice}</p>
+          ) : quota ? (
             <QuotaCard quota={quota} dict={dict.quota} />
           ) : (
             <p className="rounded-2xl bg-white p-4 text-sm text-warm-gray shadow-sm">
@@ -87,19 +97,21 @@ export default async function HomePage() {
         </div>
 
         <div className="flex flex-col gap-6 lg:col-start-3 lg:row-start-2">
-          <Link
-            href="/paquetes/nuevo"
-            className="flex items-center gap-3 rounded-2xl bg-white p-4 shadow-sm"
-          >
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-cream">
-              <Package className="h-5 w-5 text-brown-dark" strokeWidth={1.75} />
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="font-semibold text-ink">{dict.packages.registerAction}</p>
-              <p className="text-xs text-warm-gray">{dict.packages.registerActionSubtitle}</p>
-            </div>
-            <ChevronRight className="h-4 w-4 shrink-0 text-warm-gray" strokeWidth={2} />
-          </Link>
+          {!isGuest && (
+            <Link
+              href="/paquetes/nuevo"
+              className="flex items-center gap-3 rounded-2xl bg-white p-4 shadow-sm"
+            >
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-cream">
+                <Package className="h-5 w-5 text-brown-dark" strokeWidth={1.75} />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="font-semibold text-ink">{dict.packages.registerAction}</p>
+                <p className="text-xs text-warm-gray">{dict.packages.registerActionSubtitle}</p>
+              </div>
+              <ChevronRight className="h-4 w-4 shrink-0 text-warm-gray" strokeWidth={2} />
+            </Link>
+          )}
 
           {upcomingEvents.length > 0 && (
             <section className="flex flex-col gap-3">
@@ -122,47 +134,51 @@ export default async function HomePage() {
           )}
         </div>
 
-        <section className="flex flex-col gap-3 lg:col-span-2 lg:col-start-1 lg:row-start-1">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-ink">{dict.home.bookRoom}</h2>
-            <Link
-              href="/calendario"
-              className="flex items-center gap-0.5 text-sm font-medium text-brown-dark"
-            >
-              {dict.home.viewCalendar}
-              <ChevronRight className="h-4 w-4" strokeWidth={2.25} />
-            </Link>
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            {rooms.map((room) => (
-              <RoomCard key={room.id} room={room} dict={dict.room} />
-            ))}
-          </div>
-        </section>
+        {!isGuest && (
+          <section className="flex flex-col gap-3 lg:col-span-2 lg:col-start-1 lg:row-start-1">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-ink">{dict.home.bookRoom}</h2>
+              <Link
+                href="/calendario"
+                className="flex items-center gap-0.5 text-sm font-medium text-brown-dark"
+              >
+                {dict.home.viewCalendar}
+                <ChevronRight className="h-4 w-4" strokeWidth={2.25} />
+              </Link>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              {rooms.map((room) => (
+                <RoomCard key={room.id} room={room} dict={dict.room} />
+              ))}
+            </div>
+          </section>
+        )}
 
-        <section className="flex flex-col gap-3 lg:col-span-2 lg:col-start-1 lg:row-start-2">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-ink">{dict.home.upcomingBookings}</h2>
-            <Link
-              href="/reservas"
-              className="flex items-center gap-0.5 text-sm font-medium text-brown-dark"
-            >
-              {dict.home.viewAll}
-              <ChevronRight className="h-4 w-4" strokeWidth={2.25} />
-            </Link>
-          </div>
-          <div className="grid gap-3 md:grid-cols-2">
-            {upcomingBookings.length === 0 ? (
-              <p className="rounded-2xl bg-white p-4 text-sm text-warm-gray shadow-sm md:col-span-2">
-                {dict.home.noUpcoming}
-              </p>
-            ) : (
-              upcomingBookings.map((booking) => (
-                <BookingCard key={booking.id} booking={booking} />
-              ))
-            )}
-          </div>
-        </section>
+        {!isGuest && (
+          <section className="flex flex-col gap-3 lg:col-span-2 lg:col-start-1 lg:row-start-2">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-ink">{dict.home.upcomingBookings}</h2>
+              <Link
+                href="/reservas"
+                className="flex items-center gap-0.5 text-sm font-medium text-brown-dark"
+              >
+                {dict.home.viewAll}
+                <ChevronRight className="h-4 w-4" strokeWidth={2.25} />
+              </Link>
+            </div>
+            <div className="grid gap-3 md:grid-cols-2">
+              {upcomingBookings.length === 0 ? (
+                <p className="rounded-2xl bg-white p-4 text-sm text-warm-gray shadow-sm md:col-span-2">
+                  {dict.home.noUpcoming}
+                </p>
+              ) : (
+                upcomingBookings.map((booking) => (
+                  <BookingCard key={booking.id} booking={booking} />
+                ))
+              )}
+            </div>
+          </section>
+        )}
       </div>
     </div>
   );

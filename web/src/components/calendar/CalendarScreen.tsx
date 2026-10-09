@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { DatePill } from "@/components/calendar/DatePill";
@@ -47,6 +48,8 @@ export async function CalendarScreen({ role, params }: CalendarScreenProps) {
   const supabase = await createClient();
   const current = await getCurrentCoworker();
   if (!current) return null;
+  // Guests (no plan right now) can't book.
+  if (current.access === "guest") redirect("/");
 
   const weekStart = startOfWeek(date);
   const weekEnd = addDays(weekStart, 6);

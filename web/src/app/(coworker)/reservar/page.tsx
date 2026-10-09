@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { BookingForm } from "@/components/booking/BookingForm";
 import { RoomCard } from "@/components/home/RoomCard";
 import { getBookings, getCurrentCoworker, getQuotaSummary, getRooms } from "@/lib/data/coworker";
@@ -20,6 +21,8 @@ export default async function ReservarPage({ searchParams }: ReservarPageProps) 
   const { sala, reserva, fecha, inicio, fin } = await searchParams;
   const current = await getCurrentCoworker();
   if (!current) return null;
+  // Guests (no plan right now) only get the community side of the app.
+  if (current.access === "guest") redirect("/");
 
   const locale = await getLocale();
   const dict = getDictionary(locale);

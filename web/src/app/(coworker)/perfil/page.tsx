@@ -6,6 +6,7 @@ import {
   Mail,
   Package,
   ShieldCheck,
+  UserPen,
 } from "lucide-react";
 import Link from "next/link";
 import { SignOutButton } from "@/components/layout/SignOutButton";
@@ -65,6 +66,15 @@ export default async function PerfilPage() {
       </section>
 
       <Link
+        href="/perfil/datos"
+        className="flex items-center gap-3 rounded-2xl bg-white p-4 shadow-sm"
+      >
+        <UserPen className="h-5 w-5 text-brown-dark" strokeWidth={1.75} />
+        <span className="flex-1 font-medium text-ink">{dict.perfil.myDetails}</span>
+        <ChevronRight className="h-4 w-4 text-warm-gray" strokeWidth={2} />
+      </Link>
+
+      <Link
         href="/paquetes"
         className="flex items-center gap-3 rounded-2xl bg-white p-4 shadow-sm"
       >
@@ -91,9 +101,6 @@ export default async function PerfilPage() {
         <ChevronRight className="h-4 w-4 text-warm-gray" strokeWidth={2} />
       </Link>
 
-      <p className="rounded-2xl bg-white p-4 text-sm text-warm-gray shadow-sm">
-        {dict.perfil.comingSoon}
-      </p>
 
       <SignOutButton label={dict.perfil.signOut} />
     </div>

@@ -14,7 +14,8 @@ import {
 } from "lucide-react";
 import { useI18n } from "@/lib/i18n/context";
 
-export type AppRole = "admin" | "coworker";
+// "guest": signed-in person with no plan right now (Invitado).
+export type AppRole = "admin" | "coworker" | "guest";
 
 export interface NavItem {
   href: string;
@@ -66,18 +67,20 @@ export function useNavItems(role: AppRole): { bottom: NavItem[]; sidebar: NavIte
 
   const nav = dict.nav;
   const home = { href: "/", label: nav.home, icon: Home };
+  const events = { href: "/eventos", label: nav.events, icon: PartyPopper };
+  const packages = { href: "/paquetes", label: nav.packages, icon: Package };
+  const profile = { href: "/perfil", label: nav.profile, icon: User };
+
+  // No plan, no bookings: community side only.
+  if (role === "guest") {
+    const items = [home, events, packages, profile];
+    return { bottom: items, sidebar: items };
+  }
+
   const book = { href: "/calendario", label: nav.book, icon: CalendarDays, alsoActiveOn: ["/reservar"] };
   const bookings = { href: "/reservas", label: nav.bookings, icon: ListChecks };
-  const profile = { href: "/perfil", label: nav.profile, icon: User };
   return {
     bottom: [home, book, bookings, profile],
-    sidebar: [
-      home,
-      book,
-      bookings,
-      { href: "/eventos", label: nav.events, icon: PartyPopper },
-      { href: "/paquetes", label: nav.packages, icon: Package },
-      profile,
-    ],
+    sidebar: [home, book, bookings, events, packages, profile],
   };
 }

@@ -1,6 +1,7 @@
+import { redirect } from "next/navigation";
 import { getCurrentCoworker } from "@/lib/data/coworker";
 import { PackageForm } from "@/components/packages/PackageForm";
-import { getActiveContactsForPicker } from "@/lib/data/packages";
+import { getPackageRecipientsForPicker } from "@/lib/data/packages";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import { getLocale } from "@/lib/i18n/server";
 import { createClient } from "@/lib/supabase/server";
@@ -8,10 +9,12 @@ import { createClient } from "@/lib/supabase/server";
 export default async function NewPackagePage() {
   const current = await getCurrentCoworker();
   if (!current) return null;
+  // Guests (no plan right now) only get the community side of the app.
+  if (current.access === "guest") redirect("/");
 
   const dict = getDictionary(await getLocale());
   const supabase = await createClient();
-  const contacts = await getActiveContactsForPicker(supabase);
+  const contacts = await getPackageRecipientsForPicker(supabase);
 
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-6">

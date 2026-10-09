@@ -34,7 +34,7 @@ export function AppShell({ role, user, notifications, dict, children }: AppShell
           profileHref={role === "admin" ? "/admin/mas" : "/perfil"}
         />
         <main className="flex-1 px-5 py-5 md:px-8 md:py-6">
-          <div className={role === "coworker" ? "mx-auto w-full max-w-6xl" : "w-full"}>
+          <div className={role === "admin" ? "w-full" : "mx-auto w-full max-w-6xl"}>
             {children}
           </div>
         </main>

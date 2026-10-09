@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { BookingCard } from "@/components/home/BookingCard";
 import { getBookings, getCurrentCoworker } from "@/lib/data/coworker";
 import { getDictionary } from "@/lib/i18n/dictionaries";
@@ -7,6 +8,8 @@ import { createClient } from "@/lib/supabase/server";
 export default async function ReservasPage() {
   const current = await getCurrentCoworker();
   if (!current) return null;
+  // Guests (no plan right now) only get the community side of the app.
+  if (current.access === "guest") redirect("/");
 
   const dict = getDictionary(await getLocale());
   const supabase = await createClient();

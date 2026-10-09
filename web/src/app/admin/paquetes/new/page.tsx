@@ -1,5 +1,5 @@
 import { PackageForm } from "@/components/packages/PackageForm";
-import { getActiveContactsForPicker } from "@/lib/data/packages";
+import { getPackageRecipientsForPicker } from "@/lib/data/packages";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import { getLocale } from "@/lib/i18n/server";
 import { createClient } from "@/lib/supabase/server";
@@ -8,7 +8,7 @@ export default async function NewPackagePage() {
   const locale = await getLocale();
   const dict = getDictionary(locale);
   const supabase = await createClient();
-  const contacts = await getActiveContactsForPicker(supabase);
+  const contacts = await getPackageRecipientsForPicker(supabase);
 
   return (
     <div className="flex flex-col gap-6">

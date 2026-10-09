@@ -26,6 +26,18 @@ export async function getActiveContactsForPicker(
   return options.sort((a, b) => a.name.localeCompare(b.name));
 }
 
+// Anyone active who may receive packages, plan or not (coworkers, guests,
+// former coworkers...). Same name-only SECURITY DEFINER approach.
+export async function getPackageRecipientsForPicker(
+  supabase: SupabaseClient,
+): Promise<PackageContactOption[]> {
+  const { data } = await supabase.rpc("get_package_recipients_directory");
+
+  return ((data ?? []) as { id: string; first_name: string; last_name: string | null }[])
+    .map((row) => ({ id: row.id, name: `${row.first_name} ${row.last_name ?? ""}`.trim() }))
+    .sort((a, b) => a.name.localeCompare(b.name));
+}
+
 export interface PackageItem {
   id: string;
   recipientContactId: string;

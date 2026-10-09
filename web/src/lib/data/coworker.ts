@@ -14,17 +14,26 @@ function initialsFor(firstName: string, lastName: string | null) {
 export interface CurrentCoworker {
   contactId: string;
   role: "coworker" | "admin";
+  // What they can use: admins; coworkers (plan in force today); guests
+  // (no plan right now: former coworkers, people between plans...).
+  access: "admin" | "coworker" | "guest";
   coworker: Coworker;
+}
+
+export interface CurrentAccount {
+  current: CurrentCoworker | null;
+  // Signed in but archived: no access to the app at all.
+  archived: boolean;
 }
 
 // Deliberately not wrapped in React's cache(): in this Next.js/Turbopack
 // dev setup it was observed to leak a stale result (e.g. a null from a
 // pre-auth request) across unrelated later requests, which is far worse
 // than the extra duplicate DB round trip it was meant to save.
-export async function getCurrentCoworker(): Promise<CurrentCoworker | null> {
+export async function getCurrentAccount(): Promise<CurrentAccount> {
   const supabase = await createClient();
   const { data: auth } = await supabase.auth.getUser();
-  if (!auth.user) return null;
+  if (!auth.user) return { current: null, archived: false };
 
   const { data: userRow } = await supabase
     .from("users")
@@ -32,24 +41,60 @@ export async function getCurrentCoworker(): Promise<CurrentCoworker | null> {
     .eq("id", auth.user.id)
     .maybeSingle();
 
-  if (!userRow) return null;
+  if (!userRow) return { current: null, archived: false };
 
   const { data: contact } = await supabase
     .from("contacts")
-    .select("first_name, last_name, email")
+    .select("first_name, last_name, email, status")
     .eq("id", userRow.contact_id)
     .single();
 
-  if (!contact) return null;
+  if (!contact) return { current: null, archived: false };
+  if (contact.status === "archived") return { current: null, archived: true };
+
+  const access =
+    userRow.role === "admin"
+      ? "admin"
+      : (await hasActiveMembership(supabase, userRow.contact_id))
+        ? "coworker"
+        : "guest";
 
   return {
-    contactId: userRow.contact_id,
-    role: userRow.role,
-    coworker: {
-      firstName: contact.first_name,
-      initials: initialsFor(contact.first_name, contact.last_name),
+    current: {
+      contactId: userRow.contact_id,
+      role: userRow.role,
+      access,
+      coworker: {
+        firstName: contact.first_name,
+        initials: initialsFor(contact.first_name, contact.last_name),
+      },
     },
+    archived: false,
   };
+}
+
+// Null for anyone who isn't an active, linked user -- including archived
+// ones, so every server action that checks it also locks them out.
+export async function getCurrentCoworker(): Promise<CurrentCoworker | null> {
+  return (await getCurrentAccount()).current;
+}
+
+// A plan in force today (Madrid date): coworker rather than guest.
+export async function hasActiveMembership(
+  supabase: SupabaseClient,
+  contactId: string,
+): Promise<boolean> {
+  const today = utcIsoToZonedDateAndMinutes(new Date().toISOString()).date;
+  const { data } = await supabase
+    .from("memberships")
+    .select("id")
+    .eq("contact_id", contactId)
+    .eq("status", "active")
+    .lte("start_date", today)
+    .or(`end_date.is.null,end_date.gte.${today}`)
+    .limit(1)
+    .maybeSingle();
+  return !!data;
 }
 
 function capitalize(text: string) {
