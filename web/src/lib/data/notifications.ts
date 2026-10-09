@@ -203,7 +203,23 @@ export async function getMyNotifications(
     }
   }
 
-  return rows.map((row) =>
+  // A reminder is pointless once the thing has started: drop booking and
+  // event reminders whose start time has passed.
+  const now = Date.now();
+  const stillRelevant = rows.filter((row) => {
+    if (!row.related_id) return true;
+    if (row.type === "booking_reminder") {
+      const booking = bookingById.get(row.related_id);
+      return !booking || new Date(booking.startsAt).getTime() > now;
+    }
+    if (row.type === "event_reminder") {
+      const event = eventById.get(row.related_id);
+      return !event || new Date(event.startsAt).getTime() > now;
+    }
+    return true;
+  });
+
+  return stillRelevant.map((row) =>
     renderNotification(
       row,
       dict,
