@@ -20,6 +20,11 @@ export async function reportIncident(input: ReportIncidentInput): Promise<{ erro
   const current = await getCurrentCoworker();
   if (!current) return { error: dict.errors.notAuthorized };
   if (!input.description.trim()) return { error: dict.incidents.descriptionRequired };
+  if (input.description.length > 4000) return { error: dict.errors.unknown };
+  // Photos must be in the reporter's own folder (as IncidentForm uploads them).
+  if (input.imagePath && !input.imagePath.startsWith(`${current.contactId}/`)) {
+    return { error: dict.errors.unknown };
+  }
   if (!INCIDENT_CATEGORIES.includes(input.category)) return { error: dict.errors.unknown };
 
   // The RPC also creates the in-app notification for every admin.

@@ -49,30 +49,39 @@ async function resolveRecipients(admin: SupabaseClient, input: SendAnnouncementI
   const community = active.filter((c) => !adminIds.has(c.id));
   if (input.audience === "all") return community;
 
-  // Coworkers = a plan in force today, own or shared (same rule as booking).
-  const { data: coworkerRows } = await admin.rpc("get_active_coworkers_directory");
-  const coworkerIds = new Set(((coworkerRows ?? []) as { id: string }[]).map((r) => r.id));
-  if (input.audience === "coworkers") return community.filter((c) => coworkerIds.has(c.id));
-  if (input.audience === "guests") return community.filter((c) => !coworkerIds.has(c.id));
+  if (input.audience === "coworkers") {
+    const ids = await planHolderIds(admin, null);
+    return community.filter((c) => ids.has(c.id));
+  }
+  if (input.audience === "guests") {
+    const ids = await planHolderIds(admin, null);
+    return community.filter((c) => !ids.has(c.id));
+  }
+  const ids = await planHolderIds(admin, input.planId ?? "");
+  return community.filter((c) => ids.has(c.id));
+}
 
-  // One plan: its holders plus whoever shares their hours.
+// People with a plan in force today (one plan, or any when planId is null):
+// the holders plus whoever shares their hours. Same rule as booking.
+async function planHolderIds(admin: SupabaseClient, planId: string | null): Promise<Set<string>> {
   const today = utcIsoToZonedDateAndMinutes(new Date().toISOString()).date;
-  const { data: memberships } = await admin
+  let query = admin
     .from("memberships")
     .select("contact_id, quota_account_id")
-    .eq("plan_id", input.planId ?? "")
     .eq("status", "active")
     .lte("start_date", today)
     .or(`end_date.is.null,end_date.gte.${today}`);
+  if (planId !== null) query = query.eq("plan_id", planId);
+  const { data: memberships } = await query;
+
   const accountIds = (memberships ?? []).map((m) => m.quota_account_id as string);
   const { data: shares } = accountIds.length
     ? await admin.from("quota_account_members").select("contact_id").in("quota_account_id", accountIds)
     : { data: [] };
-  const planIds = new Set([
+  return new Set([
     ...(memberships ?? []).map((m) => m.contact_id as string),
     ...(shares ?? []).map((s) => s.contact_id as string),
   ]);
-  return community.filter((c) => planIds.has(c.id));
 }
 
 export async function sendAnnouncement(

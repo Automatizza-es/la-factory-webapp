@@ -20,13 +20,15 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   // so a bare `contacts(...)` embed is ambiguous -- same gotcha as bookings.
   const { data: invitation } = await admin
     .from("coworker_invitations")
-    .select("id, status, expires_at, kind, contacts!coworker_invitations_contact_id_fkey(email)")
+    .select("id, status, expires_at, kind, contacts!coworker_invitations_contact_id_fkey(email, status)")
     .eq("token", token)
     .maybeSingle();
 
-  const email = (invitation?.contacts as unknown as { email: string | null } | null)?.email;
+  const contact = invitation?.contacts as unknown as { email: string | null; status: string } | null;
+  const email = contact?.email;
 
-  if (!invitation || !email) {
+  // An archived person's old invitation must not sign them in.
+  if (!invitation || !email || contact?.status === "archived") {
     return NextResponse.redirect(new URL("/onboarding?error=not_found", origin));
   }
   if (invitation.status === "cancelled") {

@@ -3,7 +3,9 @@
 import { createClient as createServiceClient } from "@supabase/supabase-js";
 import { revalidatePath } from "next/cache";
 import { getCurrentCoworker } from "@/lib/data/coworker";
+import { getAppOrigin } from "@/lib/app-origin";
 import { sendTransactionalEmail } from "@/lib/email/resend";
+import { brandedEmailHtml } from "@/lib/email/template";
 import { formatDateLong, minutesToTime } from "@/lib/format";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import { getLocale } from "@/lib/i18n/server";
@@ -19,7 +21,6 @@ export interface RegisterPackageInput {
   recipientContactId: string;
   imagePath: string;
   note: string;
-  appOrigin: string;
 }
 
 // Callable by any signed-in coworker, not just admin: whoever's around when
@@ -27,8 +28,13 @@ export interface RegisterPackageInput {
 export async function registerPackage(input: RegisterPackageInput): Promise<ActionResult> {
   const dict = getDictionary(await getLocale());
   const current = await getCurrentCoworker();
-  if (!current) {
+  // Guests (no plan right now) aren't in the space day to day.
+  if (!current || current.access === "guest") {
     return { error: dict.errors.notAuthorized };
+  }
+  // Photos are uploaded under packages/ by PackageForm.
+  if (!input.imagePath.startsWith("packages/")) {
+    return { error: dict.errors.unknown };
   }
 
   const supabase = await createClient();
@@ -68,18 +74,17 @@ export async function registerPackage(input: RegisterPackageInput): Promise<Acti
     const zoned = utcIsoToZonedDateAndMinutes(pkg.received_at);
     const whenText = `${formatDateLong(zoned.date, recipientLocale)} · ${minutesToTime(zoned.minutes)}`;
 
+    // Branded template (escapes names); link built from the server's own
+    // origin, never from what the browser sent.
     await sendTransactionalEmail({
       to: recipient.email,
       subject: recipientDict.packages.emailSubject,
-      html: `
-        <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto;">
-          <h2>${recipientDict.packages.emailSubject}</h2>
-          <p>${recipientDict.packages.emailGreeting(recipient.first_name)}</p>
-          <p>${recipientDict.packages.emailBody}</p>
-          <p style="color:#8a7a6d;font-size:14px;">${whenText} · ${recipientDict.packages.receivedBy(current.coworker.firstName)}</p>
-          <p><a href="${input.appOrigin}/paquetes" style="display:inline-block;background:#5b4636;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;">${recipientDict.packages.emailCta}</a></p>
-        </div>
-      `,
+      html: brandedEmailHtml({
+        heading: recipientDict.packages.emailSubject,
+        paragraphs: [recipientDict.packages.emailGreeting(recipient.first_name), recipientDict.packages.emailBody],
+        cta: { label: recipientDict.packages.emailCta, url: `${await getAppOrigin()}/paquetes` },
+        footnotes: [`${whenText} · ${recipientDict.packages.receivedBy(current.coworker.firstName)}`],
+      }),
     });
   }
 

@@ -73,7 +73,6 @@ export function PackageForm({ contacts, redirectTo }: PackageFormProps) {
       recipientContactId: recipientId,
       imagePath: path,
       note,
-      appOrigin: window.location.origin,
     });
 
     if (result.error) {
