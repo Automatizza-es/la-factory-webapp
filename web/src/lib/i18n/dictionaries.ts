@@ -297,6 +297,8 @@ export interface Dictionary {
       more: string;
       account: string;
       companies: string;
+      billing: string;
+      settings: string;
     };
     dashboard: {
       title: string;
@@ -446,6 +448,35 @@ export interface Dictionary {
       people: (count: number) => string;
       back: string;
       nameRequired: string;
+    };
+    billing: {
+      title: string;
+      subtitle: (month: string) => string;
+      person: string;
+      plan: string;
+      amount: string;
+      billTo: string;
+      invoiced: string;
+      issues: string;
+      total: string;
+      progress: (done: number, total: number) => string;
+      noLines: string;
+      notBillableTitle: string;
+      noPrice: string;
+      noTaxId: string;
+      noAddress: string;
+      noHoldedId: string;
+      startsMidMonth: (date: string) => string;
+      endsMidMonth: (date: string) => string;
+      setPrices: string;
+    };
+    settings: {
+      title: string;
+      subtitle: string;
+      plansTitle: string;
+      monthlyHours: string;
+      price: string;
+      invalidPrice: string;
     };
     newCoworker: {
       title: string;
@@ -916,6 +947,8 @@ const es: Dictionary = {
       more: "Más",
       account: "Cuenta",
       companies: "Empresas",
+      billing: "Facturación",
+      settings: "Configuración",
     },
     dashboard: {
       title: "Dashboard",
@@ -1068,6 +1101,35 @@ const es: Dictionary = {
       people: (count) => (count === 1 ? "1 persona" : `${count} personas`),
       back: "Volver a empresas",
       nameRequired: "La razón social es obligatoria.",
+    },
+    billing: {
+      title: "Facturación",
+      subtitle: (month) => `Quién hay que facturar en ${month}. La factura se emite en Holded.`,
+      person: "Persona",
+      plan: "Tarifa",
+      amount: "Importe",
+      billTo: "Se factura a",
+      invoiced: "Facturado",
+      issues: "Avisos",
+      total: "Total previsto",
+      progress: (done, total) => `${done} de ${total} facturadas`,
+      noLines: "No hay nadie que facturar este mes.",
+      notBillableTitle: "Con tarifa pero no facturables",
+      noPrice: "Tarifa sin precio",
+      noTaxId: "Falta NIF/CIF",
+      noAddress: "Falta dirección fiscal",
+      noHoldedId: "Sin ID de Holded",
+      startsMidMonth: (date) => `Alta el ${date}`,
+      endsMidMonth: (date) => `Baja el ${date}`,
+      setPrices: "Poner precios",
+    },
+    settings: {
+      title: "Configuración",
+      subtitle: "Ajustes generales de La Factory.",
+      plansTitle: "Tarifas",
+      monthlyHours: "Horas de sala al mes",
+      price: "Precio mensual (€)",
+      invalidPrice: "El precio no es válido.",
     },
     newCoworker: {
       title: "Nuevo coworker",
@@ -1540,6 +1602,8 @@ const ca: Dictionary = {
       more: "Més",
       account: "Compte",
       companies: "Empreses",
+      billing: "Facturació",
+      settings: "Configuració",
     },
     dashboard: {
       title: "Dashboard",
@@ -1692,6 +1756,35 @@ const ca: Dictionary = {
       people: (count) => (count === 1 ? "1 persona" : `${count} persones`),
       back: "Tornar a empreses",
       nameRequired: "La raó social és obligatòria.",
+    },
+    billing: {
+      title: "Facturació",
+      subtitle: (month) => `Qui cal facturar el ${month}. La factura s'emet a Holded.`,
+      person: "Persona",
+      plan: "Tarifa",
+      amount: "Import",
+      billTo: "Es factura a",
+      invoiced: "Facturat",
+      issues: "Avisos",
+      total: "Total previst",
+      progress: (done, total) => `${done} de ${total} facturades`,
+      noLines: "No hi ha ningú per facturar aquest mes.",
+      notBillableTitle: "Amb tarifa però no facturables",
+      noPrice: "Tarifa sense preu",
+      noTaxId: "Falta NIF/CIF",
+      noAddress: "Falta adreça fiscal",
+      noHoldedId: "Sense ID de Holded",
+      startsMidMonth: (date) => `Alta el ${date}`,
+      endsMidMonth: (date) => `Baixa el ${date}`,
+      setPrices: "Posar preus",
+    },
+    settings: {
+      title: "Configuració",
+      subtitle: "Ajustos generals de La Factory.",
+      plansTitle: "Tarifes",
+      monthlyHours: "Hores de sala al mes",
+      price: "Preu mensual (€)",
+      invalidPrice: "El preu no és vàlid.",
     },
     newCoworker: {
       title: "Nou coworker",
@@ -2163,6 +2256,8 @@ const en: Dictionary = {
       more: "More",
       account: "Account",
       companies: "Companies",
+      billing: "Billing",
+      settings: "Settings",
     },
     dashboard: {
       title: "Dashboard",
@@ -2315,6 +2410,35 @@ const en: Dictionary = {
       people: (count) => (count === 1 ? "1 person" : `${count} people`),
       back: "Back to companies",
       nameRequired: "The company name is required.",
+    },
+    billing: {
+      title: "Billing",
+      subtitle: (month) => `Who to invoice in ${month}. Invoices are issued in Holded.`,
+      person: "Person",
+      plan: "Plan",
+      amount: "Amount",
+      billTo: "Invoice to",
+      invoiced: "Invoiced",
+      issues: "Warnings",
+      total: "Expected total",
+      progress: (done, total) => `${done} of ${total} invoiced`,
+      noLines: "Nobody to invoice this month.",
+      notBillableTitle: "With a plan but not billable",
+      noPrice: "Plan has no price",
+      noTaxId: "Missing tax ID",
+      noAddress: "Missing fiscal address",
+      noHoldedId: "No Holded ID",
+      startsMidMonth: (date) => `Starts ${date}`,
+      endsMidMonth: (date) => `Ends ${date}`,
+      setPrices: "Set prices",
+    },
+    settings: {
+      title: "Settings",
+      subtitle: "General settings for La Factory.",
+      plansTitle: "Plans",
+      monthlyHours: "Room hours per month",
+      price: "Monthly price (€)",
+      invalidPrice: "That price isn't valid.",
     },
     newCoworker: {
       title: "New coworker",

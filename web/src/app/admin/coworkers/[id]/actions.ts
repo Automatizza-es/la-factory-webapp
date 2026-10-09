@@ -1,10 +1,7 @@
 "use server";
 
-import { createClient as createServiceClient } from "@supabase/supabase-js";
 import { revalidatePath } from "next/cache";
-import { getCurrentCoworker } from "@/lib/data/coworker";
-import { getDictionary } from "@/lib/i18n/dictionaries";
-import { getLocale } from "@/lib/i18n/server";
+import { adminActionContext } from "@/lib/admin-action";
 import { utcIsoToZonedDateAndMinutes } from "@/lib/timezone";
 
 type Result = { error: string | null };
@@ -31,26 +28,13 @@ const EDITABLE_COLUMNS = [
 ] as const;
 export type PersonPatch = Partial<Record<(typeof EDITABLE_COLUMNS)[number], string | boolean | null>>;
 
-// Admin writes go through the service key after this check: contacts and
-// memberships RLS are read-only for app users.
-async function adminContext() {
-  const dict = getDictionary(await getLocale());
-  const current = await getCurrentCoworker();
-  if (!current || current.role !== "admin") return { dict, admin: null, current: null };
-  const admin = createServiceClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  );
-  return { dict, admin, current };
-}
-
 function refresh(contactId: string) {
   revalidatePath(`/admin/coworkers/${contactId}`);
   revalidatePath("/admin/coworkers");
 }
 
 export async function updatePerson(contactId: string, patch: PersonPatch): Promise<Result> {
-  const { dict, admin } = await adminContext();
+  const { dict, admin } = await adminActionContext();
   if (!admin) return { error: dict.errors.notAuthorized };
   const t = dict.admin.userDetail;
 
@@ -70,7 +54,7 @@ export async function updatePerson(contactId: string, patch: PersonPatch): Promi
 }
 
 export async function setArchived(contactId: string, archived: boolean): Promise<Result> {
-  const { dict, admin } = await adminContext();
+  const { dict, admin } = await adminActionContext();
   if (!admin) return { error: dict.errors.notAuthorized };
 
   const { error } = await admin
@@ -85,7 +69,7 @@ export async function setArchived(contactId: string, archived: boolean): Promise
 // A new plan of their own (they become a coworker from startDate). Any
 // shared-hours link is dropped: you either have your own plan or share one.
 export async function assignPlan(contactId: string, planId: string, startDate: string): Promise<Result> {
-  const { dict, admin } = await adminContext();
+  const { dict, admin } = await adminActionContext();
   if (!admin) return { error: dict.errors.notAuthorized };
   const t = dict.admin.userDetail;
 
@@ -113,7 +97,7 @@ export async function assignPlan(contactId: string, planId: string, startDate: s
 // The plan stays in force until endDate (inclusive); a date already past
 // closes it right away.
 export async function endPlan(contactId: string, membershipId: string, endDate: string): Promise<Result> {
-  const { dict, admin } = await adminContext();
+  const { dict, admin } = await adminActionContext();
   if (!admin) return { error: dict.errors.notAuthorized };
 
   const today = utcIsoToZonedDateAndMinutes(new Date().toISOString()).date;
@@ -135,7 +119,7 @@ export async function endPlan(contactId: string, membershipId: string, endDate: 
 }
 
 export async function setBillable(contactId: string, membershipId: string, billable: boolean): Promise<Result> {
-  const { dict, admin } = await adminContext();
+  const { dict, admin } = await adminActionContext();
   if (!admin) return { error: dict.errors.notAuthorized };
 
   const { error } = await admin.from("memberships").update({ billable }).eq("id", membershipId);
@@ -147,7 +131,7 @@ export async function setBillable(contactId: string, membershipId: string, billa
 // "Comparte las horas de": authorise this person on the owner's current
 // quota account (null = stop sharing).
 export async function setSharedHours(contactId: string, ownerContactId: string | null): Promise<Result> {
-  const { dict, admin } = await adminContext();
+  const { dict, admin } = await adminActionContext();
   if (!admin) return { error: dict.errors.notAuthorized };
   const t = dict.admin.userDetail;
 

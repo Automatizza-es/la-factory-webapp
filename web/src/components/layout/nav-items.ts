@@ -3,6 +3,8 @@
 import {
   Building2,
   CalendarDays,
+  Receipt,
+  Settings,
   Home,
   LayoutDashboard,
   ListChecks,
@@ -53,7 +55,13 @@ export function useNavItems(role: AppRole): { bottom: NavItem[]; sidebar: NavIte
           href: "/admin/mas",
           label: nav.more,
           icon: Menu,
-          alsoActiveOn: ["/admin/eventos", "/admin/paquetes", "/admin/empresas"],
+          alsoActiveOn: [
+            "/admin/eventos",
+            "/admin/paquetes",
+            "/admin/empresas",
+            "/admin/facturacion",
+            "/admin/configuracion",
+          ],
         },
       ],
       sidebar: [
@@ -63,6 +71,8 @@ export function useNavItems(role: AppRole): { bottom: NavItem[]; sidebar: NavIte
         { href: "/admin/empresas", label: nav.companies, icon: Building2 },
         { href: "/admin/eventos", label: nav.events, icon: PartyPopper },
         { href: "/admin/paquetes", label: nav.packages, icon: Package },
+        { href: "/admin/facturacion", label: nav.billing, icon: Receipt },
+        { href: "/admin/configuracion", label: nav.settings, icon: Settings },
       ],
     };
   }

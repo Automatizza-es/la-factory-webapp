@@ -130,3 +130,14 @@ export function formatDateShort(
       .toUpperCase(),
   };
 }
+
+// "octubre de 2026" from a YYYY-MM month.
+export function formatMonthYear(month: string, locale: Locale = "es"): string {
+  const date = new Date(`${month}-01T12:00:00`);
+  return date.toLocaleDateString(INTL_LOCALE[locale], { month: "long", year: "numeric" });
+}
+
+// Euros with the locale's separators: "1.250,00 €".
+export function formatEuros(amount: number, locale: Locale = "es"): string {
+  return new Intl.NumberFormat(INTL_LOCALE[locale], { style: "currency", currency: "EUR" }).format(amount);
+}
