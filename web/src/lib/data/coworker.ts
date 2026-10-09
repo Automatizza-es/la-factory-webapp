@@ -49,8 +49,9 @@ export async function getCurrentAccount(): Promise<CurrentAccount> {
     .eq("id", userRow.contact_id)
     .single();
 
-  if (!contact) return { current: null, archived: false };
-  if (contact.status === "archived") return { current: null, archived: true };
+  // users.contact_id always points at a contact, so an unreadable one means
+  // the database no longer recognises them: an archived profile.
+  if (!contact || contact.status === "archived") return { current: null, archived: true };
 
   const access =
     userRow.role === "admin"
