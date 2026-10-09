@@ -3,6 +3,7 @@
 import {
   Building2,
   CalendarDays,
+  Wrench,
   Receipt,
   Settings,
   Home,
@@ -58,6 +59,7 @@ export function useNavItems(role: AppRole): { bottom: NavItem[]; sidebar: NavIte
           alsoActiveOn: [
             "/admin/eventos",
             "/admin/paquetes",
+            "/admin/incidencias",
             "/admin/empresas",
             "/admin/facturacion",
             "/admin/configuracion",
@@ -68,6 +70,7 @@ export function useNavItems(role: AppRole): { bottom: NavItem[]; sidebar: NavIte
         dashboard,
         bookings,
         users,
+        { href: "/admin/incidencias", label: nav.incidents, icon: Wrench },
         { href: "/admin/empresas", label: nav.companies, icon: Building2 },
         { href: "/admin/eventos", label: nav.events, icon: PartyPopper },
         { href: "/admin/paquetes", label: nav.packages, icon: Package },
@@ -82,17 +85,20 @@ export function useNavItems(role: AppRole): { bottom: NavItem[]; sidebar: NavIte
   const events = { href: "/eventos", label: nav.events, icon: PartyPopper };
   const packages = { href: "/paquetes", label: nav.packages, icon: Package };
   const profile = { href: "/perfil", label: nav.profile, icon: User };
+  const incidents = { href: "/incidencias", label: nav.incidents, icon: Wrench };
 
   // No plan, no bookings: community side only.
   if (role === "guest") {
-    const items = [home, events, packages, profile];
-    return { bottom: items, sidebar: items };
+    return {
+      bottom: [home, events, packages, profile],
+      sidebar: [home, events, packages, incidents, profile],
+    };
   }
 
   const book = { href: "/calendario", label: nav.book, icon: CalendarDays, alsoActiveOn: ["/reservar"] };
   const bookings = { href: "/reservas", label: nav.bookings, icon: ListChecks };
   return {
     bottom: [home, book, bookings, profile],
-    sidebar: [home, book, bookings, events, packages, profile],
+    sidebar: [home, book, bookings, events, packages, incidents, profile],
   };
 }

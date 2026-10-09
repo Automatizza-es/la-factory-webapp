@@ -7,6 +7,7 @@ import {
   Package,
   ShieldCheck,
   UserPen,
+  Wrench,
 } from "lucide-react";
 import Link from "next/link";
 import { SignOutButton } from "@/components/layout/SignOutButton";
@@ -80,6 +81,15 @@ export default async function PerfilPage() {
       >
         <Package className="h-5 w-5 text-brown-dark" strokeWidth={1.75} />
         <span className="flex-1 font-medium text-ink">{dict.packages.title}</span>
+        <ChevronRight className="h-4 w-4 text-warm-gray" strokeWidth={2} />
+      </Link>
+
+      <Link
+        href="/incidencias"
+        className="flex items-center gap-3 rounded-2xl bg-white p-4 shadow-sm"
+      >
+        <Wrench className="h-5 w-5 text-brown-dark" strokeWidth={1.75} />
+        <span className="flex-1 font-medium text-ink">{dict.incidents.title}</span>
         <ChevronRight className="h-4 w-4 text-warm-gray" strokeWidth={2} />
       </Link>
 

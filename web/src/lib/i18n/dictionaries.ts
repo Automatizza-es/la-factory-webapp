@@ -8,6 +8,7 @@ export interface Dictionary {
     profile: string;
     events: string;
     packages: string;
+    incidents: string;
   };
   home: {
     greeting: string;
@@ -49,9 +50,46 @@ export interface Dictionary {
     marking: string;
     markError: string;
   };
+  incidents: {
+    title: string;
+    subtitle: string;
+    report: string;
+    reportTitle: string;
+    category: string;
+    categories: Record<"internet" | "climate" | "cleaning" | "room" | "furniture" | "access" | "other", string>;
+    description: string;
+    descriptionPlaceholder: string;
+    photo: string;
+    addPhoto: string;
+    changePhoto: string;
+    submit: string;
+    submitting: string;
+    sent: string;
+    descriptionRequired: string;
+    openTitle: string;
+    openHint: string;
+    mineTitle: string;
+    noneOpen: string;
+    noneMine: string;
+    status: Record<"pending" | "in_progress" | "resolved", string>;
+    adminNote: string;
+    homeCta: string;
+    homeCtaSubtitle: string;
+    reportedBy: string;
+    filterOpen: string;
+    filterResolved: string;
+    filterAll: string;
+    notePlaceholder: string;
+    save: string;
+    none: string;
+    pendingCount: (count: number) => string;
+  };
   notifications: {
     title: string;
     empty: string;
+    incidentNewTitle: string;
+    incidentUpdateTitle: string;
+    incidentUpdateBody: (status: string) => string;
     genericTitle: string;
     genericBody: string;
     packageReceivedTitle: string;
@@ -299,6 +337,7 @@ export interface Dictionary {
       companies: string;
       billing: string;
       settings: string;
+      incidents: string;
     };
     dashboard: {
       title: string;
@@ -670,6 +709,7 @@ const es: Dictionary = {
     profile: "Perfil",
     events: "Eventos",
     packages: "Mis paquetes",
+    incidents: "Incidencias",
   },
   home: {
     greeting: "Hola",
@@ -711,9 +751,54 @@ const es: Dictionary = {
     marking: "Guardando...",
     markError: "No hemos podido guardarlo. Inténtalo de nuevo.",
   },
+  incidents: {
+    title: "Incidencias",
+    subtitle: "¿Algo no funciona en el espacio? Avísanos y lo arreglamos.",
+    report: "Comunicar incidencia",
+    reportTitle: "Nueva incidencia",
+    category: "¿Qué pasa?",
+    categories: {
+      internet: "Internet / wifi",
+      climate: "Climatización",
+      cleaning: "Limpieza",
+      room: "Sala",
+      furniture: "Mobiliario",
+      access: "Acceso",
+      other: "Otro",
+    },
+    description: "Cuéntanos qué ocurre",
+    descriptionPlaceholder: "Dónde, desde cuándo, qué has visto...",
+    photo: "Foto (opcional)",
+    addPhoto: "Añadir foto",
+    changePhoto: "Cambiar foto",
+    submit: "Enviar",
+    submitting: "Enviando...",
+    sent: "Gracias, lo hemos recibido. Te avisaremos cuando haya novedades.",
+    descriptionRequired: "Describe la incidencia.",
+    openTitle: "Abiertas en el espacio",
+    openHint: "Si lo que ves ya está aquí, no hace falta que lo comuniques otra vez.",
+    mineTitle: "Mis incidencias",
+    noneOpen: "Ahora mismo no hay incidencias abiertas.",
+    noneMine: "No has comunicado ninguna incidencia.",
+    status: { pending: "Pendiente", in_progress: "En proceso", resolved: "Resuelta" },
+    adminNote: "Respuesta de La Factory",
+    homeCta: "¿Algo no funciona?",
+    homeCtaSubtitle: "Comunica una incidencia del espacio.",
+    reportedBy: "Comunicada por",
+    filterOpen: "Abiertas",
+    filterResolved: "Resueltas",
+    filterAll: "Todas",
+    notePlaceholder: "Nota para quien la comunicó (opcional)",
+    save: "Guardar",
+    none: "No hay incidencias.",
+    pendingCount: (count) => (count === 1 ? "1 pendiente" : `${count} pendientes`),
+  },
   notifications: {
     title: "Notificaciones",
     empty: "No tienes notificaciones.",
+    incidentNewTitle: "🛠️ Nueva incidencia",
+    incidentUpdateTitle: "🛠️ Tu incidencia se ha actualizado",
+    incidentUpdateBody: (status) => `Estado: ${status}`,
     genericTitle: "Notificación",
     genericBody: "",
     packageReceivedTitle: "📦 Tienes un paquete",
@@ -957,6 +1042,7 @@ const es: Dictionary = {
       companies: "Empresas",
       billing: "Facturación",
       settings: "Configuración",
+      incidents: "Incidencias",
     },
     dashboard: {
       title: "Dashboard",
@@ -1333,6 +1419,7 @@ const ca: Dictionary = {
     profile: "Perfil",
     events: "Esdeveniments",
     packages: "Els meus paquets",
+    incidents: "Incidències",
   },
   home: {
     greeting: "Hola",
@@ -1374,9 +1461,54 @@ const ca: Dictionary = {
     marking: "Desant...",
     markError: "No ho hem pogut desar. Torna-ho a provar.",
   },
+  incidents: {
+    title: "Incidències",
+    subtitle: "Alguna cosa no funciona a l'espai? Avisa'ns i ho arreglem.",
+    report: "Comunicar incidència",
+    reportTitle: "Nova incidència",
+    category: "Què passa?",
+    categories: {
+      internet: "Internet / wifi",
+      climate: "Climatització",
+      cleaning: "Neteja",
+      room: "Sala",
+      furniture: "Mobiliari",
+      access: "Accés",
+      other: "Altre",
+    },
+    description: "Explica'ns què passa",
+    descriptionPlaceholder: "On, des de quan, què has vist...",
+    photo: "Foto (opcional)",
+    addPhoto: "Afegir foto",
+    changePhoto: "Canviar foto",
+    submit: "Enviar",
+    submitting: "Enviant...",
+    sent: "Gràcies, ho hem rebut. T'avisarem quan hi hagi novetats.",
+    descriptionRequired: "Descriu la incidència.",
+    openTitle: "Obertes a l'espai",
+    openHint: "Si el que veus ja és aquí, no cal que ho tornis a comunicar.",
+    mineTitle: "Les meves incidències",
+    noneOpen: "Ara mateix no hi ha incidències obertes.",
+    noneMine: "No has comunicat cap incidència.",
+    status: { pending: "Pendent", in_progress: "En curs", resolved: "Resolta" },
+    adminNote: "Resposta de La Factory",
+    homeCta: "Alguna cosa no funciona?",
+    homeCtaSubtitle: "Comunica una incidència de l'espai.",
+    reportedBy: "Comunicada per",
+    filterOpen: "Obertes",
+    filterResolved: "Resoltes",
+    filterAll: "Totes",
+    notePlaceholder: "Nota per a qui la va comunicar (opcional)",
+    save: "Desar",
+    none: "No hi ha incidències.",
+    pendingCount: (count) => (count === 1 ? "1 pendent" : `${count} pendents`),
+  },
   notifications: {
     title: "Notificacions",
     empty: "No tens notificacions.",
+    incidentNewTitle: "🛠️ Nova incidència",
+    incidentUpdateTitle: "🛠️ La teva incidència s'ha actualitzat",
+    incidentUpdateBody: (status) => `Estat: ${status}`,
     genericTitle: "Notificació",
     genericBody: "",
     packageReceivedTitle: "📦 Tens un paquet",
@@ -1620,6 +1752,7 @@ const ca: Dictionary = {
       companies: "Empreses",
       billing: "Facturació",
       settings: "Configuració",
+      incidents: "Incidències",
     },
     dashboard: {
       title: "Dashboard",
@@ -1996,6 +2129,7 @@ const en: Dictionary = {
     profile: "Profile",
     events: "Events",
     packages: "My packages",
+    incidents: "Issues",
   },
   home: {
     greeting: "Hi",
@@ -2037,9 +2171,54 @@ const en: Dictionary = {
     marking: "Saving...",
     markError: "We couldn't save that. Please try again.",
   },
+  incidents: {
+    title: "Issues",
+    subtitle: "Something not working in the space? Let us know and we'll fix it.",
+    report: "Report an issue",
+    reportTitle: "New issue",
+    category: "What's wrong?",
+    categories: {
+      internet: "Internet / wifi",
+      climate: "Heating / AC",
+      cleaning: "Cleaning",
+      room: "Room",
+      furniture: "Furniture",
+      access: "Access",
+      other: "Other",
+    },
+    description: "Tell us what's happening",
+    descriptionPlaceholder: "Where, since when, what you've noticed...",
+    photo: "Photo (optional)",
+    addPhoto: "Add photo",
+    changePhoto: "Change photo",
+    submit: "Send",
+    submitting: "Sending...",
+    sent: "Thanks, we've got it. We'll let you know when there's news.",
+    descriptionRequired: "Describe the issue.",
+    openTitle: "Open in the space",
+    openHint: "If what you see is already here, no need to report it again.",
+    mineTitle: "My issues",
+    noneOpen: "No open issues right now.",
+    noneMine: "You haven't reported any issues.",
+    status: { pending: "Pending", in_progress: "In progress", resolved: "Resolved" },
+    adminNote: "Reply from La Factory",
+    homeCta: "Something not working?",
+    homeCtaSubtitle: "Report an issue in the space.",
+    reportedBy: "Reported by",
+    filterOpen: "Open",
+    filterResolved: "Resolved",
+    filterAll: "All",
+    notePlaceholder: "Note for whoever reported it (optional)",
+    save: "Save",
+    none: "No issues.",
+    pendingCount: (count) => (count === 1 ? "1 pending" : `${count} pending`),
+  },
   notifications: {
     title: "Notifications",
     empty: "You have no notifications.",
+    incidentNewTitle: "🛠️ New issue reported",
+    incidentUpdateTitle: "🛠️ Your issue has been updated",
+    incidentUpdateBody: (status) => `Status: ${status}`,
     genericTitle: "Notification",
     genericBody: "",
     packageReceivedTitle: "📦 You have a package",
@@ -2282,6 +2461,7 @@ const en: Dictionary = {
       companies: "Companies",
       billing: "Billing",
       settings: "Settings",
+      incidents: "Issues",
     },
     dashboard: {
       title: "Dashboard",

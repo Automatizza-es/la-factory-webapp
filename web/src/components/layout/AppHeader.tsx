@@ -7,7 +7,7 @@ import type { Coworker } from "@/types/domain";
 
 interface AppHeaderProps {
   coworker: Coworker;
-  // Omitted for roles that don't get notifications yet (admin): no bell.
+  // Omitted = no bell.
   notifications?: NotificationItem[];
   notificationsTitle: string;
   notificationsEmpty: string;

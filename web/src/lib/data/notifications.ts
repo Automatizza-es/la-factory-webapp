@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
+import type { IncidentCategory, IncidentStatus } from "@/lib/data/incidents";
 import { formatDateLong, minutesToTime } from "@/lib/format";
 import type { Locale } from "@/lib/i18n/config";
 import { utcIsoToZonedDateAndMinutes } from "@/lib/timezone";
@@ -32,6 +33,8 @@ function renderNotification(
   packageReceivedAt: string | undefined,
   event: { title: string; startsAt: string } | undefined,
   booking: { roomName: string; startsAt: string; endsAt: string } | undefined,
+  incident: { category: IncidentCategory; status: IncidentStatus; description: string } | undefined,
+  incidentsDict: Dictionary["incidents"],
 ): NotificationItem {
   let title = dict.genericTitle;
   let body = dict.genericBody;
@@ -52,6 +55,14 @@ function renderNotification(
     } else {
       body = dict.eventNewBody("", "");
     }
+  } else if (row.type === "incident_new") {
+    title = dict.incidentNewTitle;
+    body = incident
+      ? `${incidentsDict.categories[incident.category]} · ${incident.description.slice(0, 100)}`
+      : "";
+  } else if (row.type === "incident_update") {
+    title = dict.incidentUpdateTitle;
+    body = incident ? dict.incidentUpdateBody(incidentsDict.status[incident.status]) : "";
   } else if (row.type === "booking_reminder") {
     title = dict.bookingReminderTitle;
     if (booking) {
@@ -84,6 +95,7 @@ export async function getMyNotifications(
   contactId: string,
   dict: Dictionary["notifications"],
   locale: Locale,
+  incidentsDict: Dictionary["incidents"],
   limit = 10,
 ): Promise<NotificationItem[]> {
   const since = new Date(Date.now() - NOTIFICATION_WINDOW_DAYS * 24 * 60 * 60 * 1000).toISOString();
@@ -129,6 +141,20 @@ export async function getMyNotifications(
     }
   }
 
+  const incidentIds = rows
+    .filter((r) => (r.type === "incident_new" || r.type === "incident_update") && r.related_id)
+    .map((r) => r.related_id as string);
+  const incidentById = new Map<string, { category: IncidentCategory; status: IncidentStatus; description: string }>();
+  if (incidentIds.length > 0) {
+    const { data: incidentRows } = await supabase
+      .from("incidents")
+      .select("id, category, status, description")
+      .in("id", incidentIds);
+    for (const i of incidentRows ?? []) {
+      incidentById.set(i.id, { category: i.category, status: i.status, description: i.description });
+    }
+  }
+
   return rows.map((row) =>
     renderNotification(
       row,
@@ -137,6 +163,8 @@ export async function getMyNotifications(
       row.related_id ? receivedAtById.get(row.related_id) : undefined,
       row.related_id ? eventById.get(row.related_id) : undefined,
       row.related_id ? bookingById.get(row.related_id) : undefined,
+      row.related_id ? incidentById.get(row.related_id) : undefined,
+      incidentsDict,
     ),
   );
 }

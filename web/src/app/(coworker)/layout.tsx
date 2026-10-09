@@ -28,7 +28,7 @@ export default async function CoworkerLayout({ children }: { children: React.Rea
   }
 
   const supabase = await createClient();
-  const notifications = await getMyNotifications(supabase, current.contactId, dict.notifications, locale);
+  const notifications = await getMyNotifications(supabase, current.contactId, dict.notifications, locale, dict.incidents);
 
   return (
     <AppShell role={current.access} user={current.coworker} notifications={notifications} dict={dict}>

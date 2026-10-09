@@ -9,6 +9,7 @@ import {
   PackagePlus,
   PartyPopper,
   UserPlus,
+  Wrench,
 } from "lucide-react";
 import {
   getAllRooms,
@@ -19,6 +20,7 @@ import {
 } from "@/lib/data/admin";
 import { getCurrentCoworker } from "@/lib/data/coworker";
 import { getAdminEvents } from "@/lib/data/events";
+import { getAdminIncidents } from "@/lib/data/incidents";
 import { getAdminPackagesSummary } from "@/lib/data/packages";
 import { formatDateLong, formatMinutesAsHours, formatTimeRange, minutesToTime } from "@/lib/format";
 import { getDictionary } from "@/lib/i18n/dictionaries";
@@ -86,14 +88,16 @@ export default async function AdminDashboardPage() {
 
   const today = todayInMadrid();
   const nowMinutes = utcIsoToZonedDateAndMinutes(new Date().toISOString()).minutes;
-  const [rooms, todayBookings, upcoming, packages, events, bookedMinutes] = await Promise.all([
+  const [rooms, todayBookings, upcoming, packages, events, bookedMinutes, openIncidents] = await Promise.all([
     getAllRooms(supabase),
     getBookingsInLocalRange(supabase, today, addDays(today, 1)),
     getUpcomingBookings(supabase),
     getAdminPackagesSummary(supabase),
     getAdminEvents(supabase),
     current ? getMinutesBookedByThisMonth(supabase, current.contactId) : Promise.resolve(0),
+    current ? getAdminIncidents(supabase, current.contactId, "open") : Promise.resolve([]),
   ]);
+  const pendingIncidents = openIncidents.filter((i) => i.status === "pending");
 
   const nextEvent = events
     .filter((e) => e.status === "published" && new Date(e.startsAt) > new Date())
@@ -218,6 +222,26 @@ export default async function AdminDashboardPage() {
         </Card>
 
         <div className="flex flex-col gap-4">
+          <Card title={t.incidents} icon={Wrench} href="/admin/incidencias" seeAllLabel={t.seeAll}>
+            <p
+              className={`text-sm font-medium ${pendingIncidents.length > 0 ? "text-amber-700" : "text-warm-gray"}`}
+            >
+              {pendingIncidents.length > 0
+                ? dict.incidents.pendingCount(pendingIncidents.length)
+                : t.noIncidents}
+            </p>
+            {openIncidents.length > 0 && (
+              <ul className="mt-2 flex flex-col gap-1.5">
+                {openIncidents.slice(0, 3).map((i) => (
+                  <li key={i.id} className="flex items-center justify-between gap-2 text-sm">
+                    <span className="truncate text-ink">{dict.incidents.categories[i.category]}</span>
+                    <span className="shrink-0 text-xs text-warm-gray">{dict.incidents.status[i.status]}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </Card>
+
           <Card title={t.packagesTitle} icon={Package} href="/admin/paquetes" seeAllLabel={t.seeAll}>
             <p className={`text-sm font-medium ${packages.pendingCount > 0 ? "text-amber-700" : "text-warm-gray"}`}>
               {packages.pendingCount > 0 ? t.pendingPackages(packages.pendingCount) : t.noPendingPackages}

@@ -15,7 +15,7 @@ export async function fetchMyNotifications(): Promise<NotificationItem[]> {
   const locale = await getLocale();
   const dict = getDictionary(locale);
   const supabase = await createClient();
-  return getMyNotifications(supabase, current.contactId, dict.notifications, locale);
+  return getMyNotifications(supabase, current.contactId, dict.notifications, locale, dict.incidents);
 }
 
 // Opening the bell counts as having seen everything in it. notifications
