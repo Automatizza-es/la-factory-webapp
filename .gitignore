@@ -1,2 +1,6 @@
 .DS_Store
 .claude/
+
+# Contact exports (personal data): never commit
+*.xlsx
+*.csv
