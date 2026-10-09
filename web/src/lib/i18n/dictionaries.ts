@@ -253,6 +253,8 @@ export interface Dictionary {
     error: string;
     linkExpired: string;
     forgotPassword: string;
+    showPassword: string;
+    hidePassword: string;
   };
   recover: {
     title: string;
@@ -1005,6 +1007,8 @@ const es: Dictionary = {
     error: "El email o la contraseña no son correctos.",
     linkExpired: "El enlace ha caducado o ya se ha usado. Pide uno nuevo.",
     forgotPassword: "¿Has olvidado tu contraseña?",
+    showPassword: "Mostrar contraseña",
+    hidePassword: "Ocultar contraseña",
   },
   recover: {
     title: "Recuperar contraseña",
@@ -1760,6 +1764,8 @@ const ca: Dictionary = {
     error: "L'email o la contrasenya no són correctes.",
     linkExpired: "L'enllaç ha caducat o ja s'ha fet servir. Demana'n un de nou.",
     forgotPassword: "Has oblidat la contrasenya?",
+    showPassword: "Mostrar contrasenya",
+    hidePassword: "Amagar contrasenya",
   },
   recover: {
     title: "Recuperar contrasenya",
@@ -2514,6 +2520,8 @@ const en: Dictionary = {
     error: "The email or password is incorrect.",
     linkExpired: "That link has expired or was already used. Request a new one.",
     forgotPassword: "Forgot your password?",
+    showPassword: "Show password",
+    hidePassword: "Hide password",
   },
   recover: {
     title: "Reset password",

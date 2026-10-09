@@ -6,6 +6,7 @@ import { LOCALE_LABELS, locales } from "@/lib/i18n/config";
 import { useI18n } from "@/lib/i18n/context";
 import { validateNewPassword } from "@/lib/password";
 import type { Locale } from "@/lib/i18n/config";
+import { PasswordInput } from "@/components/auth/PasswordInput";
 
 interface OnboardingFormProps {
   token: string;
@@ -136,9 +137,8 @@ export function OnboardingForm({ token, email }: OnboardingFormProps) {
         <label htmlFor="password" className="text-sm font-medium text-ink">
           {dict.onboarding.password} *
         </label>
-        <input
+        <PasswordInput
           id="password"
-          type="password"
           required
           autoComplete="new-password"
           value={password}
@@ -152,9 +152,8 @@ export function OnboardingForm({ token, email }: OnboardingFormProps) {
         <label htmlFor="confirmPassword" className="text-sm font-medium text-ink">
           {dict.onboarding.confirmPassword} *
         </label>
-        <input
+        <PasswordInput
           id="confirmPassword"
-          type="password"
           required
           autoComplete="new-password"
           value={confirmPassword}

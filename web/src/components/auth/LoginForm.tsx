@@ -6,6 +6,7 @@ import { useState, type FormEvent } from "react";
 import { AuthShell, authButtonClass, authInputClass } from "@/components/auth/AuthShell";
 import { useI18n } from "@/lib/i18n/context";
 import { createClient } from "@/lib/supabase/client";
+import { PasswordInput } from "@/components/auth/PasswordInput";
 
 export function LoginForm({ linkExpired }: { linkExpired: boolean }) {
   const router = useRouter();
@@ -46,8 +47,7 @@ export function LoginForm({ linkExpired }: { linkExpired: boolean }) {
           onChange={(event) => setEmail(event.target.value)}
           className={authInputClass}
         />
-        <input
-          type="password"
+        <PasswordInput
           required
           autoComplete="current-password"
           placeholder={dict.login.passwordPlaceholder}

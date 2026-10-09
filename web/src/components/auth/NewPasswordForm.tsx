@@ -8,6 +8,7 @@ import { completeMyWelcomeInvitation } from "@/app/nueva-contrasena/actions";
 import { useI18n } from "@/lib/i18n/context";
 import { passwordErrorMessage, validateNewPassword } from "@/lib/password";
 import { createClient } from "@/lib/supabase/client";
+import { PasswordInput } from "@/components/auth/PasswordInput";
 
 export function NewPasswordForm({ welcome }: { welcome: boolean }) {
   const router = useRouter();
@@ -47,8 +48,7 @@ export function NewPasswordForm({ welcome }: { welcome: boolean }) {
       subtitle={welcome ? dict.password.welcomeSubtitle : dict.password.subtitle}
     >
       <form onSubmit={handleSubmit} className="flex w-full flex-col gap-3">
-        <input
-          type="password"
+        <PasswordInput
           required
           autoComplete="new-password"
           placeholder={dict.password.newPassword}
@@ -56,8 +56,7 @@ export function NewPasswordForm({ welcome }: { welcome: boolean }) {
           onChange={(event) => setPassword(event.target.value)}
           className={authInputClass}
         />
-        <input
-          type="password"
+        <PasswordInput
           required
           autoComplete="new-password"
           placeholder={dict.password.confirmPassword}
