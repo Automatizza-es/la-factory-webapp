@@ -2,7 +2,6 @@
 
 import {
   CalendarDays,
-  CalendarPlus,
   Home,
   LayoutDashboard,
   ListChecks,
@@ -41,12 +40,7 @@ export function useNavItems(role: AppRole): { bottom: NavItem[]; sidebar: NavIte
   if (role === "admin") {
     const nav = dict.admin.nav;
     const dashboard = { href: "/admin", label: nav.dashboard, icon: LayoutDashboard };
-    const bookings = {
-      href: "/admin/calendario",
-      label: nav.bookings,
-      icon: CalendarDays,
-      alsoActiveOn: ["/admin/reservar"],
-    };
+    const bookings = { href: "/admin/calendario", label: nav.bookings, icon: CalendarDays };
     const users = { href: "/admin/coworkers", label: nav.users, icon: Users };
     return {
       bottom: [
@@ -62,8 +56,7 @@ export function useNavItems(role: AppRole): { bottom: NavItem[]; sidebar: NavIte
       ],
       sidebar: [
         dashboard,
-        { ...bookings, alsoActiveOn: undefined },
-        { href: "/admin/reservar", label: nav.book, icon: CalendarPlus },
+        bookings,
         users,
         { href: "/admin/eventos", label: nav.events, icon: PartyPopper },
         { href: "/admin/paquetes", label: nav.packages, icon: Package },

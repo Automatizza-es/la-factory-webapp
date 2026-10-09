@@ -142,7 +142,11 @@ export interface RoomOccupancyBlock {
   date: string;
   startMinutes: number;
   endMinutes: number;
+  // For coworkers: their own booking. For admins: every booking (they can
+  // manage all of them).
   isMine: boolean;
+  // Admin calendar only: who the booking is for. Coworkers never get it.
+  label?: string;
 }
 
 // Room occupancy for the calendar view: any signed-in coworker can see

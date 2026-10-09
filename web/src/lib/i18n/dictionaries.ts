@@ -389,6 +389,19 @@ export interface Dictionary {
       submit: string;
       submitting: string;
       success: string;
+      bookingFor: string;
+      typeExternal: string;
+      typeOther: string;
+      nameLabel: string;
+      eventNameLabel: string;
+      otherNameLabel: string;
+      notesLabel: string;
+      notesPlaceholder: string;
+      nameRequired: string;
+      contactRequired: string;
+      bookedThisMonth: (hours: string) => string;
+      eventFallback: string;
+      otherFallback: string;
     };
     packages: {
       title: string;
@@ -873,7 +886,7 @@ const es: Dictionary = {
       subtitle: "Reserva una sala para un coworker, invitado, uso interno o evento.",
       type: "Tipo de reserva",
       typeCoworker: "Coworker",
-      typeGuest: "Invitado / contacto",
+      typeGuest: "Invitado",
       typeInternal: "Uso interno",
       typeEvent: "Evento",
       coworkerLabel: "Coworker",
@@ -884,6 +897,19 @@ const es: Dictionary = {
       submit: "Crear reserva",
       submitting: "Creando reserva...",
       success: "Reserva creada correctamente.",
+      bookingFor: "Reserva para",
+      typeExternal: "Cliente externo",
+      typeOther: "Otro",
+      nameLabel: "Nombre del cliente",
+      eventNameLabel: "Nombre del evento (opcional)",
+      otherNameLabel: "Descripción (opcional)",
+      notesLabel: "Notas (opcional)",
+      notesPlaceholder: "Empresa, teléfono, lo que necesite...",
+      nameRequired: "Escribe el nombre del cliente.",
+      contactRequired: "Elige para quién es la reserva.",
+      bookedThisMonth: (hours) => `Has reservado ${hours} este mes`,
+      eventFallback: "Evento",
+      otherFallback: "Reserva interna",
     },
     packages: {
       title: "Paquetería",
@@ -1370,7 +1396,7 @@ const ca: Dictionary = {
       subtitle: "Reserva una sala per a un coworker, convidat, ús intern o esdeveniment.",
       type: "Tipus de reserva",
       typeCoworker: "Coworker",
-      typeGuest: "Convidat / contacte",
+      typeGuest: "Convidat",
       typeInternal: "Ús intern",
       typeEvent: "Esdeveniment",
       coworkerLabel: "Coworker",
@@ -1381,6 +1407,19 @@ const ca: Dictionary = {
       submit: "Crear reserva",
       submitting: "Creant reserva...",
       success: "Reserva creada correctament.",
+      bookingFor: "Reserva per a",
+      typeExternal: "Client extern",
+      typeOther: "Altre",
+      nameLabel: "Nom del client",
+      eventNameLabel: "Nom de l'esdeveniment (opcional)",
+      otherNameLabel: "Descripció (opcional)",
+      notesLabel: "Notes (opcional)",
+      notesPlaceholder: "Empresa, telèfon, el que necessiti...",
+      nameRequired: "Escriu el nom del client.",
+      contactRequired: "Tria per a qui és la reserva.",
+      bookedThisMonth: (hours) => `Has reservat ${hours} aquest mes`,
+      eventFallback: "Esdeveniment",
+      otherFallback: "Reserva interna",
     },
     packages: {
       title: "Paqueteria",
@@ -1866,7 +1905,7 @@ const en: Dictionary = {
       subtitle: "Book a room for a coworker, guest, internal use or event.",
       type: "Booking type",
       typeCoworker: "Coworker",
-      typeGuest: "Guest / contact",
+      typeGuest: "Guest",
       typeInternal: "Internal use",
       typeEvent: "Event",
       coworkerLabel: "Coworker",
@@ -1877,6 +1916,19 @@ const en: Dictionary = {
       submit: "Create booking",
       submitting: "Creating booking...",
       success: "Booking created successfully.",
+      bookingFor: "Booking for",
+      typeExternal: "External client",
+      typeOther: "Other",
+      nameLabel: "Client name",
+      eventNameLabel: "Event name (optional)",
+      otherNameLabel: "Description (optional)",
+      notesLabel: "Notes (optional)",
+      notesPlaceholder: "Company, phone, anything they need...",
+      nameRequired: "Enter the client's name.",
+      contactRequired: "Choose who the booking is for.",
+      bookedThisMonth: (hours) => `You've booked ${hours} this month`,
+      eventFallback: "Event",
+      otherFallback: "Internal booking",
     },
     packages: {
       title: "Packages",

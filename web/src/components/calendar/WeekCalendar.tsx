@@ -33,6 +33,8 @@ interface WeekCalendarProps {
   dict: Dictionary["calendar"];
   locale: Locale;
   myName: string;
+  // Calendar route to navigate within: /calendario or /admin/calendario.
+  basePath?: string;
 }
 
 export function WeekCalendar({
@@ -43,6 +45,7 @@ export function WeekCalendar({
   dict,
   locale,
   myName,
+  basePath = "/calendario",
 }: WeekCalendarProps) {
   const router = useRouter();
   const activeRoom = rooms.find((r) => r.id === activeRoomId);
@@ -74,11 +77,11 @@ export function WeekCalendar({
   }
 
   function goToDay(date: string) {
-    router.push(`/calendario?fecha=${date}&sala=${activeRoomId}`);
+    router.push(`${basePath}?fecha=${date}&sala=${activeRoomId}`);
   }
 
   function switchRoom(roomId: string) {
-    router.push(`/calendario?fecha=${weekDates[0]}&vista=semana&sala=${roomId}`);
+    router.push(`${basePath}?fecha=${weekDates[0]}&vista=semana&sala=${roomId}`);
   }
 
   return (
@@ -181,7 +184,7 @@ export function WeekCalendar({
                     const content = (
                       <>
                         <p className="truncate font-medium">
-                          {block.isMine ? myName : dict.booked}
+                          {block.label ?? (block.isMine ? myName : dict.booked)}
                         </p>
                         <p className="truncate opacity-80">
                           {minutesToTime(block.startMinutes)}–{minutesToTime(block.endMinutes)}

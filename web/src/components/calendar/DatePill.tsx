@@ -10,9 +10,11 @@ interface DatePillProps {
   locale: Locale;
   extraQuery: string;
   label?: string;
+  // Calendar route to navigate within: /calendario or /admin/calendario.
+  basePath?: string;
 }
 
-export function DatePill({ date, locale, extraQuery, label }: DatePillProps) {
+export function DatePill({ date, locale, extraQuery, label, basePath = "/calendario" }: DatePillProps) {
   const router = useRouter();
 
   return (
@@ -26,7 +28,7 @@ export function DatePill({ date, locale, extraQuery, label }: DatePillProps) {
         value={date}
         onChange={(event) => {
           if (event.target.value) {
-            router.push(`/calendario?fecha=${event.target.value}${extraQuery}`);
+            router.push(`${basePath}?fecha=${event.target.value}${extraQuery}`);
           }
         }}
         aria-label="Elegir fecha"

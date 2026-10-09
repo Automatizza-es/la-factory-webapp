@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { getBookings, getQuotaSummary } from "@/lib/data/coworker";
+import { getBookings, getQuotaSummary, type RoomOccupancyBlock } from "@/lib/data/coworker";
+import { getActiveContactsForPicker } from "@/lib/data/packages";
 import type { Locale } from "@/lib/i18n/config";
 import { utcIsoToZonedDateAndMinutes, zonedDateTimeToUtcIso } from "@/lib/timezone";
 import type { Booking, QuotaSummary } from "@/types/domain";
@@ -280,6 +281,7 @@ interface RawAdminBooking {
   status: "confirmed" | "cancelled";
   starts_at: string;
   ends_at: string;
+  guest_name: string | null;
   rooms: { name: string } | null;
   contacts: { first_name: string; last_name: string | null } | null;
 }
@@ -293,9 +295,10 @@ function toAdminBooking(row: RawAdminBooking): AdminBooking {
     roomId: row.room_id,
     roomName: row.rooms?.name ?? "",
     contactId: row.contact_id,
+    // A coworker/guest's name, or the free-text name of an external client.
     contactName: row.contacts
       ? `${row.contacts.first_name}${row.contacts.last_name ? " " + row.contacts.last_name : ""}`
-      : null,
+      : row.guest_name,
     bookingType: row.booking_type,
     status: row.status,
     date: start.date,
@@ -320,7 +323,7 @@ export async function getBookingsInLocalRange(
   const { data, error } = await supabase
     .from("bookings")
     .select(
-      "id, room_id, contact_id, booking_type, status, starts_at, ends_at, rooms(name), contacts!contact_id(first_name, last_name)",
+      "id, room_id, contact_id, booking_type, status, starts_at, ends_at, guest_name, rooms(name), contacts!contact_id(first_name, last_name)",
     )
     .eq("status", "confirmed")
     .gte("starts_at", startsAtGte)
@@ -339,7 +342,7 @@ export async function getUpcomingBookings(
   const { data, error } = await supabase
     .from("bookings")
     .select(
-      "id, room_id, contact_id, booking_type, status, starts_at, ends_at, rooms(name), contacts!contact_id(first_name, last_name)",
+      "id, room_id, contact_id, booking_type, status, starts_at, ends_at, guest_name, rooms(name), contacts!contact_id(first_name, last_name)",
     )
     .eq("status", "confirmed")
     .gt("starts_at", new Date().toISOString())
@@ -349,4 +352,111 @@ export async function getUpcomingBookings(
   if (error) console.error("getUpcomingBookings failed:", error.message);
 
   return ((data ?? []) as unknown as RawAdminBooking[]).map(toAdminBooking);
+}
+
+// ---------------------------------------------------------------------------
+// Admin calendar
+// ---------------------------------------------------------------------------
+
+export type AdminBookingFor = "coworker" | "external" | "guest" | "event" | "other";
+
+interface RawAdminOccupancy {
+  id: string;
+  room_id: string;
+  starts_at: string;
+  ends_at: string;
+  booking_type: string;
+  guest_name: string | null;
+  contacts: { first_name: string; last_name: string | null } | null;
+}
+
+// Every confirmed booking in the range, labelled with who it's for, so the
+// admin's calendar shows names where a coworker's only sees "Reservado".
+// `typeLabels` names the bookings that have no person or free-text name.
+export async function getAdminOccupancy(
+  supabase: SupabaseClient,
+  rangeStartIso: string,
+  rangeEndIso: string,
+  typeLabels: { event: string; other: string },
+): Promise<RoomOccupancyBlock[]> {
+  const { data } = await supabase
+    .from("bookings")
+    .select(
+      "id, room_id, starts_at, ends_at, booking_type, guest_name, contacts!contact_id(first_name, last_name)",
+    )
+    .eq("status", "confirmed")
+    .lt("starts_at", rangeEndIso)
+    .gt("ends_at", rangeStartIso)
+    .order("starts_at");
+
+  return ((data ?? []) as unknown as RawAdminOccupancy[]).map((row) => {
+    const start = utcIsoToZonedDateAndMinutes(row.starts_at);
+    const end = utcIsoToZonedDateAndMinutes(row.ends_at);
+    const person = row.contacts
+      ? `${row.contacts.first_name} ${row.contacts.last_name ?? ""}`.trim()
+      : null;
+    const fallback = row.booking_type === "event" ? typeLabels.event : typeLabels.other;
+    return {
+      id: row.id,
+      roomId: row.room_id,
+      date: start.date,
+      startMinutes: start.minutes,
+      endMinutes: end.minutes,
+      isMine: true,
+      label: person || row.guest_name || fallback,
+    };
+  });
+}
+
+export interface BookingPickerOption {
+  id: string;
+  name: string;
+}
+
+// Who an admin can book for from the lists: active coworkers, and "guests"
+// (any other contact that isn't an admin) until the Invitado role exists.
+export async function getAdminBookingPickers(
+  supabase: SupabaseClient,
+): Promise<{ coworkers: BookingPickerOption[]; guests: BookingPickerOption[] }> {
+  const [coworkers, contacts, { data: admins }] = await Promise.all([
+    getActiveContactsForPicker(supabase),
+    getAllContacts(supabase),
+    supabase.from("users").select("contact_id").eq("role", "admin"),
+  ]);
+
+  const excluded = new Set([
+    ...coworkers.map((c) => c.id),
+    ...(admins ?? []).map((a) => a.contact_id as string),
+  ]);
+  const guests = contacts
+    .filter((c) => !excluded.has(c.id))
+    .map((c) => ({ id: c.id, name: `${c.firstName} ${c.lastName ?? ""}`.trim() || c.email || "—" }))
+    .sort((a, b) => a.name.localeCompare(b.name));
+
+  return { coworkers, guests };
+}
+
+// Minutes of confirmed bookings this admin created in the current month
+// (Madrid time), whoever they were for: "Has reservado X h este mes".
+export async function getMinutesBookedByThisMonth(
+  supabase: SupabaseClient,
+  contactId: string,
+): Promise<number> {
+  const today = utcIsoToZonedDateAndMinutes(new Date().toISOString()).date;
+  const monthStart = `${today.slice(0, 7)}-01`;
+  const [year, month] = today.slice(0, 7).split("-").map(Number);
+  const nextMonth = month === 12 ? `${year + 1}-01-01` : `${year}-${String(month + 1).padStart(2, "0")}-01`;
+
+  const { data } = await supabase
+    .from("bookings")
+    .select("starts_at, ends_at")
+    .eq("created_by", contactId)
+    .eq("status", "confirmed")
+    .gte("starts_at", zonedDateTimeToUtcIso(monthStart, "00:00"))
+    .lt("starts_at", zonedDateTimeToUtcIso(nextMonth, "00:00"));
+
+  return (data ?? []).reduce(
+    (sum, b) => sum + (new Date(b.ends_at).getTime() - new Date(b.starts_at).getTime()) / 60000,
+    0,
+  );
 }

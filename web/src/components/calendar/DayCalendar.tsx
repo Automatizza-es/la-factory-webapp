@@ -5,6 +5,12 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Minus, Plus, Trash2, X } from "lucide-react";
 import { cancelBooking, submitBooking } from "@/app/(coworker)/reservar/actions";
+import { createAdminBooking } from "@/app/admin/calendario/actions";
+import {
+  AdminBookingFields,
+  EMPTY_ADMIN_BOOKING_FIELDS,
+  type AdminBookingFieldsValue,
+} from "@/components/calendar/AdminBookingFields";
 import {
   GRID_END_MINUTES,
   GRID_HEIGHT,
@@ -18,6 +24,8 @@ import {
 import { formatDateLong, formatMinutesAsHours, minutesToTime } from "@/lib/format";
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
+import type { BookingPickerOption } from "@/lib/data/admin";
+import { useI18n } from "@/lib/i18n/context";
 import type { RoomOccupancyBlock } from "@/lib/data/coworker";
 import { todayInMadrid, utcIsoToZonedDateAndMinutes } from "@/lib/timezone";
 import { useScrollToNow } from "@/lib/use-scroll-to-now";
@@ -32,6 +40,8 @@ interface Selection {
   startMinutes: number;
   endMinutes: number;
   bookingId?: string;
+  // Admin only: who an existing booking is for.
+  label?: string;
 }
 
 interface DayCalendarProps {
@@ -47,6 +57,11 @@ interface DayCalendarProps {
   locale: Locale;
   initialRoomId?: string;
   myName: string;
+  // Calendar route to navigate within: /calendario or /admin/calendario.
+  basePath?: string;
+  // Set on the admin calendar: new bookings ask who they're for (and never
+  // take the admin's own hours).
+  admin?: { coworkers: BookingPickerOption[]; guests: BookingPickerOption[] };
 }
 
 export function DayCalendar({
@@ -62,6 +77,8 @@ export function DayCalendar({
   locale,
   initialRoomId,
   myName,
+  basePath = "/calendario",
+  admin,
 }: DayCalendarProps) {
   const router = useRouter();
   const [selection, setSelection] = useState<Selection | null>(null);
@@ -69,6 +86,8 @@ export function DayCalendar({
   const [cancelling, setCancelling] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [focusRoomId, setFocusRoomId] = useState<string | undefined>(initialRoomId);
+  const [adminFields, setAdminFields] = useState<AdminBookingFieldsValue>(EMPTY_ADMIN_BOOKING_FIELDS);
+  const bookingForLabel = useI18n().dict.admin.createBooking.bookingFor;
 
   const visibleRooms = focusRoomId ? rooms.filter((r) => r.id === focusRoomId) : rooms;
 
@@ -76,7 +95,7 @@ export function DayCalendar({
     setFocusRoomId(roomId);
     setSelection(null);
     setError(null);
-    router.replace(`/calendario?fecha=${date}&sala=${roomId}`, { scroll: false });
+    router.replace(`${basePath}?fecha=${date}&sala=${roomId}`, { scroll: false });
   }
 
   const today = todayInMadrid();
@@ -113,6 +132,7 @@ export function DayCalendar({
     const nextStart = blocks.length > 0 ? Math.min(...blocks.map((b) => b.startMinutes)) : Infinity;
     const end = Math.min(slotStart + 60, nextStart, GRID_END_MINUTES);
     setError(null);
+    setAdminFields(EMPTY_ADMIN_BOOKING_FIELDS);
     setSelection({ roomId, startMinutes: slotStart, endMinutes: end });
   }
 
@@ -142,6 +162,7 @@ export function DayCalendar({
       startMinutes: block.startMinutes,
       endMinutes: block.endMinutes,
       bookingId: block.id,
+      label: block.label,
     });
   }
 
@@ -155,13 +176,16 @@ export function DayCalendar({
     setSubmitting(true);
     setError(null);
 
-    const result = await submitBooking({
+    const times = {
       roomId: selection.roomId,
       date,
       startTime: minutesToTime(selection.startMinutes),
       endTime: minutesToTime(selection.endMinutes),
-      existingBookingId: selection.bookingId,
-    });
+    };
+    const result =
+      admin && !selection.bookingId
+        ? await createAdminBooking({ ...times, ...adminFields })
+        : await submitBooking({ ...times, existingBookingId: selection.bookingId });
 
     if (result.error) {
       setError(result.error);
@@ -169,7 +193,8 @@ export function DayCalendar({
       return;
     }
 
-    if (selection.bookingId) {
+    // The admin stays on the calendar; a coworker goes to their bookings.
+    if (selection.bookingId || admin) {
       setSelection(null);
       setSubmitting(false);
       router.refresh();
@@ -307,7 +332,7 @@ export function DayCalendar({
                 const content = (
                   <>
                     <p className="font-medium">
-                      {block.isMine ? myName : dict.booked}
+                      {block.label ?? (block.isMine ? myName : dict.booked)}
                     </p>
                     <p className="opacity-80">
                       {minutesToTime(block.startMinutes)}–{minutesToTime(block.endMinutes)}
@@ -381,6 +406,11 @@ export function DayCalendar({
               {formatDateLong(date, locale)} · {minutesToTime(selection.startMinutes)}–
               {minutesToTime(selection.endMinutes)}
             </p>
+            {admin && selection.label && (
+              <p className="mt-1 text-sm font-medium text-ink">
+                {bookingForLabel}: {selection.label}
+              </p>
+            )}
             {!focusRoomId && <p className="mt-1 text-sm text-warm-gray">{dict.chooseRoomAndConfirm}</p>}
 
             {!focusRoomId && (
@@ -495,6 +525,15 @@ export function DayCalendar({
                 </div>
               </div>
             </div>
+
+            {admin && !selection.bookingId && (
+              <AdminBookingFields
+                value={adminFields}
+                onChange={setAdminFields}
+                coworkers={admin.coworkers}
+                guests={admin.guests}
+              />
+            )}
 
             {selectionOverlaps && (
               <p className="mt-2 rounded-2xl bg-red-50 p-3 text-sm text-red-600">
