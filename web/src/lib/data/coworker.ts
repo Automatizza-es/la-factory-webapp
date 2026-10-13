@@ -35,19 +35,21 @@ export async function getCurrentAccount(): Promise<CurrentAccount> {
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) return { current: null, archived: false };
 
+  // One round trip for both rows: this runs on every page.
   const { data: userRow } = await supabase
     .from("users")
-    .select("contact_id, role")
+    .select("contact_id, role, contacts(first_name, last_name, email, status)")
     .eq("id", auth.user.id)
     .maybeSingle();
 
   if (!userRow) return { current: null, archived: false };
 
-  const { data: contact } = await supabase
-    .from("contacts")
-    .select("first_name, last_name, email, status")
-    .eq("id", userRow.contact_id)
-    .single();
+  const contact = userRow.contacts as unknown as {
+    first_name: string;
+    last_name: string | null;
+    email: string | null;
+    status: string;
+  } | null;
 
   // users.contact_id always points at a contact, so an unreadable one means
   // the database no longer recognises them: an archived profile.
@@ -124,20 +126,17 @@ export async function getQuotaSummary(
   const membership = await getEffectiveMembership(supabase, contactId);
   if (!membership) return null;
 
-  const { data: plan } = await supabase
-    .from("plans")
-    .select("code, name, monthly_minutes")
-    .eq("id", membership.plan_id)
-    .single();
+  const [{ data: plan }, { data: period }] = await Promise.all([
+    supabase.from("plans").select("code, name, monthly_minutes").eq("id", membership.plan_id).single(),
+    supabase
+      .from("quota_periods")
+      .select("id, allocated_minutes")
+      .eq("quota_account_id", membership.quota_account_id)
+      .eq("period_start", periodStart)
+      .maybeSingle(),
+  ]);
 
   if (!plan) return null;
-
-  const { data: period } = await supabase
-    .from("quota_periods")
-    .select("id, allocated_minutes")
-    .eq("quota_account_id", membership.quota_account_id)
-    .eq("period_start", periodStart)
-    .maybeSingle();
 
   let availableMinutes = plan.monthly_minutes;
   // Hours the admin added (or removed) by hand this month count towards the

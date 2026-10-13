@@ -38,10 +38,13 @@ export async function updateSession(request: NextRequest) {
     },
   );
 
-  const { data } = await supabase.auth.getUser();
+  // getClaims verifies the session token locally (refreshing it when it has
+  // expired) instead of asking the Auth server on every request; pages
+  // still check the user properly with getUser().
+  const { data } = await supabase.auth.getClaims();
   const isPublicPath = PUBLIC_PATHS.some((path) => request.nextUrl.pathname.startsWith(path));
 
-  if (!data.user && !isPublicPath) {
+  if (!data?.claims && !isPublicPath) {
     const redirectUrl = new URL("/login", request.url);
     return NextResponse.redirect(redirectUrl);
   }
