@@ -4,6 +4,7 @@ import { useState, type FormEvent } from "react";
 import { setMyNewsletter, updateMyProfile, type MyProfileInput } from "@/app/(coworker)/perfil/datos/actions";
 import { Switch } from "@/components/admin/person/Switch";
 import { useI18n } from "@/lib/i18n/context";
+import { TEXT_LIMITS } from "@/lib/limits";
 
 const inputClass =
   "w-full rounded-xl border border-sand bg-white px-4 py-3 text-sm text-ink outline-none focus:border-brown-dark";
@@ -51,6 +52,13 @@ export function MyProfileForm({
     setStatus("saved");
   }
 
+  const maxLengths: Partial<Record<keyof MyProfileInput, number>> = {
+    firstName: TEXT_LIMITS.name,
+    lastName: TEXT_LIMITS.name,
+    phone: TEXT_LIMITS.phone,
+    company: TEXT_LIMITS.company,
+  };
+
   const field = (id: keyof MyProfileInput, label: string, type = "text", required = false) => (
     <div className="flex flex-col gap-1.5">
       <label htmlFor={id} className="text-sm font-medium text-ink">
@@ -62,6 +70,7 @@ export function MyProfileForm({
         type={type}
         required={required}
         value={values[id]}
+        maxLength={maxLengths[id]}
         onChange={(e) => set({ [id]: e.target.value })}
         className={inputClass}
       />

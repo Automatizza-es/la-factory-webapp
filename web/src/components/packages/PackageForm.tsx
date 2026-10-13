@@ -11,6 +11,7 @@ import type { PackageContactOption } from "@/lib/data/packages";
 import { compressImage } from "@/lib/image-compress";
 import { createClient } from "@/lib/supabase/client";
 import { todayInMadrid, utcIsoToZonedDateAndMinutes } from "@/lib/timezone";
+import { TEXT_LIMITS } from "@/lib/limits";
 
 interface PackageFormProps {
   contacts: PackageContactOption[];
@@ -175,6 +176,7 @@ export function PackageForm({ contacts, redirectTo }: PackageFormProps) {
           id="note"
           rows={2}
           value={note}
+          maxLength={TEXT_LIMITS.packageNote}
           onChange={(e) => setNote(e.target.value)}
           className="w-full rounded-xl border border-sand bg-white px-4 py-3 text-sm text-ink outline-none focus:border-brown-dark"
         />

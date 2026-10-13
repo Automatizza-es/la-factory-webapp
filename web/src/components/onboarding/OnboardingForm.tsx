@@ -5,6 +5,7 @@ import { completeOnboarding } from "@/app/onboarding/actions";
 import { useI18n } from "@/lib/i18n/context";
 import { validateNewPassword } from "@/lib/password";
 import { PasswordInput } from "@/components/auth/PasswordInput";
+import { TEXT_LIMITS } from "@/lib/limits";
 
 interface OnboardingFormProps {
   token: string;
@@ -66,6 +67,7 @@ export function OnboardingForm({ token, email }: OnboardingFormProps) {
           id="firstName"
           required
           value={firstName}
+          maxLength={TEXT_LIMITS.name}
           onChange={(e) => setFirstName(e.target.value)}
           className={inputClass}
         />
@@ -79,6 +81,7 @@ export function OnboardingForm({ token, email }: OnboardingFormProps) {
           id="lastName"
           required
           value={lastName}
+          maxLength={TEXT_LIMITS.name}
           onChange={(e) => setLastName(e.target.value)}
           className={inputClass}
         />
@@ -92,6 +95,7 @@ export function OnboardingForm({ token, email }: OnboardingFormProps) {
         <input
           id="nif"
           value={nif}
+          maxLength={TEXT_LIMITS.nif}
           onChange={(e) => setNif(e.target.value)}
           className={inputClass}
         />
@@ -105,6 +109,7 @@ export function OnboardingForm({ token, email }: OnboardingFormProps) {
         <input
           id="companyName"
           value={companyName}
+          maxLength={TEXT_LIMITS.company}
           onChange={(e) => setCompanyName(e.target.value)}
           className={inputClass}
         />
@@ -119,6 +124,7 @@ export function OnboardingForm({ token, email }: OnboardingFormProps) {
           type="tel"
           required
           value={phone}
+          maxLength={TEXT_LIMITS.phone}
           onChange={(e) => setPhone(e.target.value)}
           className={inputClass}
         />

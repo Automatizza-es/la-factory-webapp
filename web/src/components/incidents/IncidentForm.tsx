@@ -8,6 +8,7 @@ import { INCIDENT_CATEGORIES, type IncidentCategory } from "@/lib/data/incidents
 import { useI18n } from "@/lib/i18n/context";
 import { compressImage } from "@/lib/image-compress";
 import { createClient } from "@/lib/supabase/client";
+import { TEXT_LIMITS } from "@/lib/limits";
 
 export function IncidentForm({ contactId }: { contactId: string }) {
   const { dict } = useI18n();
@@ -109,6 +110,7 @@ export function IncidentForm({ contactId }: { contactId: string }) {
           id="incident-description"
           rows={4}
           value={description}
+          maxLength={TEXT_LIMITS.incidentDescription}
           onChange={(e) => setDescription(e.target.value)}
           placeholder={t.descriptionPlaceholder}
           className="w-full resize-y rounded-xl border border-sand bg-white px-4 py-3 text-sm text-ink outline-none focus:border-brown-dark"
