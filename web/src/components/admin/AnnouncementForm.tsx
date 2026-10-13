@@ -70,7 +70,12 @@ export function AnnouncementForm({
       setMessage({ ok: false, text: result.error });
       return;
     }
-    setMessage({ ok: true, text: t.sent(result.sent ?? 0) });
+    // In-app went out to everyone either way; say so if some emails didn't.
+    setMessage(
+      result.emailsFailed
+        ? { ok: false, text: t.sentEmailsFailed(result.sent ?? 0, result.emailsFailed) }
+        : { ok: true, text: t.sent(result.sent ?? 0) },
+    );
     setTexts(EMPTY_TEXTS);
     setChosen(new Set());
     setSendEmail(false);

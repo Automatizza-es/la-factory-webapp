@@ -426,6 +426,8 @@ export interface Dictionary {
       sendWelcomeConfirm: (count: number) => string;
       welcomeSent: (count: number) => string;
       welcomeError: string;
+      // Some went out, some didn't (sent, failed).
+      welcomePartial: (sent: number, failed: number) => string;
       access: string;
       filterAll: string;
       filterCoworkers: string;
@@ -550,6 +552,7 @@ export interface Dictionary {
       sending: string;
       confirm: string;
       sent: (count: number) => string;
+      sentEmailsFailed: (sent: number, failed: number) => string;
       noRecipients: string;
       textRequired: string;
       openApp: string;
@@ -1185,6 +1188,8 @@ const es: Dictionary = {
         `Se enviará un email de bienvenida a ${count} ${count === 1 ? "coworker" : "coworkers"} para que creen su contraseña. ¿Continuar?`,
       welcomeSent: (count) => `Bienvenida enviada a ${count} ${count === 1 ? "coworker" : "coworkers"}.`,
       welcomeError: "No hemos podido enviar la bienvenida. Inténtalo de nuevo.",
+      welcomePartial: (sent, failed) =>
+        `Bienvenida enviada a ${sent}. A ${failed} no se ha podido enviar: vuelve a pulsar el botón para reintentarlo solo con ellos.`,
       access: "Acceso a la app",
       filterAll: "Todos",
       filterCoworkers: "Coworkers",
@@ -1309,6 +1314,8 @@ const es: Dictionary = {
       sending: "Enviando...",
       confirm: "¿Enviar este comunicado ahora?",
       sent: (count) => (count === 1 ? "Enviado a 1 persona." : `Enviado a ${count} personas.`),
+      sentEmailsFailed: (sent, failed) =>
+        `Enviado en la app a ${sent}, pero ${failed === 1 ? "1 email no ha salido" : `${failed} emails no han salido`}. Avísales por otro canal.`,
       noRecipients: "No hay nadie en ese grupo.",
       textRequired: "Escribe el título y el mensaje en al menos un idioma.",
       openApp: "Abrir la app",
@@ -1946,6 +1953,8 @@ const ca: Dictionary = {
         `S'enviarà un email de benvinguda a ${count} ${count === 1 ? "coworker" : "coworkers"} perquè creïn la seva contrasenya. Continuar?`,
       welcomeSent: (count) => `Benvinguda enviada a ${count} ${count === 1 ? "coworker" : "coworkers"}.`,
       welcomeError: "No hem pogut enviar la benvinguda. Torna-ho a provar.",
+      welcomePartial: (sent, failed) =>
+        `Benvinguda enviada a ${sent}. A ${failed} no s'ha pogut enviar: torna a prémer el botó per reintentar-ho només amb ells.`,
       access: "Accés a l'app",
       filterAll: "Tots",
       filterCoworkers: "Coworkers",
@@ -2070,6 +2079,8 @@ const ca: Dictionary = {
       sending: "Enviant...",
       confirm: "Enviar aquest comunicat ara?",
       sent: (count) => (count === 1 ? "Enviat a 1 persona." : `Enviat a ${count} persones.`),
+      sentEmailsFailed: (sent, failed) =>
+        `Enviat a l'app a ${sent}, però ${failed === 1 ? "1 email no ha sortit" : `${failed} emails no han sortit`}. Avisa'ls per un altre canal.`,
       noRecipients: "No hi ha ningú en aquest grup.",
       textRequired: "Escriu el títol i el missatge en almenys un idioma.",
       openApp: "Obrir l'app",
@@ -2706,6 +2717,8 @@ const en: Dictionary = {
         `A welcome email will go to ${count} ${count === 1 ? "coworker" : "coworkers"} so they can create their password. Continue?`,
       welcomeSent: (count) => `Welcome sent to ${count} ${count === 1 ? "coworker" : "coworkers"}.`,
       welcomeError: "We couldn't send the welcome email. Please try again.",
+      welcomePartial: (sent, failed) =>
+        `Welcome sent to ${sent}. ${failed} couldn't be sent: press the button again to retry just those.`,
       access: "App access",
       filterAll: "All",
       filterCoworkers: "Coworkers",
@@ -2830,6 +2843,8 @@ const en: Dictionary = {
       sending: "Sending...",
       confirm: "Send this announcement now?",
       sent: (count) => (count === 1 ? "Sent to 1 person." : `Sent to ${count} people.`),
+      sentEmailsFailed: (sent, failed) =>
+        `Sent in the app to ${sent}, but ${failed === 1 ? "1 email didn't go out" : `${failed} emails didn't go out`}. Let them know another way.`,
       noRecipients: "Nobody is in that group.",
       textRequired: "Write the title and message in at least one language.",
       openApp: "Open the app",

@@ -188,9 +188,9 @@ export async function sendCoworkerInvitationEmail(
 
 // Welcome emails for existing coworkers with no login yet. The RPC skips
 // anyone who already has access or a live invitation, so pressing "send to
-// everyone" twice doesn't email people twice. If the email send fails, the
-// invitations just created are cancelled again so they go back to
-// "Sin acceso" instead of looking sent.
+// everyone" twice doesn't email people twice. Invitations whose email didn't
+// go out are cancelled again, so they go back to "Sin acceso" and the next
+// press retries just those; the ones that did go out stay valid.
 export async function sendWelcomeInvitations(
   contactIds: string[],
   origin: string,
@@ -219,27 +219,28 @@ export async function sendWelcomeInvitations(
     );
   const contactById = new Map((contacts ?? []).map((c) => [c.id, c as InvitationRecipient & { id: string }]));
 
-  const emails = invitations.flatMap((inv) => {
+  const toSend = invitations.flatMap((inv) => {
     const contact = contactById.get(inv.contact_id);
-    return contact?.email ? [invitationEmail("welcome", contact, inviteUrl(origin, inv.token))] : [];
+    return contact?.email
+      ? [{ invitation: inv, email: invitationEmail("welcome", contact, inviteUrl(origin, inv.token)) }]
+      : [];
   });
 
-  const { error: sendError } = await sendTransactionalEmails(emails);
-  if (sendError) {
-    await Promise.all(
-      invitations.map((inv) =>
-        supabase.rpc("admin_cancel_coworker_invitation", { p_invitation_id: inv.id }),
-      ),
-    );
-    revalidatePath("/admin/coworkers");
-    return { error: dict.admin.coworkers.welcomeError };
-  }
+  const { failed } = await sendTransactionalEmails(toSend.map((s) => s.email));
+  const failedSet = new Set(failed);
 
   await Promise.all(
-    invitations.map((inv) =>
-      supabase.rpc("admin_mark_invitation_sent", { p_invitation_id: inv.id }),
+    toSend.map(({ invitation }, i) =>
+      failedSet.has(i)
+        ? supabase.rpc("admin_cancel_coworker_invitation", { p_invitation_id: invitation.id })
+        : supabase.rpc("admin_mark_invitation_sent", { p_invitation_id: invitation.id }),
     ),
   );
   revalidatePath("/admin/coworkers");
-  return { error: null, data: { sent: emails.length } };
+
+  const sent = toSend.length - failed.length;
+  if (failed.length > 0) {
+    return { error: dict.admin.coworkers.welcomePartial(sent, failed.length), data: { sent } };
+  }
+  return { error: null, data: { sent } };
 }

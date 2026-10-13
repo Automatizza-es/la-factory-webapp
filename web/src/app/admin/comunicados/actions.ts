@@ -9,6 +9,7 @@ import {
 } from "@/lib/announcements";
 import { sendTransactionalEmails, type SendEmailInput } from "@/lib/email/resend";
 import { brandedEmailHtml } from "@/lib/email/template";
+import { PRELAUNCH } from "@/lib/launch";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import type { Locale } from "@/lib/i18n/config";
 import { sendPushToContact } from "@/lib/push-server";
@@ -32,11 +33,6 @@ interface Recipient {
   preferred_locale: string | null;
 }
 
-// Until launch, only people who already have an app login get announcements
-// (in-app, push and email), so coworkers imported without one hear nothing
-// while we test. Set to false when we send everyone their welcome.
-const ONLY_PEOPLE_WITH_LOGIN = true;
-
 // Who gets it. Archived people never do; admins only when picked by hand.
 async function resolveRecipients(admin: SupabaseClient, input: SendAnnouncementInput): Promise<Recipient[]> {
   const [{ data: contacts }, { data: users }] = await Promise.all([
@@ -44,7 +40,7 @@ async function resolveRecipients(admin: SupabaseClient, input: SendAnnouncementI
     admin.from("users").select("contact_id, role"),
   ]);
   const loginIds = new Set((users ?? []).map((u) => u.contact_id as string));
-  const active = ((contacts ?? []) as Recipient[]).filter((c) => !ONLY_PEOPLE_WITH_LOGIN || loginIds.has(c.id));
+  const active = ((contacts ?? []) as Recipient[]).filter((c) => !PRELAUNCH || loginIds.has(c.id));
   const adminIds = new Set((users ?? []).filter((u) => u.role === "admin").map((u) => u.contact_id as string));
 
   if (input.audience === "contacts") {
@@ -92,7 +88,7 @@ async function planHolderIds(admin: SupabaseClient, planId: string | null): Prom
 
 export async function sendAnnouncement(
   input: SendAnnouncementInput,
-): Promise<{ error: string | null; sent?: number }> {
+): Promise<{ error: string | null; sent?: number; emailsFailed?: number }> {
   const { dict, current, admin } = await adminActionContext();
   if (!admin || !current) return { error: dict.errors.notAuthorized };
   const t = dict.admin.announcements;
@@ -158,7 +154,8 @@ export async function sendAnnouncement(
           }),
         };
       });
-    await sendTransactionalEmails(emails);
+    const { failed } = await sendTransactionalEmails(emails);
+    return { error: null, sent: recipients.length, emailsFailed: failed.length };
   }
 
   return { error: null, sent: recipients.length };
