@@ -64,7 +64,7 @@ export function PackageForm({ contacts, redirectTo }: PackageFormProps) {
       .upload(path, compressed, { contentType: "image/jpeg" });
 
     if (uploadError) {
-      setError(uploadError.message);
+      setError(fullDict.errors.photoUpload);
       setSubmitting(false);
       return;
     }

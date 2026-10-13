@@ -73,7 +73,7 @@ export function EventEditForm({ event }: EventEditFormProps) {
         .from("events")
         .upload(path, compressed, { contentType: "image/jpeg" });
       if (uploadError) {
-        setError(uploadError.message);
+        setError(fullDict.errors.photoUpload);
         setSubmitting(false);
         return;
       }

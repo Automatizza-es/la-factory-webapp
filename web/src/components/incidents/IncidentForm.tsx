@@ -40,7 +40,7 @@ export function IncidentForm({ contactId }: { contactId: string }) {
         .from("incidents")
         .upload(path, compressed, { contentType: "image/jpeg" });
       if (uploadError) {
-        setError(uploadError.message);
+        setError(dict.errors.photoUpload);
         setSubmitting(false);
         return;
       }

@@ -87,7 +87,9 @@ export function DayCalendar({
   const [error, setError] = useState<string | null>(null);
   const [focusRoomId, setFocusRoomId] = useState<string | undefined>(initialRoomId);
   const [adminFields, setAdminFields] = useState<AdminBookingFieldsValue>(EMPTY_ADMIN_BOOKING_FIELDS);
-  const bookingForLabel = useI18n().dict.admin.createBooking.bookingFor;
+  const { dict: fullDict } = useI18n();
+  const bookingForLabel = fullDict.admin.createBooking.bookingFor;
+  const commonDict = fullDict.common;
 
   const visibleRooms = focusRoomId ? rooms.filter((r) => r.id === focusRoomId) : rooms;
 
@@ -389,7 +391,7 @@ export function DayCalendar({
         <div className="fixed inset-0 z-30 flex items-end justify-center md:items-center md:p-6">
           <button
             type="button"
-            aria-label="Close"
+            aria-label={commonDict.close}
             onClick={closeSheet}
             className="absolute inset-0 bg-ink/30"
           />
@@ -398,7 +400,7 @@ export function DayCalendar({
               <h3 className="text-lg font-bold text-ink">
                 {selection.bookingId ? dict.editBooking : dict.newBooking}
               </h3>
-              <button type="button" onClick={closeSheet} aria-label="Close">
+              <button type="button" onClick={closeSheet} aria-label={commonDict.close}>
                 <X className="h-5 w-5 text-warm-gray" strokeWidth={2} />
               </button>
             </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useI18n } from "@/lib/i18n/context";
 import { Calendar } from "lucide-react";
 import { formatDatePill } from "@/lib/format";
 import type { Locale } from "@/lib/i18n/config";
@@ -15,6 +16,7 @@ interface DatePillProps {
 }
 
 export function DatePill({ date, locale, extraQuery, label, basePath = "/calendario" }: DatePillProps) {
+  const { dict } = useI18n();
   const router = useRouter();
 
   return (
@@ -31,7 +33,7 @@ export function DatePill({ date, locale, extraQuery, label, basePath = "/calenda
             router.push(`${basePath}?fecha=${event.target.value}${extraQuery}`);
           }
         }}
-        aria-label="Elegir fecha"
+        aria-label={dict.common.pickDate}
         className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
       />
     </label>

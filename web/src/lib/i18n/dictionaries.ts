@@ -735,7 +735,13 @@ export interface Dictionary {
       noAttendees: string;
     };
   };
+  // Screen-reader labels for icon-only buttons.
+  common: {
+    close: string;
+    pickDate: string;
+  };
   errors: {
+    photoUpload: string;
     notSignedIn: string;
     notAuthorized: string;
     invalidTimeRange: string;
@@ -1498,7 +1504,12 @@ const es: Dictionary = {
       noAttendees: "Todavía no hay inscritos.",
     },
   },
+  common: {
+    close: "Cerrar",
+    pickDate: "Elegir fecha",
+  },
   errors: {
+    photoUpload: "No hemos podido subir la foto. Revisa la conexión e inténtalo de nuevo.",
     notSignedIn: "No has iniciado sesión.",
     notAuthorized: "No estás autorizado para realizar esta acción.",
     invalidTimeRange: "La hora de fin debe ser posterior a la de inicio.",
@@ -2263,7 +2274,12 @@ const ca: Dictionary = {
       noAttendees: "Encara no hi ha inscrits.",
     },
   },
+  common: {
+    close: "Tancar",
+    pickDate: "Triar data",
+  },
   errors: {
+    photoUpload: "No hem pogut pujar la foto. Revisa la connexió i torna-ho a provar.",
     notSignedIn: "No has iniciat sessió.",
     notAuthorized: "No estàs autoritzat per fer aquesta acció.",
     invalidTimeRange: "L'hora de fi ha de ser posterior a la d'inici.",
@@ -3027,7 +3043,12 @@ const en: Dictionary = {
       noAttendees: "No one has registered yet.",
     },
   },
+  common: {
+    close: "Close",
+    pickDate: "Choose date",
+  },
   errors: {
+    photoUpload: "We couldn't upload the photo. Check your connection and try again.",
     notSignedIn: "You're not signed in.",
     notAuthorized: "You're not authorized to perform this action.",
     invalidTimeRange: "The end time must be later than the start time.",

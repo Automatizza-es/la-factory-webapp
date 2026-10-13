@@ -109,7 +109,7 @@ export function PackageCard({ pkg }: PackageCardProps) {
         <div className="fixed inset-0 z-30 flex items-end justify-center md:items-center md:p-6">
           <button
             type="button"
-            aria-label="Close"
+            aria-label={dict.common.close}
             onClick={() => setOpen(false)}
             className="absolute inset-0 bg-ink/30"
           />
@@ -121,7 +121,7 @@ export function PackageCard({ pkg }: PackageCardProps) {
               <button
                 type="button"
                 onClick={() => setOpen(false)}
-                aria-label="Close"
+                aria-label={dict.common.close}
                 className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 shadow-sm"
               >
                 <X className="h-4 w-4 text-ink" strokeWidth={2} />
