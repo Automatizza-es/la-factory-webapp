@@ -132,75 +132,67 @@ export async function getMyNotifications(
 
   const rows = (data ?? []) as RawNotification[];
 
-  const packageIds = rows.filter((r) => r.type === "package_received" && r.related_id).map((r) => r.related_id as string);
+  const idsOf = (match: (type: string) => boolean) =>
+    rows.filter((r) => match(r.type) && r.related_id).map((r) => r.related_id as string);
+  const packageIds = idsOf((t) => t === "package_received");
+  const eventIds = idsOf((t) => t.startsWith("event_"));
+  const bookingIds = idsOf((t) => t === "booking_reminder");
+  const incidentIds = idsOf((t) => t === "incident_new" || t === "incident_update");
+  const announcementIds = idsOf((t) => t === "announcement");
+
+  // The bell loads on every page: look up the related rows all at once.
+  const none = Promise.resolve({ data: [] as never[] });
+  const [
+    { data: packageRows },
+    { data: eventRows },
+    { data: bookingRows },
+    { data: incidentRows },
+    { data: announcementRows },
+  ] = await Promise.all([
+    packageIds.length ? supabase.from("packages").select("id, received_at").in("id", packageIds) : none,
+    eventIds.length ? supabase.from("events").select("id, title, starts_at").in("id", eventIds) : none,
+    bookingIds.length
+      ? supabase.from("bookings").select("id, starts_at, ends_at, rooms(name)").in("id", bookingIds)
+      : none,
+    incidentIds.length
+      ? supabase.from("incidents").select("id, category, status, description").in("id", incidentIds)
+      : none,
+    announcementIds.length
+      ? supabase
+          .from("announcements")
+          .select("id, title_es, body_es, title_ca, body_ca, title_en, body_en")
+          .in("id", announcementIds)
+      : none,
+  ]);
+
   const receivedAtById = new Map<string, string>();
-  if (packageIds.length > 0) {
-    const { data: packageRows } = await supabase
-      .from("packages")
-      .select("id, received_at")
-      .in("id", packageIds);
-    for (const p of packageRows ?? []) receivedAtById.set(p.id, p.received_at);
-  }
+  for (const p of packageRows ?? []) receivedAtById.set(p.id, p.received_at);
 
-  const eventIds = rows
-    .filter((r) => r.type.startsWith("event_") && r.related_id)
-    .map((r) => r.related_id as string);
   const eventById = new Map<string, { title: string; startsAt: string }>();
-  if (eventIds.length > 0) {
-    const { data: eventRows } = await supabase
-      .from("events")
-      .select("id, title, starts_at")
-      .in("id", eventIds);
-    for (const e of eventRows ?? []) eventById.set(e.id, { title: e.title, startsAt: e.starts_at });
-  }
+  for (const e of eventRows ?? []) eventById.set(e.id, { title: e.title, startsAt: e.starts_at });
 
-  const bookingIds = rows.filter((r) => r.type === "booking_reminder" && r.related_id).map((r) => r.related_id as string);
   const bookingById = new Map<string, { roomName: string; startsAt: string; endsAt: string }>();
-  if (bookingIds.length > 0) {
-    const { data: bookingRows } = await supabase
-      .from("bookings")
-      .select("id, starts_at, ends_at, rooms(name)")
-      .in("id", bookingIds);
-    for (const b of (bookingRows ?? []) as unknown as { id: string; starts_at: string; ends_at: string; rooms: { name: string } | null }[]) {
-      bookingById.set(b.id, { roomName: b.rooms?.name ?? "", startsAt: b.starts_at, endsAt: b.ends_at });
-    }
+  for (const b of (bookingRows ?? []) as unknown as { id: string; starts_at: string; ends_at: string; rooms: { name: string } | null }[]) {
+    bookingById.set(b.id, { roomName: b.rooms?.name ?? "", startsAt: b.starts_at, endsAt: b.ends_at });
   }
 
-  const incidentIds = rows
-    .filter((r) => (r.type === "incident_new" || r.type === "incident_update") && r.related_id)
-    .map((r) => r.related_id as string);
   const incidentById = new Map<string, { category: IncidentCategory; status: IncidentStatus; description: string }>();
-  if (incidentIds.length > 0) {
-    const { data: incidentRows } = await supabase
-      .from("incidents")
-      .select("id, category, status, description")
-      .in("id", incidentIds);
-    for (const i of incidentRows ?? []) {
-      incidentById.set(i.id, { category: i.category, status: i.status, description: i.description });
-    }
+  for (const i of incidentRows ?? []) {
+    incidentById.set(i.id, { category: i.category, status: i.status, description: i.description });
   }
 
   // Admin announcements, in the reader's language when it was written.
-  const announcementIds = rows
-    .filter((r) => r.type === "announcement" && r.related_id)
-    .map((r) => r.related_id as string);
   const announcementById = new Map<string, AnnouncementText>();
-  if (announcementIds.length > 0) {
-    const { data: announcementRows } = await supabase
-      .from("announcements")
-      .select("id, title_es, body_es, title_ca, body_ca, title_en, body_en")
-      .in("id", announcementIds);
-    for (const a of announcementRows ?? []) {
-      const text = pickAnnouncementText(
-        {
-          es: { title: a.title_es ?? "", body: a.body_es ?? "" },
-          ca: { title: a.title_ca ?? "", body: a.body_ca ?? "" },
-          en: { title: a.title_en ?? "", body: a.body_en ?? "" },
-        },
-        locale,
-      );
-      if (text) announcementById.set(a.id, text);
-    }
+  for (const a of announcementRows ?? []) {
+    const text = pickAnnouncementText(
+      {
+        es: { title: a.title_es ?? "", body: a.body_es ?? "" },
+        ca: { title: a.title_ca ?? "", body: a.body_ca ?? "" },
+        en: { title: a.title_en ?? "", body: a.body_en ?? "" },
+      },
+      locale,
+    );
+    if (text) announcementById.set(a.id, text);
   }
 
   // A reminder is pointless once the thing has started: drop booking and

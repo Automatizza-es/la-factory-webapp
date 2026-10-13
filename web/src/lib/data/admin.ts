@@ -118,29 +118,29 @@ export async function getAllCoworkers(
     if (!latestInvitationByContact.has(inv.contact_id)) latestInvitationByContact.set(inv.contact_id, inv);
   }
 
+  const kindOf = (contact: NonNullable<typeof contacts>[number]): PersonKind => {
+    const role = roleByContact.get(contact.id);
+    if (contact.status === "archived") return "archived";
+    if (role === "admin") return "admin";
+    return ownPlanByContact.has(contact.id) || sharedOwnerByContact.has(contact.id) ? "coworker" : "guest";
+  };
+  // Every coworker's hours at once: one after another, a list of 40 people
+  // took seconds to open.
+  const quotas = await Promise.all(
+    (contacts ?? []).map((contact) =>
+      kindOf(contact) === "coworker" ? getQuotaSummary(supabase, contact.id, locale) : null,
+    ),
+  );
+
   const rows: AdminCoworkerRow[] = [];
-  for (const contact of contacts ?? []) {
+  for (const [index, contact] of (contacts ?? []).entries()) {
     const ownPlan = ownPlanByContact.get(contact.id);
     const sharedOwner = ownPlan ? undefined : sharedOwnerByContact.get(contact.id);
-    const role = roleByContact.get(contact.id);
-    const kind: PersonKind =
-      contact.status === "archived"
-        ? "archived"
-        : role === "admin"
-          ? "admin"
-          : ownPlan || sharedOwner
-            ? "coworker"
-            : "guest";
+    const kind = kindOf(contact);
 
-    let totalMinutes = 0;
-    let usedMinutes = 0;
-    if (kind === "coworker") {
-      const quota = await getQuotaSummary(supabase, contact.id, locale);
-      if (quota) {
-        totalMinutes = quota.totalMinutes;
-        usedMinutes = quota.usedMinutes;
-      }
-    }
+    const quota = quotas[index];
+    const totalMinutes = quota?.totalMinutes ?? 0;
+    const usedMinutes = quota?.usedMinutes ?? 0;
 
     const invitation = latestInvitationByContact.get(contact.id) ?? null;
     const hasLogin = roleByContact.has(contact.id);
