@@ -57,8 +57,9 @@ export function formatDatePill(isoDate: string, locale: Locale = "es"): string {
   return `${day} ${month} ${year}`;
 }
 
-// "Del 14 al 20 de septiembre de 2026" (or "Del 28 de sept. al 3 de oct. de
-// 2026" when the week crosses a month boundary).
+// "14–20 de septiembre de 2026", "14–20 de setembre de 2026", "14–20
+// September 2026" (or "28 sept – 3 oct 2026" style when the week crosses a
+// month boundary): the browser's own wording for each language.
 export function formatWeekRangeLong(
   startIso: string,
   endIso: string,
@@ -66,18 +67,11 @@ export function formatWeekRangeLong(
 ): string {
   const start = new Date(`${startIso}T00:00:00`);
   const end = new Date(`${endIso}T00:00:00`);
-  const sameMonth = start.getMonth() === end.getMonth() && start.getFullYear() === end.getFullYear();
-  const startDay = start.toLocaleDateString(INTL_LOCALE[locale], { day: "numeric" });
-  const endDay = end.toLocaleDateString(INTL_LOCALE[locale], { day: "numeric" });
-  const endMonth = end.toLocaleDateString(INTL_LOCALE[locale], { month: "long" });
-  const endYear = end.toLocaleDateString(INTL_LOCALE[locale], { year: "numeric" });
-
-  if (sameMonth) {
-    return `Del ${startDay} al ${endDay} de ${endMonth} de ${endYear}`;
-  }
-
-  const startMonth = start.toLocaleDateString(INTL_LOCALE[locale], { month: "long" });
-  return `Del ${startDay} de ${startMonth} al ${endDay} de ${endMonth} de ${endYear}`;
+  return new Intl.DateTimeFormat(INTL_LOCALE[locale], {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).formatRange(start, end);
 }
 
 // Short one-line form for the compact pill nav, e.g. "14 – 20 septiembre 2026".

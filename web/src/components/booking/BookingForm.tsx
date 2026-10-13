@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { submitBooking } from "@/app/(coworker)/reservar/actions";
 import { defaultEndTime, defaultStartTime, formatDateLong, formatMinutesAsHours } from "@/lib/format";
 import { useI18n } from "@/lib/i18n/context";
+import { todayInMadrid } from "@/lib/timezone";
 import type { QuotaSummary, Room } from "@/types/domain";
 
 interface BookingFormProps {
@@ -16,9 +17,6 @@ interface BookingFormProps {
   initialEndTime?: string;
 }
 
-function todayIso() {
-  return new Date().toISOString().slice(0, 10);
-}
 
 function toMinutes(time: string) {
   const [h, m] = time.split(":").map(Number);
@@ -35,7 +33,7 @@ export function BookingForm({
 }: BookingFormProps) {
   const router = useRouter();
   const { locale, dict } = useI18n();
-  const [date, setDate] = useState(initialDate ?? todayIso());
+  const [date, setDate] = useState(initialDate ?? todayInMadrid());
   const [startTime, setStartTime] = useState(initialStartTime ?? defaultStartTime());
   const [endTime, setEndTime] = useState(initialEndTime ?? defaultEndTime(startTime));
   const [submitting, setSubmitting] = useState(false);
@@ -88,7 +86,7 @@ export function BookingForm({
             <input
               type="date"
               value={date}
-              min={todayIso()}
+              min={todayInMadrid()}
               onChange={(e) => setDate(e.target.value)}
               required
               className="rounded-xl border border-sand bg-white px-3 py-2 text-ink outline-none focus:border-brown-dark"

@@ -1,7 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
 import { INTL_LOCALE, type Locale } from "@/lib/i18n/config";
-import { utcIsoToZonedDateAndMinutes } from "@/lib/timezone";
+import { todayInMadrid, utcIsoToZonedDateAndMinutes } from "@/lib/timezone";
 import type { Booking, Coworker, QuotaSummary, Room } from "@/types/domain";
 import { historySinceIso } from "@/lib/retention";
 
@@ -116,8 +116,9 @@ export async function getQuotaSummary(
   contactId: string,
   locale: Locale,
 ): Promise<QuotaSummary | null> {
-  const today = new Date();
-  const todayIso = today.toISOString().slice(0, 10);
+  // The month is Madrid's: just after midnight on the 1st, UTC is still in
+  // the previous month.
+  const todayIso = todayInMadrid();
   const periodStart = `${todayIso.slice(0, 7)}-01`;
 
   const membership = await getEffectiveMembership(supabase, contactId);
@@ -165,7 +166,7 @@ export async function getQuotaSummary(
   return {
     planCode: plan.code,
     planLabel: plan.name.toUpperCase(),
-    periodLabel: capitalize(monthLabelFormatter.format(today)),
+    periodLabel: capitalize(monthLabelFormatter.format(new Date(`${periodStart}T12:00:00Z`))),
     totalMinutes,
     usedMinutes: totalMinutes - availableMinutes,
   };
