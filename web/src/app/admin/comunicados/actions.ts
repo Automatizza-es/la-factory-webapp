@@ -32,14 +32,20 @@ interface Recipient {
   preferred_locale: string | null;
 }
 
+// Until launch, only people who already have an app login get announcements
+// (in-app, push and email), so coworkers imported without one hear nothing
+// while we test. Set to false when we send everyone their welcome.
+const ONLY_PEOPLE_WITH_LOGIN = true;
+
 // Who gets it. Archived people never do; admins only when picked by hand.
 async function resolveRecipients(admin: SupabaseClient, input: SendAnnouncementInput): Promise<Recipient[]> {
-  const [{ data: contacts }, { data: admins }] = await Promise.all([
+  const [{ data: contacts }, { data: users }] = await Promise.all([
     admin.from("contacts").select("id, email, first_name, preferred_locale").eq("status", "active"),
-    admin.from("users").select("contact_id").eq("role", "admin"),
+    admin.from("users").select("contact_id, role"),
   ]);
-  const active = (contacts ?? []) as Recipient[];
-  const adminIds = new Set((admins ?? []).map((a) => a.contact_id as string));
+  const loginIds = new Set((users ?? []).map((u) => u.contact_id as string));
+  const active = ((contacts ?? []) as Recipient[]).filter((c) => !ONLY_PEOPLE_WITH_LOGIN || loginIds.has(c.id));
+  const adminIds = new Set((users ?? []).filter((u) => u.role === "admin").map((u) => u.contact_id as string));
 
   if (input.audience === "contacts") {
     const chosen = new Set(input.contactIds ?? []);
