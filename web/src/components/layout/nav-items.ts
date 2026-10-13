@@ -26,6 +26,8 @@ export interface NavItem {
   href: string;
   label: string;
   icon: LucideIcon;
+  // Shorter label for the phone bottom bar, when the full one won't fit.
+  shortLabel?: string;
   // Other paths that should also light this item up (e.g. "Más" for the
   // pages listed inside it).
   alsoActiveOn?: string[];
@@ -86,7 +88,7 @@ export function useNavItems(role: AppRole): { bottom: NavItem[]; sidebar: NavIte
   const nav = dict.nav;
   const home = { href: "/", label: nav.home, icon: Home };
   const events = { href: "/eventos", label: nav.events, icon: PartyPopper };
-  const packages = { href: "/paquetes", label: nav.packages, icon: Package };
+  const packages = { href: "/paquetes", label: nav.packages, shortLabel: nav.packagesShort, icon: Package };
   const profile = { href: "/perfil", label: nav.profile, icon: User };
   const incidents = { href: "/incidencias", label: nav.incidents, icon: Wrench };
 
@@ -99,7 +101,7 @@ export function useNavItems(role: AppRole): { bottom: NavItem[]; sidebar: NavIte
   }
 
   const book = { href: "/calendario", label: nav.book, icon: CalendarDays, alsoActiveOn: ["/reservar"] };
-  const bookings = { href: "/reservas", label: nav.bookings, icon: ListChecks };
+  const bookings = { href: "/reservas", label: nav.bookings, shortLabel: nav.bookingsShort, icon: ListChecks };
   return {
     bottom: [home, book, bookings, profile],
     sidebar: [home, book, bookings, events, packages, incidents, profile],

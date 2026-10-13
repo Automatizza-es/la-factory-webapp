@@ -5,9 +5,12 @@ export interface Dictionary {
     home: string;
     book: string;
     bookings: string;
+    // Phone bottom bar: must fit one line in a quarter of the screen.
+    bookingsShort: string;
     profile: string;
     events: string;
     packages: string;
+    packagesShort: string;
     incidents: string;
   };
   home: {
@@ -753,9 +756,11 @@ const es: Dictionary = {
     home: "Inicio",
     book: "Reservar",
     bookings: "Mis reservas",
+    bookingsShort: "Mis reservas",
     profile: "Perfil",
     events: "Eventos",
     packages: "Mis paquetes",
+    packagesShort: "Mis paquetes",
     incidents: "Incidencias",
   },
   home: {
@@ -1510,9 +1515,11 @@ const ca: Dictionary = {
     home: "Inici",
     book: "Reservar",
     bookings: "Les meves reserves",
+    bookingsShort: "Reserves",
     profile: "Perfil",
     events: "Esdeveniments",
     packages: "Els meus paquets",
+    packagesShort: "Paquets",
     incidents: "Incidències",
   },
   home: {
@@ -2267,9 +2274,11 @@ const en: Dictionary = {
     home: "Home",
     book: "Book",
     bookings: "My bookings",
+    bookingsShort: "My bookings",
     profile: "Profile",
     events: "Events",
     packages: "My packages",
+    packagesShort: "My packages",
     incidents: "Issues",
   },
   home: {

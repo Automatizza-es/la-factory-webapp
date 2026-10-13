@@ -16,7 +16,7 @@ export function BottomNav({ role }: { role: AppRole }) {
     >
       <ul className="grid grid-cols-4">
         {bottom.map((item) => {
-          const { href, label, icon: Icon } = item;
+          const { href, label, shortLabel, icon: Icon } = item;
           const isActive = isNavItemActive(item, pathname);
           return (
             <li key={href}>
@@ -28,7 +28,10 @@ export function BottomNav({ role }: { role: AppRole }) {
                 aria-current={isActive ? "page" : undefined}
               >
                 <Icon className="h-5 w-5" strokeWidth={isActive ? 2.25 : 1.75} />
-                <span className={isActive ? "font-semibold" : ""}>{label}</span>
+                {/* Always one line, so every language gives the bar the same height. */}
+                <span className={`max-w-full truncate whitespace-nowrap ${isActive ? "font-semibold" : ""}`}>
+                  {shortLabel ?? label}
+                </span>
               </Link>
             </li>
           );
