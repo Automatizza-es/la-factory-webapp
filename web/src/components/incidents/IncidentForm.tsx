@@ -58,12 +58,25 @@ export function IncidentForm({ contactId }: { contactId: string }) {
 
   if (sent) {
     return (
-      <div className="flex flex-col items-center gap-3 rounded-2xl bg-white p-6 text-center shadow-sm">
-        <CheckCircle2 className="h-10 w-10 text-emerald-600" strokeWidth={1.75} />
-        <p className="text-sm text-ink">{t.sent}</p>
-        <Link href="/incidencias" className="text-sm font-medium text-brown-dark">
-          {t.title}
-        </Link>
+      <div className="flex flex-col items-center gap-4 rounded-2xl bg-white p-5 py-9 text-center shadow-sm">
+        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-emerald-50">
+          <CheckCircle2 className="h-7 w-7 text-emerald-600" strokeWidth={2} />
+        </div>
+        <p className="text-base font-medium text-ink">{t.sent}</p>
+        <div className="flex w-full flex-col gap-2">
+          <Link
+            href="/incidencias"
+            className="flex w-full items-center justify-center rounded-xl bg-brown-dark py-3 text-sm font-medium text-white"
+          >
+            {t.viewMine}
+          </Link>
+          <Link
+            href="/"
+            className="flex w-full items-center justify-center rounded-xl bg-cream py-3 text-sm font-medium text-brown-dark"
+          >
+            {t.backHome}
+          </Link>
+        </div>
       </div>
     );
   }

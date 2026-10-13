@@ -68,6 +68,8 @@ export interface Dictionary {
     submit: string;
     submitting: string;
     sent: string;
+    viewMine: string;
+    backHome: string;
     descriptionRequired: string;
     openTitle: string;
     openHint: string;
@@ -826,6 +828,8 @@ const es: Dictionary = {
     submit: "Enviar",
     submitting: "Enviando...",
     sent: "Gracias, lo hemos recibido. Te avisaremos cuando haya novedades.",
+    viewMine: "Ver mis incidencias",
+    backHome: "Volver a inicio",
     descriptionRequired: "Describe la incidencia.",
     openTitle: "Abiertas en el espacio",
     openHint: "Si lo que ves ya está aquí, no hace falta que lo comuniques otra vez.",
@@ -1585,6 +1589,8 @@ const ca: Dictionary = {
     submit: "Enviar",
     submitting: "Enviant...",
     sent: "Gràcies, ho hem rebut. T'avisarem quan hi hagi novetats.",
+    viewMine: "Veure les meves incidències",
+    backHome: "Tornar a inici",
     descriptionRequired: "Descriu la incidència.",
     openTitle: "Obertes a l'espai",
     openHint: "Si el que veus ja és aquí, no cal que ho tornis a comunicar.",
@@ -2344,6 +2350,8 @@ const en: Dictionary = {
     submit: "Send",
     submitting: "Sending...",
     sent: "Thanks, we've got it. We'll let you know when there's news.",
+    viewMine: "View my issues",
+    backHome: "Back to home",
     descriptionRequired: "Describe the issue.",
     openTitle: "Open in the space",
     openHint: "If what you see is already here, no need to report it again.",
