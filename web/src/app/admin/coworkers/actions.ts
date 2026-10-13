@@ -7,7 +7,7 @@ import {
   sendTransactionalEmails,
   type SendEmailInput,
 } from "@/lib/email/resend";
-import { brandedEmailHtml } from "@/lib/email/template";
+import { brandedEmailHtml, brandedMultilingualEmailHtml } from "@/lib/email/template";
 import type { Locale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import { getLocale } from "@/lib/i18n/server";
@@ -30,33 +30,53 @@ interface InvitationRecipient {
   preferred_locale: string | null;
 }
 
-// "onboarding": a brand-new coworker who still has to fill in the form.
-// "welcome": an existing (imported) coworker who only has to set a password.
-// Written in the recipient's own language.
+// "onboarding": a brand-new coworker who still has to fill in the form,
+// written in their language.
+// "welcome": an existing (imported) coworker who only has to set a
+// password. We don't know their language yet, so it goes in all three
+// (CAT / ES / EN, La Factory's standard for the community).
 function invitationEmail(
   kind: InvitationKind,
   recipient: InvitationRecipient,
   link: string,
 ): SendEmailInput {
+  const name = recipient.first_name.trim();
+
+  if (kind === "welcome") {
+    const labels: Record<Locale, string> = { ca: "CAT", es: "ES", en: "EN" };
+    const sections = (["ca", "es", "en"] as const).map((locale) => {
+      const t = getDictionary(locale).emails;
+      return {
+        id: locale,
+        label: labels[locale],
+        heading: t.welcome.heading,
+        paragraphs: [t.greeting(name), t.welcome.body],
+        cta: { label: t.welcome.cta, url: link },
+        footnotes: [t.welcome.validity, `${t.linkFallback} ${link}`],
+      };
+    });
+    return { to: recipient.email, subject: WELCOME_SUBJECT, html: brandedMultilingualEmailHtml(sections) };
+  }
+
   const locale: Locale =
     recipient.preferred_locale === "ca" || recipient.preferred_locale === "en"
       ? recipient.preferred_locale
       : "es";
   const t = getDictionary(locale).emails;
-  const content = kind === "welcome" ? t.welcome : t.invite;
-  const footnotes = kind === "welcome" ? [t.welcome.validity] : [];
 
   return {
     to: recipient.email,
-    subject: content.subject,
+    subject: t.invite.subject,
     html: brandedEmailHtml({
-      heading: content.heading,
-      paragraphs: [t.greeting(recipient.first_name.trim()), content.body],
-      cta: { label: content.cta, url: link },
-      footnotes: [...footnotes, `${t.linkFallback} ${link}`],
+      heading: t.invite.heading,
+      paragraphs: [t.greeting(name), t.invite.body],
+      cta: { label: t.invite.cta, url: link },
+      footnotes: [`${t.linkFallback} ${link}`],
     }),
   };
 }
+
+const WELCOME_SUBJECT = "Hub de La Factory: benvinguda · bienvenida · welcome";
 
 export interface CreateInvitationInput {
   email: string;
