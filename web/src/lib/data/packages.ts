@@ -1,4 +1,5 @@
 import { createClient as createServiceClient, type SupabaseClient } from "@supabase/supabase-js";
+import { contactIdsWithLogin, PRELAUNCH } from "@/lib/launch";
 import { historySinceIso } from "@/lib/retention";
 
 export interface PackageContactOption {
@@ -32,8 +33,14 @@ export async function getPackageRecipientsForPicker(
   supabase: SupabaseClient,
 ): Promise<PackageContactOption[]> {
   const { data } = await supabase.rpc("get_package_recipients_directory");
+  const withLogin = PRELAUNCH
+    ? await contactIdsWithLogin(
+        createServiceClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!),
+      )
+    : null;
 
   return ((data ?? []) as { id: string; first_name: string; last_name: string | null }[])
+    .filter((row) => !withLogin || withLogin.has(row.id))
     .map((row) => ({ id: row.id, name: `${row.first_name} ${row.last_name ?? ""}`.trim() }))
     .sort((a, b) => a.name.localeCompare(b.name));
 }
