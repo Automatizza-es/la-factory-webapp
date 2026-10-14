@@ -9,6 +9,9 @@ self.addEventListener("push", (event) => {
   const title = data.title || "La Factory";
   const options = {
     body: data.body || "",
+    // The same alert arriving twice (e.g. two old subscriptions on this
+    // device) replaces itself instead of stacking up.
+    tag: [data.url || "", title, data.body || ""].join("|"),
     icon: "/brand/logo-cuadrado-original.jpg",
     badge: "/brand/logo-cuadrado-original.jpg",
     data: { url: data.url || "/" },
