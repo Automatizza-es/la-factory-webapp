@@ -20,6 +20,8 @@
 body {
   background: var(--background);
   color: var(--foreground);
+  /* No double-tap zoom: taps respond straight away, like a native app. */
+  touch-action: manipulation;
 }
 
 img {

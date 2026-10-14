@@ -31,6 +31,10 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
+  // Feels like a native app: iOS no longer zooms in when a field is tapped,
+  // and Android doesn't pinch-zoom. (iOS still allows a deliberate pinch,
+  // which it keeps for accessibility whatever the page says.)
+  maximumScale: 1,
   viewportFit: "cover",
   // The app has no dark theme. (iOS still paints the installed app's status
   // bar black in system dark mode -- that one isn't controllable from the web.)
