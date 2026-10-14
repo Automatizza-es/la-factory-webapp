@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { Building2, CheckCircle2, Plus, Search } from "lucide-react";
+import { Building2, CheckCircle2, Plus } from "lucide-react";
 import { InvitationActions } from "@/components/admin/InvitationActions";
+import { UserSearch } from "@/components/admin/UserSearch";
 import { WelcomeButton } from "@/components/admin/WelcomeButton";
 import { getAllCoworkers, type AdminCoworkerStage, type PersonKind } from "@/lib/data/admin";
 import { formatMinutesAsHours } from "@/lib/format";
@@ -131,19 +132,13 @@ export default async function AdminUsersPage({ searchParams }: PageProps) {
             </Link>
           ))}
         </div>
-        <form action="/admin/coworkers" className="flex items-center gap-2 md:w-72">
-          {filter !== "todos" && <input type="hidden" name="filtro" value={filter} />}
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-warm-gray" strokeWidth={2} />
-            <input
-              name="q"
-              defaultValue={q ?? ""}
-              placeholder={t.searchPlaceholder}
-              aria-label={t.search}
-              className="w-full rounded-xl border border-sand bg-white py-2.5 pl-9 pr-3 text-sm text-ink outline-none focus:border-brown-dark"
-            />
-          </div>
-        </form>
+        <UserSearch
+          key={filter}
+          filter={filter}
+          initialQuery={q ?? ""}
+          placeholder={t.searchPlaceholder}
+          label={t.search}
+        />
       </div>
 
       {people.length === 0 ? (
