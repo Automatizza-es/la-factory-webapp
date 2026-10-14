@@ -141,6 +141,9 @@ export interface Dictionary {
   };
   notificationSettings: {
     back: string;
+    // Admin version of the page, reached from Más / the sidebar.
+    backAdmin: string;
+    adminSubtitle: string;
     title: string;
     subtitle: string;
     pushSectionTitle: string;
@@ -910,6 +913,8 @@ const es: Dictionary = {
   },
   notificationSettings: {
     back: "Volver al perfil",
+    backAdmin: "Volver a Más",
+    adminSubtitle: "Activa las notificaciones push en este móvil para enterarte al momento de cada incidencia nueva y de los paquetes que lleguen para ti.",
     title: "Notificaciones",
     subtitle: "Elige qué avisos quieres recibir y activa las notificaciones push.",
     pushSectionTitle: "Notificaciones push",
@@ -1680,6 +1685,8 @@ const ca: Dictionary = {
   },
   notificationSettings: {
     back: "Tornar al perfil",
+    backAdmin: "Tornar a Més",
+    adminSubtitle: "Activa les notificacions push en aquest mòbil per assabentar-te a l'instant de cada incidència nova i dels paquets que arribin per a tu.",
     title: "Notificacions",
     subtitle: "Tria quins avisos vols rebre i activa les notificacions push.",
     pushSectionTitle: "Notificacions push",
@@ -2450,6 +2457,8 @@ const en: Dictionary = {
   },
   notificationSettings: {
     back: "Back to profile",
+    backAdmin: "Back to More",
+    adminSubtitle: "Turn on push notifications on this phone to hear straight away about every new issue and any package that arrives for you.",
     title: "Notifications",
     subtitle: "Choose which alerts you want, and turn on push notifications.",
     pushSectionTitle: "Push notifications",

@@ -67,6 +67,7 @@ export function useNavItems(role: AppRole): { bottom: NavItem[]; sidebar: NavIte
             "/admin/empresas",
             "/admin/facturacion",
             "/admin/configuracion",
+            "/admin/notificaciones",
           ],
         },
       ],

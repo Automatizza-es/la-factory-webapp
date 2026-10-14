@@ -1,5 +1,6 @@
 import Link from "next/link";
 import {
+  Bell,
   Building2,
   ChevronRight,
   KeyRound,
@@ -47,6 +48,14 @@ export default async function AdminMorePage() {
 
       <section className="flex flex-col gap-3">
         <h2 className="text-lg font-semibold text-ink">{nav.account}</h2>
+        <Link
+          href="/admin/notificaciones"
+          className="flex items-center gap-3 rounded-2xl bg-white p-4 shadow-sm"
+        >
+          <Bell className="h-5 w-5 text-brown-dark" strokeWidth={1.75} />
+          <span className="flex-1 font-medium text-ink">{dict.notificationSettings.title}</span>
+          <ChevronRight className="h-4 w-4 text-warm-gray" strokeWidth={2} />
+        </Link>
         <Link
           href="/nueva-contrasena"
           className="flex items-center gap-3 rounded-2xl bg-white p-4 shadow-sm"

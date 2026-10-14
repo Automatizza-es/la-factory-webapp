@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { KeyRound } from "lucide-react";
+import { Bell, KeyRound } from "lucide-react";
 import { isNavItemActive, useNavItems, type AppRole } from "@/components/layout/nav-items";
 import { SignOutButton } from "@/components/layout/SignOutButton";
 import { useI18n } from "@/lib/i18n/context";
@@ -56,6 +56,15 @@ export function Sidebar({ role, user }: { role: AppRole; user: Coworker }) {
           </div>
           <span className="truncate text-sm font-medium text-ink">{user.firstName}</span>
         </div>
+        {role === "admin" && (
+          <Link
+            href="/admin/notificaciones"
+            className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm text-warm-gray hover:bg-cream/60"
+          >
+            <Bell className="h-4 w-4" strokeWidth={1.75} />
+            {dict.notificationSettings.title}
+          </Link>
+        )}
         <Link
           href="/nueva-contrasena"
           className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm text-warm-gray hover:bg-cream/60"
