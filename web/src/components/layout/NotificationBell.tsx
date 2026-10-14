@@ -97,7 +97,10 @@ export function NotificationBell({ notifications, title, emptyLabel }: Notificat
       </button>
 
       {open && (
-        <div className="absolute right-0 top-12 z-40 max-h-[70vh] w-80 max-w-[85vw] overflow-y-auto rounded-2xl bg-white shadow-xl">
+        // Phones: the bell isn't at the screen edge (the avatar is to its
+        // right), so a panel hung from it ran off the left side. There it
+        // spans the screen under the header; from md up it hangs from the bell.
+        <div className="fixed inset-x-4 top-[calc(env(safe-area-inset-top,0px)+5rem)] z-40 max-h-[70vh] overflow-y-auto rounded-2xl bg-white shadow-xl md:absolute md:inset-x-auto md:right-0 md:top-12 md:w-80">
           <div className="border-b border-sand/50 px-4 py-3">
             <p className="text-sm font-semibold text-ink">{title}</p>
           </div>
