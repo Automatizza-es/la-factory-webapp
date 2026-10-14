@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { assignPlan, endPlan, setBillable, setSharedHours } from "@/app/admin/coworkers/[id]/actions";
+import { assignPlan, changePlan, endPlan, setBillable, setSharedHours } from "@/app/admin/coworkers/[id]/actions";
 import { personInputClass } from "@/components/admin/person/PersonFieldsCard";
 import { Switch } from "@/components/admin/person/Switch";
 import type { AdminCoworkerDetail } from "@/lib/data/admin";
@@ -34,6 +34,9 @@ export function PersonPlanCard({
   const [endDate, setEndDate] = useState(todayInMadrid());
 
   const inForce = membership?.inForce ? membership : null;
+  const otherPlans = plans.filter((p) => p.name !== inForce?.planLabel);
+  const [newPlanId, setNewPlanId] = useState(otherPlans[0]?.id ?? "");
+  const [changeFrom, setChangeFrom] = useState(todayInMadrid());
 
   async function run(action: () => Promise<{ error: string | null }>) {
     setBusy(true);
@@ -69,6 +72,44 @@ export function PersonPlanCard({
               onChange={(value) => run(() => setBillable(contactId, inForce.id, value))}
             />
           </div>
+          {otherPlans.length > 0 && (
+            <div className="flex flex-col gap-2 border-t border-sand/30 pt-3">
+              <div className="flex flex-wrap items-end gap-2">
+                <label className="flex flex-col gap-1 text-xs font-medium text-warm-gray">
+                  {t.plan}
+                  <select
+                    value={newPlanId}
+                    onChange={(e) => setNewPlanId(e.target.value)}
+                    className={personInputClass}
+                  >
+                    {otherPlans.map((p) => (
+                      <option key={p.id} value={p.id}>
+                        {p.name}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="flex flex-col gap-1 text-xs font-medium text-warm-gray">
+                  {t.changePlanFrom}
+                  <input
+                    type="date"
+                    value={changeFrom}
+                    onChange={(e) => setChangeFrom(e.target.value)}
+                    className={personInputClass}
+                  />
+                </label>
+                <button
+                  type="button"
+                  disabled={busy || !newPlanId || !changeFrom}
+                  onClick={() => run(() => changePlan(contactId, newPlanId, changeFrom))}
+                  className="rounded-xl bg-brown-dark px-4 py-2.5 text-sm font-medium text-white disabled:opacity-60"
+                >
+                  {t.changePlan}
+                </button>
+              </div>
+              <p className="text-xs text-warm-gray">{t.changePlanHint}</p>
+            </div>
+          )}
           <div className="flex flex-wrap items-end gap-2 border-t border-sand/30 pt-3">
             <label className="flex flex-col gap-1 text-xs font-medium text-warm-gray">
               {t.endDate}

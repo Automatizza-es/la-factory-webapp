@@ -472,6 +472,9 @@ export interface Dictionary {
       billable: string;
       billableHint: string;
       endPlan: string;
+      changePlan: string;
+      changePlanFrom: string;
+      changePlanHint: string;
       endDate: string;
       newPlan: string;
       plan: string;
@@ -1242,6 +1245,9 @@ const es: Dictionary = {
       billable: "Facturable",
       billableHint: "Desmárcalo para cortesías, socios o intercambios.",
       endPlan: "Finalizar tarifa",
+      changePlan: "Cambiar tarifa",
+      changePlanFrom: "Desde",
+      changePlanHint: "Con la fecha de inicio de la tarifa actual (o anterior), se corrige desde el principio. Con una fecha posterior, la actual termina el día antes. Las horas de este mes pasan a ser las de la nueva tarifa.",
       endDate: "Último día",
       newPlan: "Asignar tarifa",
       plan: "Tarifa",
@@ -2014,6 +2020,9 @@ const ca: Dictionary = {
       billable: "Facturable",
       billableHint: "Desmarca-ho per a cortesies, socis o intercanvis.",
       endPlan: "Finalitzar tarifa",
+      changePlan: "Canviar tarifa",
+      changePlanFrom: "Des de",
+      changePlanHint: "Amb la data d'inici de la tarifa actual (o anterior), es corregeix des del principi. Amb una data posterior, l'actual acaba el dia abans. Les hores d'aquest mes passen a ser les de la nova tarifa.",
       endDate: "Últim dia",
       newPlan: "Assignar tarifa",
       plan: "Tarifa",
@@ -2785,6 +2794,9 @@ const en: Dictionary = {
       billable: "Billable",
       billableHint: "Untick it for courtesies, partners or exchanges.",
       endPlan: "End plan",
+      changePlan: "Change plan",
+      changePlanFrom: "From",
+      changePlanHint: "With the current plan's start date (or earlier), it's corrected from the start. With a later date, the current one ends the day before. This month's hours become the new plan's.",
       endDate: "Last day",
       newPlan: "Assign plan",
       plan: "Plan",

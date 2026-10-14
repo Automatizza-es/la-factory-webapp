@@ -95,6 +95,28 @@ export async function assignPlan(contactId: string, planId: string, startDate: s
   return { error: null };
 }
 
+// Switch the plan in force to another one from `from`: on or before its
+// start date it's a correction; later, the old one ends the day before.
+// This month's hours follow the new plan (see admin_change_plan).
+export async function changePlan(contactId: string, planId: string, from: string): Promise<Result> {
+  const { dict, admin } = await adminActionContext();
+  if (!admin) return { error: dict.errors.notAuthorized };
+
+  // Through the user's own session: the function checks it's an admin and
+  // records who made the change.
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("admin_change_plan", {
+    p_contact_id: contactId,
+    p_plan_id: planId,
+    p_from: from,
+  });
+  if (error) {
+    return { error: error.message === "NO_ACTIVE_PLAN" ? dict.errors.noActivePlan : dict.admin.userDetail.error };
+  }
+  refresh(contactId);
+  return { error: null };
+}
+
 // The plan stays in force until endDate (inclusive); a date already past
 // closes it right away.
 export async function endPlan(contactId: string, membershipId: string, endDate: string): Promise<Result> {
