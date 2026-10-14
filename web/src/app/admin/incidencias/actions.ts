@@ -25,6 +25,9 @@ export async function updateIncident(
   const { data, error } = await supabase
     .rpc("admin_update_incident", { p_incident_id: incidentId, p_status: status, p_note: note })
     .single();
+  // Same status and note as already saved (e.g. Save tapped twice): nothing
+  // changed, so nobody is told again.
+  if (error?.message === "NO_CHANGE") return { error: null };
   if (error || !data) return { error: dict.admin.userDetail.error };
 
   const reporter = (data as { reporter_contact_id: string }).reporter_contact_id;

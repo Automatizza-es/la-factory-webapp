@@ -23,6 +23,9 @@ export function AdminIncidentControls({
   const [value, setValue] = useState(status);
   const [text, setText] = useState(note ?? "");
   const [busy, setBusy] = useState(false);
+  // What was last saved: Save stays off until something differs from it,
+  // also in the moment before the refreshed props arrive.
+  const [saved, setSaved] = useState({ status, note: note ?? "" });
   const [error, setError] = useState<string | null>(null);
 
   async function save() {
@@ -31,7 +34,10 @@ export function AdminIncidentControls({
     const result = await updateIncident(incidentId, value, text);
     setBusy(false);
     if (result.error) setError(result.error);
-    else router.refresh();
+    else {
+      setSaved({ status: value, note: text });
+      router.refresh();
+    }
   }
 
   return (
@@ -62,7 +68,7 @@ export function AdminIncidentControls({
       <button
         type="button"
         onClick={save}
-        disabled={busy || (value === status && text === (note ?? ""))}
+        disabled={busy || (value === saved.status && text === saved.note)}
         className="self-end rounded-xl bg-brown-dark px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
       >
         {t.save}
