@@ -1,9 +1,10 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import { Camera, CheckCircle2, ImageUp } from "lucide-react";
+import { Camera, CheckCircle2 } from "lucide-react";
 import { registerPackage } from "@/app/admin/paquetes/actions";
+import { PhotoSourceButtons } from "@/components/PhotoSourceButtons";
 import { RecipientPicker } from "@/components/packages/RecipientPicker";
 import { formatDateLong, minutesToTime } from "@/lib/format";
 import { useI18n } from "@/lib/i18n/context";
@@ -21,7 +22,6 @@ interface PackageFormProps {
 export function PackageForm({ contacts, redirectTo }: PackageFormProps) {
   const { locale, dict: fullDict } = useI18n();
   const dict = fullDict.admin.newPackageForm;
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [recipientId, setRecipientId] = useState("");
@@ -35,9 +35,7 @@ export function PackageForm({ contacts, redirectTo }: PackageFormProps) {
     utcIsoToZonedDateAndMinutes(new Date().toISOString()).minutes,
   )}`;
 
-  function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
-    const selected = event.target.files?.[0];
-    if (!selected) return;
+  function handleFile(selected: File) {
     setFile(selected);
     setPreview(URL.createObjectURL(selected));
   }
@@ -125,38 +123,15 @@ export function PackageForm({ contacts, redirectTo }: PackageFormProps) {
     <div className="flex flex-col gap-5">
       <div className="flex flex-col gap-1.5">
         <span className="text-sm font-medium text-ink">{dict.photoLabel}</span>
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/*"
-          onChange={handleFileChange}
-          className="hidden"
-        />
-        <button
-          type="button"
-          onClick={() => fileInputRef.current?.click()}
-          className="relative flex h-48 w-full items-center justify-center overflow-hidden rounded-2xl border-2 border-dashed border-sand bg-white"
-        >
+        <div className="relative flex h-48 w-full items-center justify-center overflow-hidden rounded-2xl border-2 border-dashed border-sand bg-white">
           {preview ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={preview} alt="" className="h-full w-full object-cover" />
           ) : (
-            <div className="flex flex-col items-center gap-2 text-warm-gray">
-              <Camera className="h-8 w-8" strokeWidth={1.5} />
-              <span className="text-sm">{dict.photoLabel}</span>
-            </div>
+            <Camera className="h-8 w-8 text-warm-gray" strokeWidth={1.5} />
           )}
-        </button>
-        {preview && (
-          <button
-            type="button"
-            onClick={() => fileInputRef.current?.click()}
-            className="flex items-center justify-center gap-1.5 text-sm font-medium text-brown-dark"
-          >
-            <ImageUp className="h-4 w-4" strokeWidth={2} />
-            {dict.changePhoto}
-          </button>
-        )}
+        </div>
+        <PhotoSourceButtons onSelect={handleFile} />
       </div>
 
       <RecipientPicker

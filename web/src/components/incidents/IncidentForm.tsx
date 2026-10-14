@@ -1,9 +1,10 @@
 "use client";
 
-import { useRef, useState, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import Link from "next/link";
-import { CheckCircle2, ImageUp } from "lucide-react";
+import { CheckCircle2 } from "lucide-react";
 import { reportIncident } from "@/app/(coworker)/incidencias/actions";
+import { PhotoSourceButtons } from "@/components/PhotoSourceButtons";
 import { INCIDENT_CATEGORIES, type IncidentCategory } from "@/lib/data/incidents";
 import { useI18n } from "@/lib/i18n/context";
 import { compressImage } from "@/lib/image-compress";
@@ -13,7 +14,6 @@ import { TEXT_LIMITS } from "@/lib/limits";
 export function IncidentForm({ contactId }: { contactId: string }) {
   const { dict } = useI18n();
   const t = dict.incidents;
-  const fileInput = useRef<HTMLInputElement>(null);
   const [category, setCategory] = useState<IncidentCategory>("internet");
   const [description, setDescription] = useState("");
   const [file, setFile] = useState<File | null>(null);
@@ -119,29 +119,18 @@ export function IncidentForm({ contactId }: { contactId: string }) {
 
       <div className="flex flex-col gap-1.5">
         <span className="text-sm font-medium text-ink">{t.photo}</span>
-        <input
-          ref={fileInput}
-          type="file"
-          accept="image/*"
-          className="hidden"
-          onChange={(e) => {
-            const selected = e.target.files?.[0] ?? null;
-            setFile(selected);
-            setPreview(selected ? URL.createObjectURL(selected) : null);
-          }}
-        />
         {preview && (
           // eslint-disable-next-line @next/next/no-img-element -- local object URL preview
           <img src={preview} alt="" className="h-40 w-full rounded-xl object-cover sm:w-64" />
         )}
-        <button
-          type="button"
-          onClick={() => fileInput.current?.click()}
-          className="flex w-fit items-center gap-1.5 rounded-xl bg-cream px-4 py-2.5 text-sm font-medium text-brown-dark"
-        >
-          <ImageUp className="h-4 w-4" strokeWidth={2} />
-          {preview ? t.changePhoto : t.addPhoto}
-        </button>
+        <div className="sm:w-96">
+          <PhotoSourceButtons
+            onSelect={(selected) => {
+              setFile(selected);
+              setPreview(URL.createObjectURL(selected));
+            }}
+          />
+        </div>
       </div>
 
       {error && <p className="rounded-xl bg-red-50 p-3 text-sm text-red-600">{error}</p>}

@@ -745,6 +745,8 @@ export interface Dictionary {
   common: {
     close: string;
     pickDate: string;
+    takePhoto: string;
+    fromGallery: string;
   };
   errors: {
     photoUpload: string;
@@ -1518,6 +1520,8 @@ const es: Dictionary = {
   common: {
     close: "Cerrar",
     pickDate: "Elegir fecha",
+    takePhoto: "Hacer foto",
+    fromGallery: "Galería",
   },
   errors: {
     photoUpload: "No hemos podido subir la foto. Revisa la conexión e inténtalo de nuevo.",
@@ -2293,6 +2297,8 @@ const ca: Dictionary = {
   common: {
     close: "Tancar",
     pickDate: "Triar data",
+    takePhoto: "Fer foto",
+    fromGallery: "Galeria",
   },
   errors: {
     photoUpload: "No hem pogut pujar la foto. Revisa la connexió i torna-ho a provar.",
@@ -3067,6 +3073,8 @@ const en: Dictionary = {
   common: {
     close: "Close",
     pickDate: "Choose date",
+    takePhoto: "Take photo",
+    fromGallery: "Gallery",
   },
   errors: {
     photoUpload: "We couldn't upload the photo. Check your connection and try again.",
