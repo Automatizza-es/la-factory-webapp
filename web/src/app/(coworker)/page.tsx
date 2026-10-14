@@ -129,7 +129,7 @@ export default async function HomePage() {
 
           {upcomingEvents.length > 0 && (
             <section className="flex flex-col gap-3">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
                 <h2 className="text-lg font-semibold text-ink">{dict.events.homeTitle}</h2>
                 <Link
                   href="/eventos"
@@ -150,7 +150,7 @@ export default async function HomePage() {
 
         {!isGuest && (
           <section className="flex flex-col gap-3 lg:col-span-2 lg:col-start-1 lg:row-start-1">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
               <h2 className="text-lg font-semibold text-ink">{dict.home.bookRoom}</h2>
               <Link
                 href="/calendario"
@@ -170,7 +170,7 @@ export default async function HomePage() {
 
         {!isGuest && (
           <section className="flex flex-col gap-3 lg:col-span-2 lg:col-start-1 lg:row-start-2">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
               <h2 className="text-lg font-semibold text-ink">{dict.home.upcomingBookings}</h2>
               <Link
                 href="/reservas"

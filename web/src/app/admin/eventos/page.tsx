@@ -41,7 +41,7 @@ export default async function AdminEventsPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-start justify-between gap-3">
+      <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold text-ink">{dict.admin.events.title}</h1>
           <p className="text-sm text-warm-gray">{dict.admin.events.subtitle}</p>
@@ -62,7 +62,7 @@ export default async function AdminEventsPage() {
       ) : (
         <div className="flex flex-col gap-3">
           {events.map((ev) => (
-            <div key={ev.id} className="flex items-center gap-3 rounded-2xl bg-white p-4 shadow-sm">
+            <div key={ev.id} className="flex flex-wrap items-center gap-3 rounded-2xl bg-white p-4 shadow-sm">
               <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-sand/50">
                 {ev.imageUrl ? (
                   <Image src={ev.imageUrl} alt="" fill className="object-cover" unoptimized />
@@ -72,7 +72,7 @@ export default async function AdminEventsPage() {
                   </div>
                 )}
               </div>
-              <div className="min-w-0 flex-1">
+              <div className="min-w-0 flex-1 basis-40">
                 <div className="flex flex-wrap items-center gap-2">
                   <p className="truncate font-medium text-ink">{ev.title}</p>
                   <span className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${STATUS_STYLE[statusOf(ev)]}`}>
@@ -89,7 +89,7 @@ export default async function AdminEventsPage() {
                 </Link>
               </div>
               {statusOf(ev) === "cancelled" || statusOf(ev) === "finished" ? null : (
-                <div className="flex shrink-0 flex-col gap-1.5">
+                <div className="ml-auto flex shrink-0 flex-col gap-1.5">
                   {ev.status === "draft" && (
                     <PublishEventButton eventId={ev.id} label={t.publish} confirmLabel={t.publishConfirm} />
                   )}

@@ -93,8 +93,8 @@ export function BookingForm({
             />
           </label>
 
-          <div className="flex gap-3">
-            <label className="flex flex-1 flex-col gap-1 text-sm text-warm-gray">
+          <div className="flex flex-wrap gap-3">
+            <label className="flex min-w-32 flex-1 flex-col gap-1 text-sm text-warm-gray">
               {dict.reservar.start}
               <input
                 type="time"
@@ -104,7 +104,7 @@ export function BookingForm({
                 className="rounded-xl border border-sand bg-white px-3 py-2 text-ink outline-none focus:border-brown-dark"
               />
             </label>
-            <label className="flex flex-1 flex-col gap-1 text-sm text-warm-gray">
+            <label className="flex min-w-32 flex-1 flex-col gap-1 text-sm text-warm-gray">
               {dict.reservar.end}
               <input
                 type="time"
@@ -131,14 +131,14 @@ export function BookingForm({
 
         {availableMinutes !== null && (
           <div className="mt-4 flex flex-col gap-1 border-t border-sand/50 pt-3 text-sm">
-            <div className="flex justify-between text-warm-gray">
+            <div className="flex justify-between gap-3 text-warm-gray">
               <span>{dict.reservar.availableNow}</span>
               <span className="font-medium text-ink">
                 {formatMinutesAsHours(availableMinutes)}
               </span>
             </div>
             {afterMinutes !== null && (
-              <div className="flex justify-between text-warm-gray">
+              <div className="flex justify-between gap-3 text-warm-gray">
                 <span>{dict.reservar.afterBooking}</span>
                 <span
                   className={`font-medium ${afterMinutes < 0 ? "text-red-600" : "text-ink"}`}

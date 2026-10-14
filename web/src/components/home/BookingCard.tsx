@@ -60,11 +60,11 @@ export function BookingCard({ booking }: BookingCardProps) {
 
   const header = (
     <div className="flex items-start gap-3">
-      <div className="flex w-14 flex-col items-center rounded-xl bg-cream py-2 text-brown-dark">
+      <div className="flex w-14 shrink-0 flex-col items-center rounded-xl bg-cream py-2 text-brown-dark">
         <span className="text-lg font-bold leading-none">{day}</span>
         <span className="text-[11px] font-medium">{month}</span>
       </div>
-      <div className="flex-1">
+      <div className="min-w-0 flex-1">
         <p className="font-semibold text-ink">{booking.roomName}</p>
         <p className="text-sm text-warm-gray">{formatDateLong(booking.date, locale)}</p>
         <p className="text-sm text-warm-gray">
@@ -74,7 +74,7 @@ export function BookingCard({ booking }: BookingCardProps) {
       </div>
       {isHistory && (
         <span
-          className={`flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-medium ${
+          className={`flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-medium ${
             booking.status === "completed"
               ? "bg-sand/50 text-brown-dark"
               : "bg-red-50 text-red-600"
@@ -175,7 +175,7 @@ export function BookingCard({ booking }: BookingCardProps) {
               <h3 className="text-lg font-bold text-ink">{booking.roomName}</h3>
               <p className="mt-1 text-sm text-warm-gray">{formatDateLong(booking.date, locale)}</p>
 
-              <div className="mt-4 grid grid-cols-2 gap-x-6 gap-y-2 rounded-2xl bg-cream p-4 text-sm">
+              <div className="mt-4 grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 rounded-2xl bg-cream p-4 text-sm">
                 <span className="text-warm-gray">{dict.reservar.start}</span>
                 <span className="text-ink">{formatTimeRange(booking.startMinutes, booking.endMinutes)}</span>
                 <span className="text-warm-gray">{dict.reservar.duration}</span>

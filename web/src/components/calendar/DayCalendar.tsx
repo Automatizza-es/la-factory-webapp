@@ -243,8 +243,10 @@ export function DayCalendar({
         <div className="flex">
           <div className="w-10 shrink-0" />
           {visibleRooms.map((room) => (
-            <div key={room.id} className="flex flex-1 items-center gap-2 px-1 pb-2">
-              <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-lg bg-sand/50">
+            // min-w-0: without it a long room name pushed the column past the
+            // card on narrow phones. The photo drops out below 360px wide.
+            <div key={room.id} className="flex min-w-0 flex-1 items-center gap-2 px-1 pb-2">
+              <div className="relative hidden h-10 w-10 shrink-0 overflow-hidden rounded-lg bg-sand/50 min-[360px]:block">
                 {room.imagePath && (
                   <Image src={room.imagePath} alt={room.name} fill className="object-cover" />
                 )}
@@ -437,7 +439,7 @@ export function DayCalendar({
                           isSelected ? "border-brown-dark bg-cream" : "border-sand/50 bg-white"
                         }`}
                       >
-                        <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-xl bg-sand/50">
+                        <div className="relative hidden h-12 w-12 shrink-0 overflow-hidden rounded-xl bg-sand/50 min-[360px]:block">
                           {room.imagePath && (
                             <Image
                               src={room.imagePath}
@@ -447,14 +449,14 @@ export function DayCalendar({
                             />
                           )}
                         </div>
-                        <div className="flex-1">
+                        <div className="min-w-0 flex-1">
                           <p className="font-semibold text-ink">{room.name}</p>
                           <p className="text-sm text-warm-gray">
                             {room.capacityMin}–{room.capacityMax} {roomDict.people}
                           </p>
                         </div>
                         <span
-                          className={`flex items-center gap-1.5 text-xs font-medium ${
+                          className={`flex shrink-0 items-center gap-1.5 whitespace-nowrap text-xs font-medium ${
                             roomIsFree ? "text-emerald-600" : "text-warm-gray"
                           }`}
                         >
@@ -477,10 +479,10 @@ export function DayCalendar({
               </>
             )}
 
-            <div className="mt-4 flex items-center justify-center gap-6 rounded-2xl bg-cream p-4">
+            <div className="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-3 rounded-2xl bg-cream p-3 min-[360px]:gap-x-6 min-[360px]:p-4">
               <div className="flex flex-col items-center gap-1.5">
                 <span className="text-xs text-warm-gray">{reservarDict.start}</span>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5">
                   <button
                     type="button"
                     onClick={() => adjustStart(-15)}
@@ -489,7 +491,7 @@ export function DayCalendar({
                   >
                     <Minus className="h-3.5 w-3.5" strokeWidth={2.25} />
                   </button>
-                  <span className="w-14 text-center text-sm font-semibold text-ink">
+                  <span className="w-12 text-center text-sm font-semibold text-ink">
                     {minutesToTime(selection.startMinutes)}
                   </span>
                   <button
@@ -504,7 +506,7 @@ export function DayCalendar({
               </div>
               <div className="flex flex-col items-center gap-1.5">
                 <span className="text-xs text-warm-gray">{reservarDict.end}</span>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5">
                   <button
                     type="button"
                     onClick={() => adjustEnd(-15)}
@@ -513,7 +515,7 @@ export function DayCalendar({
                   >
                     <Minus className="h-3.5 w-3.5" strokeWidth={2.25} />
                   </button>
-                  <span className="w-14 text-center text-sm font-semibold text-ink">
+                  <span className="w-12 text-center text-sm font-semibold text-ink">
                     {minutesToTime(selection.endMinutes)}
                   </span>
                   <button
@@ -544,7 +546,7 @@ export function DayCalendar({
             )}
 
             <div className="mt-3 rounded-2xl bg-cream p-4">
-              <div className="grid grid-cols-2 gap-x-6 gap-y-1.5 text-sm">
+              <div className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 text-sm">
                 <p className="font-semibold text-ink">{dict.summary}</p>
                 <span />
                 <span className="text-warm-gray">{dict.roomLabel}</span>

@@ -80,8 +80,10 @@ export async function CalendarScreen({ role, params }: CalendarScreenProps) {
 
   return (
     <div className="flex flex-col gap-5">
-      <div className="flex items-start justify-between gap-3">
-        <div>
+      {/* Wraps: on narrow phones the Day/Week switch drops under the title
+          instead of squeezing the date onto two lines. */}
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="min-w-0">
           <h1 className="text-2xl font-bold text-ink">{dict.calendar.title}</h1>
           <p className="text-sm text-warm-gray">
             {isWeekView ? formatWeekRangeLong(weekStart, weekEnd, locale) : formatDateLong(date, locale)}
@@ -135,7 +137,7 @@ export async function CalendarScreen({ role, params }: CalendarScreenProps) {
           </Link>
         </div>
       ) : (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 min-[360px]:gap-2">
           <Link
             href={`${basePath}?fecha=${addDays(date, -1)}${salaQuery}`}
             className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white shadow-sm"

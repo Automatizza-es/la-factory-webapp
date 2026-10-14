@@ -90,6 +90,33 @@ export default async function AdminUsersPage({ searchParams }: PageProps) {
     .filter((c) => c.stage === "no_access" && c.kind !== "archived")
     .map((c) => c.contactId);
 
+  const personName = (c: (typeof people)[number]) =>
+    `${c.firstName} ${c.lastName ?? ""}`.trim() || c.email || "—";
+  const planText = (c: (typeof people)[number]) =>
+    c.planLabel ?? (c.sharedWithName ? t.sharedWith(c.sharedWithName) : "—");
+  // App access: a tick, or the stage plus what the admin can do about it.
+  const accessCell = (c: (typeof people)[number]) => {
+    // Expired invitations keep their actions so "Reenviar" can revive them.
+    const isPending = c.stage === "invited" || c.stage === "onboarding" || c.stage === "invite_expired";
+    return (
+      <div className="flex flex-wrap items-center gap-2">
+        {c.stage === "active" ? (
+          <CheckCircle2 className="h-4 w-4 text-emerald-600" strokeWidth={2} aria-label={t.access} />
+        ) : (
+          <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${STAGE_STYLE[c.stage]}`}>
+            {c.stage === "invited" && c.invitation?.kind === "welcome" ? t.statusWelcomeSent : stageLabel[c.stage]}
+          </span>
+        )}
+        {c.stage === "no_access" && c.kind !== "archived" && (
+          <WelcomeButton contactIds={[c.contactId]} label={t.sendWelcome} />
+        )}
+        {isPending && c.invitation && (
+          <InvitationActions invitationId={c.invitation.id} token={c.invitation.token} />
+        )}
+      </div>
+    );
+  };
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
@@ -146,80 +173,102 @@ export default async function AdminUsersPage({ searchParams }: PageProps) {
           {everyone.length === 0 ? t.noCoworkers : t.noResults}
         </p>
       ) : (
-        <div className="overflow-hidden rounded-3xl bg-white shadow-sm">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead>
-                <tr className="border-b border-sand/50 text-warm-gray">
-                  <th className="px-5 py-3 font-medium">{t.name}</th>
-                  <th className="px-5 py-3 font-medium">{t.status}</th>
-                  <th className="px-5 py-3 font-medium">{t.plan}</th>
-                  <th className="px-5 py-3 font-medium">{t.used}</th>
-                  <th className="px-5 py-3 font-medium">{t.available}</th>
-                  <th className="px-5 py-3 font-medium">{t.access}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {people.map((c) => {
-                  // Expired invitations keep their actions so "Reenviar" can revive them.
-                  const isPending =
-                    c.stage === "invited" || c.stage === "onboarding" || c.stage === "invite_expired";
-                  const name = `${c.firstName} ${c.lastName ?? ""}`.trim() || c.email || "—";
-                  const hasHours = c.kind === "coworker";
-
-                  return (
-                    <tr key={c.contactId} className="border-b border-sand/30 last:border-0">
-                      <td className="px-5 py-3">
-                        <Link
-                          href={`/admin/coworkers/${c.contactId}`}
-                          className="font-medium text-brown-dark hover:underline"
-                        >
-                          {name}
-                        </Link>
-                        {c.email && name !== c.email && (
-                          <p className="text-xs text-warm-gray">{c.email}</p>
-                        )}
-                      </td>
-                      <td className="px-5 py-3">
-                        <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${KIND_STYLE[c.kind]}`}>
-                          {kindLabel[c.kind]}
+        <>
+          {/* Phones: one card per person (a six-column table meant scrolling
+              sideways to reach the access buttons). From md up: the table. */}
+          <ul className="flex flex-col gap-2 md:hidden">
+            {people.map((c) => {
+              const name = personName(c);
+              const hasHours = c.kind === "coworker";
+              return (
+                <li key={c.contactId} className="flex flex-col gap-2 rounded-2xl bg-white p-4 shadow-sm">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <Link
+                        href={`/admin/coworkers/${c.contactId}`}
+                        className="font-medium text-brown-dark hover:underline"
+                      >
+                        {name}
+                      </Link>
+                      {c.email && name !== c.email && (
+                        <p className="truncate text-xs text-warm-gray">{c.email}</p>
+                      )}
+                    </div>
+                    <span
+                      className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-medium ${KIND_STYLE[c.kind]}`}
+                    >
+                      {kindLabel[c.kind]}
+                    </span>
+                  </div>
+                  {(planText(c) !== "—" || hasHours) && (
+                    <p className="text-sm text-ink">
+                      {planText(c)}
+                      {hasHours && (
+                        <span className="text-warm-gray">
+                          {" · "}
+                          {t.available}: {formatMinutesAsHours(c.totalMinutes - c.usedMinutes)}
                         </span>
-                      </td>
-                      <td className="px-5 py-3 text-ink">
-                        {c.planLabel ?? (c.sharedWithName ? t.sharedWith(c.sharedWithName) : "—")}
-                      </td>
-                      <td className="px-5 py-3 text-ink">
-                        {hasHours ? formatMinutesAsHours(c.usedMinutes) : "—"}
-                      </td>
-                      <td className="px-5 py-3 text-ink">
-                        {hasHours ? formatMinutesAsHours(c.totalMinutes - c.usedMinutes) : "—"}
-                      </td>
-                      <td className="px-5 py-3">
-                        <div className="flex flex-wrap items-center gap-2">
-                          {c.stage === "active" ? (
-                            <CheckCircle2 className="h-4 w-4 text-emerald-600" strokeWidth={2} />
-                          ) : (
-                            <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${STAGE_STYLE[c.stage]}`}>
-                              {c.stage === "invited" && c.invitation?.kind === "welcome"
-                                ? t.statusWelcomeSent
-                                : stageLabel[c.stage]}
-                            </span>
+                      )}
+                    </p>
+                  )}
+                  {accessCell(c)}
+                </li>
+              );
+            })}
+          </ul>
+
+          <div className="hidden overflow-hidden rounded-3xl bg-white shadow-sm md:block">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-sm">
+                <thead>
+                  <tr className="border-b border-sand/50 text-warm-gray">
+                    <th className="px-5 py-3 font-medium">{t.name}</th>
+                    <th className="px-5 py-3 font-medium">{t.status}</th>
+                    <th className="px-5 py-3 font-medium">{t.plan}</th>
+                    <th className="px-5 py-3 font-medium">{t.used}</th>
+                    <th className="px-5 py-3 font-medium">{t.available}</th>
+                    <th className="px-5 py-3 font-medium">{t.access}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {people.map((c) => {
+                    const name = personName(c);
+                    const hasHours = c.kind === "coworker";
+
+                    return (
+                      <tr key={c.contactId} className="border-b border-sand/30 last:border-0">
+                        <td className="px-5 py-3">
+                          <Link
+                            href={`/admin/coworkers/${c.contactId}`}
+                            className="font-medium text-brown-dark hover:underline"
+                          >
+                            {name}
+                          </Link>
+                          {c.email && name !== c.email && (
+                            <p className="text-xs text-warm-gray">{c.email}</p>
                           )}
-                          {c.stage === "no_access" && c.kind !== "archived" && (
-                            <WelcomeButton contactIds={[c.contactId]} label={t.sendWelcome} />
-                          )}
-                          {isPending && c.invitation && (
-                            <InvitationActions invitationId={c.invitation.id} token={c.invitation.token} />
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                        </td>
+                        <td className="px-5 py-3">
+                          <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${KIND_STYLE[c.kind]}`}>
+                            {kindLabel[c.kind]}
+                          </span>
+                        </td>
+                        <td className="px-5 py-3 text-ink">{planText(c)}</td>
+                        <td className="px-5 py-3 text-ink">
+                          {hasHours ? formatMinutesAsHours(c.usedMinutes) : "—"}
+                        </td>
+                        <td className="px-5 py-3 text-ink">
+                          {hasHours ? formatMinutesAsHours(c.totalMinutes - c.usedMinutes) : "—"}
+                        </td>
+                        <td className="px-5 py-3">{accessCell(c)}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
+        </>
       )}
     </div>
   );

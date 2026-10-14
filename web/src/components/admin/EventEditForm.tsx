@@ -164,8 +164,8 @@ export function EventEditForm({ event }: EventEditFormProps) {
               className="rounded-xl border border-sand bg-white px-3 py-2 text-ink outline-none focus:border-brown-dark"
             />
           </label>
-          <div className="flex gap-3">
-            <label className="flex flex-1 flex-col gap-1 text-sm text-warm-gray">
+          <div className="flex flex-wrap gap-3">
+            <label className="flex min-w-32 flex-1 flex-col gap-1 text-sm text-warm-gray">
               {dict.startTimeLabel}
               <input
                 type="time"
@@ -175,7 +175,7 @@ export function EventEditForm({ event }: EventEditFormProps) {
                 className="rounded-xl border border-sand bg-white px-3 py-2 text-ink outline-none focus:border-brown-dark"
               />
             </label>
-            <label className="flex flex-1 flex-col gap-1 text-sm text-warm-gray">
+            <label className="flex min-w-32 flex-1 flex-col gap-1 text-sm text-warm-gray">
               {dict.endTimeLabel}
               <input
                 type="time"
@@ -215,18 +215,18 @@ export function EventEditForm({ event }: EventEditFormProps) {
         <label className="mt-3 flex flex-col gap-1 text-sm text-warm-gray">
           {dict.registrationDeadlineLabel} <span className="font-normal">({dict.deadlineOptional})</span>
         </label>
-        <div className="flex gap-3">
+        <div className="flex flex-wrap gap-3">
           <input
             type="date"
             value={deadlineDate}
             onChange={(e) => setDeadlineDate(e.target.value)}
-            className="flex-1 rounded-xl border border-sand bg-white px-3 py-2 text-ink outline-none focus:border-brown-dark"
+            className="min-w-32 flex-1 rounded-xl border border-sand bg-white px-3 py-2 text-ink outline-none focus:border-brown-dark"
           />
           <input
             type="time"
             value={deadlineTime}
             onChange={(e) => setDeadlineTime(e.target.value)}
-            className="flex-1 rounded-xl border border-sand bg-white px-3 py-2 text-ink outline-none focus:border-brown-dark"
+            className="min-w-32 flex-1 rounded-xl border border-sand bg-white px-3 py-2 text-ink outline-none focus:border-brown-dark"
           />
         </div>
       </div>

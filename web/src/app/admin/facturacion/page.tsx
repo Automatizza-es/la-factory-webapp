@@ -40,6 +40,35 @@ export default async function AdminBillingPage({ searchParams }: PageProps) {
     })[issue];
   const missingPrices = data.billable.some((l) => l.issues.includes("no_price"));
 
+  type Line = (typeof data.billable)[number];
+  const billToName = (line: Line) =>
+    line.billTo.companyId ? (
+      <Link href={`/admin/empresas/${line.billTo.companyId}`} className="hover:underline">
+        {line.billTo.name}
+      </Link>
+    ) : (
+      line.billTo.name
+    );
+  const issueChips = (line: Line) => (
+    <div className="flex flex-wrap gap-1.5">
+      {line.issues.map((issue) => (
+        <span
+          key={issue}
+          className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${
+            issue === "starts_mid_month" || issue === "ends_mid_month"
+              ? "bg-cream text-brown-dark"
+              : "bg-amber-50 text-amber-700"
+          }`}
+        >
+          {issue !== "starts_mid_month" && issue !== "ends_mid_month" && (
+            <AlertTriangle className="h-3 w-3" strokeWidth={2.25} />
+          )}
+          {issueLabel(issue, line)}
+        </span>
+      ))}
+    </div>
+  );
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
@@ -54,7 +83,7 @@ export default async function AdminBillingPage({ searchParams }: PageProps) {
           >
             <ChevronLeft className="h-4 w-4 text-ink" strokeWidth={2} />
           </Link>
-          <span className="min-w-36 rounded-full bg-white px-4 py-2 text-center text-sm font-medium capitalize text-ink shadow-sm">
+          <span className="rounded-full bg-white px-4 py-2 text-center text-sm font-medium capitalize text-ink shadow-sm min-[360px]:min-w-36">
             {monthLabel}
           </span>
           <Link
@@ -85,76 +114,87 @@ export default async function AdminBillingPage({ searchParams }: PageProps) {
       {data.billable.length === 0 ? (
         <p className="rounded-2xl bg-white p-4 text-sm text-warm-gray shadow-sm">{t.noLines}</p>
       ) : (
-        <div className="overflow-hidden rounded-3xl bg-white shadow-sm">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead>
-                <tr className="border-b border-sand/50 text-warm-gray">
-                  <th className="px-5 py-3 font-medium">{t.invoiced}</th>
-                  <th className="px-5 py-3 font-medium">{t.billTo}</th>
-                  <th className="px-5 py-3 font-medium">{t.person}</th>
-                  <th className="px-5 py-3 font-medium">{t.plan}</th>
-                  <th className="px-5 py-3 text-right font-medium">{t.amount}</th>
-                  <th className="px-5 py-3 font-medium">{t.issues}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.billable.map((line) => (
-                  <tr
-                    key={line.membershipId}
-                    className={`border-b border-sand/30 last:border-0 ${line.invoiced ? "bg-cream/40" : ""}`}
-                  >
-                    <td className="px-5 py-3">
-                      <InvoicedCheckbox
-                        membershipId={line.membershipId}
-                        month={month}
-                        invoiced={line.invoiced}
-                        label={`${t.invoiced}: ${line.billTo.name}`}
-                      />
-                    </td>
-                    <td className="px-5 py-3 font-medium text-ink">
-                      {line.billTo.companyId ? (
-                        <Link href={`/admin/empresas/${line.billTo.companyId}`} className="hover:underline">
-                          {line.billTo.name}
-                        </Link>
-                      ) : (
-                        line.billTo.name
-                      )}
-                    </td>
-                    <td className="px-5 py-3">
-                      <Link href={`/admin/coworkers/${line.contactId}`} className="text-brown-dark hover:underline">
-                        {line.personName}
-                      </Link>
-                    </td>
-                    <td className="px-5 py-3 text-ink">{line.planName}</td>
-                    <td className="px-5 py-3 text-right text-ink">
+        <>
+          {/* Phones: one card per line instead of a six-column table. */}
+          <ul className="flex flex-col gap-2 md:hidden">
+            {data.billable.map((line) => (
+              <li
+                key={line.membershipId}
+                className={`flex items-start gap-3 rounded-2xl p-4 shadow-sm ${line.invoiced ? "bg-cream/60" : "bg-white"}`}
+              >
+                <div className="pt-0.5">
+                  <InvoicedCheckbox
+                    membershipId={line.membershipId}
+                    month={month}
+                    invoiced={line.invoiced}
+                    label={`${t.invoiced}: ${line.billTo.name}`}
+                  />
+                </div>
+                <div className="flex min-w-0 flex-1 flex-col gap-1.5 text-sm">
+                  <div className="flex items-start justify-between gap-3">
+                    <span className="min-w-0 font-medium text-ink">{billToName(line)}</span>
+                    <span className="shrink-0 text-ink">
                       {line.price === null ? "—" : formatEuros(line.price, locale)}
-                    </td>
-                    <td className="px-5 py-3">
-                      <div className="flex flex-wrap gap-1.5">
-                        {line.issues.map((issue) => (
-                          <span
-                            key={issue}
-                            className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${
-                              issue === "starts_mid_month" || issue === "ends_mid_month"
-                                ? "bg-cream text-brown-dark"
-                                : "bg-amber-50 text-amber-700"
-                            }`}
-                          >
-                            {issue !== "starts_mid_month" && issue !== "ends_mid_month" && (
-                              <AlertTriangle className="h-3 w-3" strokeWidth={2.25} />
-                            )}
-                            {issueLabel(issue, line)}
-                          </span>
-                        ))}
-                      </div>
-                    </td>
+                    </span>
+                  </div>
+                  <p className="text-warm-gray">
+                    <Link href={`/admin/coworkers/${line.contactId}`} className="text-brown-dark hover:underline">
+                      {line.personName}
+                    </Link>
+                    {" · "}
+                    {line.planName}
+                  </p>
+                  {line.issues.length > 0 && issueChips(line)}
+                </div>
+              </li>
+            ))}
+          </ul>
+
+          <div className="hidden overflow-hidden rounded-3xl bg-white shadow-sm md:block">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-sm">
+                <thead>
+                  <tr className="border-b border-sand/50 text-warm-gray">
+                    <th className="px-5 py-3 font-medium">{t.invoiced}</th>
+                    <th className="px-5 py-3 font-medium">{t.billTo}</th>
+                    <th className="px-5 py-3 font-medium">{t.person}</th>
+                    <th className="px-5 py-3 font-medium">{t.plan}</th>
+                    <th className="px-5 py-3 text-right font-medium">{t.amount}</th>
+                    <th className="px-5 py-3 font-medium">{t.issues}</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {data.billable.map((line) => (
+                    <tr
+                      key={line.membershipId}
+                      className={`border-b border-sand/30 last:border-0 ${line.invoiced ? "bg-cream/40" : ""}`}
+                    >
+                      <td className="px-5 py-3">
+                        <InvoicedCheckbox
+                          membershipId={line.membershipId}
+                          month={month}
+                          invoiced={line.invoiced}
+                          label={`${t.invoiced}: ${line.billTo.name}`}
+                        />
+                      </td>
+                      <td className="px-5 py-3 font-medium text-ink">{billToName(line)}</td>
+                      <td className="px-5 py-3">
+                        <Link href={`/admin/coworkers/${line.contactId}`} className="text-brown-dark hover:underline">
+                          {line.personName}
+                        </Link>
+                      </td>
+                      <td className="px-5 py-3 text-ink">{line.planName}</td>
+                      <td className="px-5 py-3 text-right text-ink">
+                        {line.price === null ? "—" : formatEuros(line.price, locale)}
+                      </td>
+                      <td className="px-5 py-3">{issueChips(line)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
+        </>
       )}
 
       {data.notBillable.length > 0 && (
@@ -162,7 +202,7 @@ export default async function AdminBillingPage({ searchParams }: PageProps) {
           <h2 className="font-semibold text-ink">{t.notBillableTitle}</h2>
           <ul className="mt-3 flex flex-col gap-2 text-sm">
             {data.notBillable.map((line) => (
-              <li key={line.membershipId} className="flex items-center justify-between gap-3">
+              <li key={line.membershipId} className="flex flex-wrap items-center justify-between gap-x-3">
                 <Link href={`/admin/coworkers/${line.contactId}`} className="text-brown-dark hover:underline">
                   {line.personName}
                 </Link>

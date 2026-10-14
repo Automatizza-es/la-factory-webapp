@@ -53,7 +53,7 @@ export default async function AdminEventAttendeesPage({ params }: AdminEventAtte
         ) : (
           <div className="flex flex-col gap-2">
             {registered.map((a) => (
-              <div key={a.contactId} className="flex items-center justify-between rounded-2xl bg-white p-3.5 shadow-sm">
+              <div key={a.contactId} className="flex flex-wrap items-center justify-between gap-x-3 gap-y-0.5 rounded-2xl bg-white p-3.5 shadow-sm">
                 <span className="text-sm font-medium text-ink">{a.name}</span>
                 <span className="text-xs text-warm-gray">{formatWhen(a.registeredAt)}</span>
               </div>
@@ -69,7 +69,7 @@ export default async function AdminEventAttendeesPage({ params }: AdminEventAtte
           </h2>
           <div className="flex flex-col gap-2">
             {cancelled.map((a) => (
-              <div key={a.contactId} className="flex items-center justify-between rounded-2xl bg-white p-3.5 opacity-60 shadow-sm">
+              <div key={a.contactId} className="flex flex-wrap items-center justify-between gap-x-3 gap-y-0.5 rounded-2xl bg-white p-3.5 opacity-60 shadow-sm">
                 <span className="text-sm font-medium text-ink">{a.name}</span>
                 <span className="text-xs text-warm-gray">
                   {a.cancelledAt ? formatWhen(a.cancelledAt) : ""}

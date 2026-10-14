@@ -20,8 +20,9 @@ export function DatePill({ date, locale, extraQuery, label, basePath = "/calenda
   const router = useRouter();
 
   return (
-    <label className="relative flex flex-1 items-center justify-center gap-1 overflow-hidden rounded-full bg-white px-2.5 py-2 shadow-sm">
-      <Calendar className="h-4 w-4 shrink-0 text-brown-dark" strokeWidth={2} />
+    <label className="relative flex min-w-0 flex-1 items-center justify-center gap-1 overflow-hidden rounded-full bg-white px-2.5 py-2 shadow-sm">
+      {/* On narrow phones the icon gives its room to the date itself. */}
+      <Calendar className="hidden h-4 w-4 shrink-0 text-brown-dark min-[360px]:block" strokeWidth={2} />
       <span className="truncate whitespace-nowrap text-sm font-medium text-ink">
         {label ?? formatDatePill(date, locale)}
       </span>

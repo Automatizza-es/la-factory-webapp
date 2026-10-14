@@ -185,7 +185,7 @@ export function PackageForm({ contacts, redirectTo }: PackageFormProps) {
       {(preview || recipientName) && (
         <div className="rounded-2xl bg-cream p-4">
           <p className="text-sm font-semibold text-ink">{dict.summaryTitle}</p>
-          <div className="mt-2 grid grid-cols-2 gap-x-6 gap-y-1.5 text-sm">
+          <div className="mt-2 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 text-sm">
             <span className="text-warm-gray">{dict.summaryFor}</span>
             <span className="text-ink">{recipientName || "—"}</span>
             <span className="text-warm-gray">{dict.summaryReceived}</span>

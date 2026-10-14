@@ -19,7 +19,7 @@ export function RoomSwitcher({ rooms, activeRoomId, onSelect }: RoomSwitcherProp
             key={room.id}
             type="button"
             onClick={() => onSelect(room.id)}
-            className={`flex flex-1 items-center gap-2 rounded-xl px-2 py-1.5 text-left transition-colors ${
+            className={`flex min-w-0 flex-1 items-center gap-2 rounded-xl px-2 py-1.5 text-left transition-colors ${
               active ? "bg-brown-dark" : "bg-transparent"
             }`}
           >

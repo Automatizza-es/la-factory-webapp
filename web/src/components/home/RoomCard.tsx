@@ -32,11 +32,11 @@ export function RoomCard({ room, dict }: RoomCardProps) {
           {room.capacityMin}–{room.capacityMax} {dict.people}
         </span>
       </div>
-      <div className="flex flex-1 flex-col gap-3 p-4">
+      <div className="flex flex-1 flex-col gap-3 p-3 min-[360px]:p-4">
         <p className="font-semibold text-ink">{room.name}</p>
         <span className="mt-auto flex items-center justify-center gap-1 whitespace-nowrap rounded-xl bg-brown-dark py-2 text-xs font-medium text-white sm:text-sm">
           {dict.availability}
-          <ChevronRight className="h-4 w-4 shrink-0" strokeWidth={2.25} />
+          <ChevronRight className="hidden h-4 w-4 shrink-0 min-[360px]:block" strokeWidth={2.25} />
         </span>
       </div>
     </Link>

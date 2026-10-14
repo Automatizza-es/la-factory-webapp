@@ -14,7 +14,7 @@ export function QuotaCard({ quota, dict }: QuotaCardProps) {
 
   return (
     <section className="rounded-3xl bg-white p-5 shadow-sm">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <span className="text-sm text-warm-gray">{dict.currentPlan}</span>
         <span className="flex items-center gap-1.5 rounded-full bg-cream px-3 py-1 text-xs font-medium text-brown-dark">
           <CalendarRange className="h-3.5 w-3.5" strokeWidth={2} />

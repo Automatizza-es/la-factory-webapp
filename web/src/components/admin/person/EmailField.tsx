@@ -34,7 +34,7 @@ export function EmailField({ contactId, email }: { contactId: string; email: str
       <label htmlFor={`${contactId}-email`} className="text-xs font-medium text-warm-gray">
         {t.email}
       </label>
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2">
         <input
           id={`${contactId}-email`}
           type="email"
@@ -43,7 +43,7 @@ export function EmailField({ contactId, email }: { contactId: string; email: str
             setValue(e.target.value);
             setMessage(null);
           }}
-          className={`${personInputClass} flex-1`}
+          className={`${personInputClass} min-w-0 flex-1 basis-48`}
         />
         <button
           type="button"

@@ -151,12 +151,17 @@ export default async function AdminDashboardPage() {
           ) : (
             <ul className="flex flex-col divide-y divide-sand/30">
               {todayBookings.map((b) => (
-                <li key={b.id} className="flex items-center justify-between gap-3 py-2 text-sm">
+                <li key={b.id} className="flex items-start gap-3 py-2 text-sm sm:items-center">
                   <span className="shrink-0 font-medium text-ink">
                     {formatTimeRange(b.startMinutes, b.endMinutes)}
                   </span>
-                  <span className="flex-1 truncate text-ink">{bookingName(b)}</span>
-                  <span className="shrink-0 text-warm-gray">{b.roomName}</span>
+                  {/* Narrow phones: the room goes under the name instead of
+                      squeezing it down to a letter. */}
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-ink">{bookingName(b)}</span>
+                    <span className="block truncate text-xs text-warm-gray sm:hidden">{b.roomName}</span>
+                  </span>
+                  <span className="hidden shrink-0 text-warm-gray sm:inline">{b.roomName}</span>
                   <span className="hidden shrink-0 text-warm-gray sm:inline">
                     {formatMinutesAsHours(b.endMinutes - b.startMinutes)}
                   </span>
@@ -174,10 +179,10 @@ export default async function AdminDashboardPage() {
                 nowMinutes,
               );
               return (
-                <li key={room.id} className="flex items-center justify-between gap-3 text-sm">
+                <li key={room.id} className="flex flex-wrap items-center justify-between gap-x-3 gap-y-0.5 text-sm">
                   <span className="font-medium text-ink">{room.name}</span>
                   <span
-                    className={`flex items-center gap-1.5 text-xs font-medium ${
+                    className={`flex items-center gap-1.5 whitespace-nowrap text-xs font-medium ${
                       status.busy ? "text-amber-700" : "text-emerald-600"
                     }`}
                   >
@@ -255,9 +260,9 @@ export default async function AdminDashboardPage() {
                   {packages.latest.map((p) => {
                     const when = utcIsoToZonedDateAndMinutes(p.receivedAt);
                     return (
-                      <li key={p.id} className="flex items-center justify-between gap-2 text-sm">
-                        <span className="truncate text-ink">{p.recipientName}</span>
-                        <span className="shrink-0 text-xs text-warm-gray">
+                      <li key={p.id} className="flex flex-wrap items-baseline justify-between gap-x-2 text-sm">
+                        <span className="min-w-0 text-ink">{p.recipientName}</span>
+                        <span className="text-xs text-warm-gray">
                           {formatDateLong(when.date, locale)} · {minutesToTime(when.minutes)}
                         </span>
                       </li>

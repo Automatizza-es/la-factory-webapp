@@ -36,7 +36,7 @@ export default async function AdminPackagesPage({ searchParams }: AdminPackagesP
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-start justify-between gap-3">
+      <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold text-ink">{dict.admin.packages.title}</h1>
           <p className="text-sm text-warm-gray">{dict.admin.packages.subtitle}</p>
@@ -50,7 +50,7 @@ export default async function AdminPackagesPage({ searchParams }: AdminPackagesP
         </Link>
       </div>
 
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2">
         {filters.map((f) => (
           <Link
             key={f.key}
@@ -71,7 +71,7 @@ export default async function AdminPackagesPage({ searchParams }: AdminPackagesP
       ) : (
         <div className="flex flex-col gap-3">
           {packages.map((p) => (
-            <div key={p.id} className="flex items-center gap-3 rounded-2xl bg-white p-4 shadow-sm">
+            <div key={p.id} className="flex flex-wrap items-center gap-3 rounded-2xl bg-white p-4 shadow-sm">
               <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-sand/50">
                 {p.imageUrl && (
                   <Image src={p.imageUrl} alt="" fill className="object-cover" unoptimized />
@@ -82,7 +82,9 @@ export default async function AdminPackagesPage({ searchParams }: AdminPackagesP
                   </div>
                 )}
               </div>
-              <div className="min-w-0 flex-1">
+              {/* basis: on narrow phones the status and button drop to their
+                  own line instead of squeezing the name out. */}
+              <div className="min-w-0 flex-1 basis-40">
                 <p className="truncate font-medium text-ink">{p.recipientName}</p>
                 <p className="text-xs text-warm-gray">
                   {dict.admin.packages.receivedAt}: {formatWhen(p.receivedAt, locale)}
@@ -94,18 +96,20 @@ export default async function AdminPackagesPage({ searchParams }: AdminPackagesP
                   </p>
                 )}
               </div>
-              <span
-                className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-medium ${
-                  p.status === "pending" ? "bg-amber-50 text-amber-700" : "bg-sand/50 text-brown-dark"
-                }`}
-              >
-                {p.status === "pending"
-                  ? dict.admin.packages.statusPending
-                  : dict.admin.packages.statusCollected}
-              </span>
-              {p.status === "pending" && (
-                <MarkCollectedButton packageId={p.id} label={dict.admin.packages.markCollected} />
-              )}
+              <div className="ml-auto flex shrink-0 items-center gap-2">
+                <span
+                  className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-medium ${
+                    p.status === "pending" ? "bg-amber-50 text-amber-700" : "bg-sand/50 text-brown-dark"
+                  }`}
+                >
+                  {p.status === "pending"
+                    ? dict.admin.packages.statusPending
+                    : dict.admin.packages.statusCollected}
+                </span>
+                {p.status === "pending" && (
+                  <MarkCollectedButton packageId={p.id} label={dict.admin.packages.markCollected} />
+                )}
+              </div>
             </div>
           ))}
         </div>

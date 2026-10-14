@@ -158,13 +158,13 @@ export default async function AdminCoworkerDetailPage({ params }: PageProps) {
         ) : (
           <ul className="mt-3 flex flex-col gap-2 text-sm">
             {detail.movements.map((m) => (
-              <li key={m.id} className="flex items-center justify-between">
-                <span className="text-ink">
+              <li key={m.id} className="flex items-start justify-between gap-3">
+                <span className="min-w-0 text-ink">
                   {reasonLabel[m.reasonCode] ?? m.reasonCode}
                   {m.note ? ` · ${m.note}` : ""}
                 </span>
                 <span
-                  className={`font-medium ${m.deltaMinutes < 0 ? "text-red-600" : "text-brown-dark"}`}
+                  className={`shrink-0 font-medium ${m.deltaMinutes < 0 ? "text-red-600" : "text-brown-dark"}`}
                 >
                   {m.deltaMinutes > 0 ? "+" : ""}
                   {formatMinutesAsHours(Math.abs(m.deltaMinutes))}

@@ -17,9 +17,21 @@
   --font-sans: var(--font-inter);
 }
 
+html {
+  /* iOS mustn't enlarge text on its own (e.g. when the phone turns). */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
+  /* Safety nets for narrow screens (iPhone "Larger Text" display zoom is
+     about 320px wide): long words like emails wrap instead of running out,
+     and the page itself never scrolls sideways. Wide content that should
+     scroll (the week calendar) has its own overflow-x-auto box. */
+  overflow-wrap: break-word;
+  overflow-x: clip;
   /* No double-tap zoom: taps respond straight away, like a native app. */
   touch-action: manipulation;
 }
