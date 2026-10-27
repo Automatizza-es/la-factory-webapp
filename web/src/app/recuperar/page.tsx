@@ -5,6 +5,7 @@ import { useState, type FormEvent } from "react";
 import { AuthShell, authButtonClass, authInputClass } from "@/components/auth/AuthShell";
 import { useI18n } from "@/lib/i18n/context";
 import { createClient } from "@/lib/supabase/client";
+import { APP_ORIGIN } from "@/lib/app-origin";
 
 // The email links back to /auth/callback (see supabase/templates/reset-password.html),
 // which signs the person in and forwards them to /nueva-contrasena.
@@ -19,7 +20,7 @@ export default function RecoverPasswordPage() {
 
     const supabase = createClient();
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/auth/callback`,
+      redirectTo: `${APP_ORIGIN}/auth/callback`,
     });
 
     setStatus(error ? "error" : "sent");

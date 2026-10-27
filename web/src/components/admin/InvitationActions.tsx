@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Check, Copy, RotateCw, X } from "lucide-react";
 import { cancelCoworkerInvitation, resendCoworkerInvitation } from "@/app/admin/coworkers/actions";
 import { useI18n } from "@/lib/i18n/context";
+import { APP_ORIGIN } from "@/lib/app-origin";
 
 interface InvitationActionsProps {
   invitationId: string;
@@ -16,7 +17,7 @@ export function InvitationActions({ invitationId, token }: InvitationActionsProp
   const [busy, setBusy] = useState(false);
 
   async function handleCopy() {
-    const link = `${window.location.origin}/invite/${token}`;
+    const link = `${APP_ORIGIN}/invite/${encodeURIComponent(token)}`;
     await navigator.clipboard.writeText(link);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
@@ -24,7 +25,7 @@ export function InvitationActions({ invitationId, token }: InvitationActionsProp
 
   async function handleResend() {
     setBusy(true);
-    const result = await resendCoworkerInvitation(invitationId, window.location.origin);
+    const result = await resendCoworkerInvitation(invitationId);
     setBusy(false);
     if (result.error) window.alert(result.error);
   }

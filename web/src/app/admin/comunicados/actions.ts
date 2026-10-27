@@ -14,6 +14,7 @@ import { getDictionary } from "@/lib/i18n/dictionaries";
 import type { Locale } from "@/lib/i18n/config";
 import { sendPushToContact } from "@/lib/push-server";
 import { utcIsoToZonedDateAndMinutes } from "@/lib/timezone";
+import { APP_ORIGIN } from "@/lib/app-origin";
 
 export type AnnouncementAudience = "all" | "coworkers" | "guests" | "plan" | "contacts";
 
@@ -23,7 +24,6 @@ export interface SendAnnouncementInput {
   contactIds?: string[];
   texts: AnnouncementTexts;
   sendEmail: boolean;
-  origin: string;
 }
 
 interface Recipient {
@@ -150,7 +150,7 @@ export async function sendAnnouncement(
           html: brandedEmailHtml({
             heading: text.title,
             paragraphs: [d.emails.greeting(r.first_name.trim()), ...text.body.split(/\n{2,}/)],
-            cta: { label: d.admin.announcements.openApp, url: input.origin },
+            cta: { label: d.admin.announcements.openApp, url: APP_ORIGIN },
           }),
         };
       });

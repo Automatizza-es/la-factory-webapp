@@ -24,7 +24,7 @@ export function WelcomeButton({ contactIds, label, bulk = false }: WelcomeButton
     if (bulk && !window.confirm(dict.sendWelcomeConfirm(contactIds.length))) return;
 
     setSending(true);
-    const result = await sendWelcomeInvitations(contactIds, window.location.origin);
+    const result = await sendWelcomeInvitations(contactIds);
     setSending(false);
 
     if (result.error) {

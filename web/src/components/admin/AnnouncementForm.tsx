@@ -63,7 +63,6 @@ export function AnnouncementForm({
       contactIds: [...chosen],
       texts,
       sendEmail,
-      origin: window.location.origin,
     });
     setSending(false);
     if (result.error) {

@@ -12,14 +12,15 @@ import type { Locale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import { getLocale } from "@/lib/i18n/server";
 import { createClient } from "@/lib/supabase/server";
+import { APP_ORIGIN } from "@/lib/app-origin";
 
 interface ActionResult<T = undefined> {
   error: string | null;
   data?: T;
 }
 
-function inviteUrl(origin: string, token: string) {
-  return `${origin}/invite/${token}`;
+function inviteUrl(token: string) {
+  return `${APP_ORIGIN}/invite/${encodeURIComponent(token)}`;
 }
 
 type InvitationKind = "onboarding" | "welcome";
@@ -82,7 +83,6 @@ export interface CreateInvitationInput {
   email: string;
   planCode: "fixed" | "hot_desk";
   startDate: string;
-  origin: string;
 }
 
 export interface CreateInvitationData {
@@ -122,14 +122,13 @@ export async function createCoworkerInvitation(
   revalidatePath("/admin/coworkers");
   return {
     error: null,
-    data: { invitationId: row.id, token: row.token, inviteLink: inviteUrl(input.origin, row.token) },
+    data: { invitationId: row.id, token: row.token, inviteLink: inviteUrl(row.token) },
   };
 }
 
 // Extends the invitation another 14 days and emails the link again.
 export async function resendCoworkerInvitation(
   invitationId: string,
-  origin: string,
 ): Promise<ActionResult> {
   const dict = getDictionary(await getLocale());
   const current = await getCurrentCoworker();
@@ -154,7 +153,7 @@ export async function resendCoworkerInvitation(
   if (!contact?.email) return { error: dict.errors.unknown };
 
   const { error: sendError } = await sendTransactionalEmail(
-    invitationEmail(row.kind, contact as InvitationRecipient, inviteUrl(origin, row.token)),
+    invitationEmail(row.kind, contact as InvitationRecipient, inviteUrl(row.token)),
   );
   if (sendError) return { error: dict.errors.unknown };
 
@@ -183,7 +182,7 @@ export async function cancelCoworkerInvitation(invitationId: string): Promise<Ac
 export async function sendCoworkerInvitationEmail(
   invitationId: string,
   email: string,
-  inviteLink: string,
+  token: string,
 ): Promise<ActionResult> {
   const dict = getDictionary(await getLocale());
   const current = await getCurrentCoworker();
@@ -193,7 +192,7 @@ export async function sendCoworkerInvitationEmail(
 
   // Just created by the admin: no name yet, default language.
   const { error: sendError } = await sendTransactionalEmail(
-    invitationEmail("onboarding", { email, first_name: "", preferred_locale: null }, inviteLink),
+    invitationEmail("onboarding", { email, first_name: "", preferred_locale: null }, inviteUrl(token)),
   );
 
   if (sendError) {
@@ -213,7 +212,6 @@ export async function sendCoworkerInvitationEmail(
 // press retries just those; the ones that did go out stay valid.
 export async function sendWelcomeInvitations(
   contactIds: string[],
-  origin: string,
 ): Promise<ActionResult<{ sent: number }>> {
   const dict = getDictionary(await getLocale());
   const current = await getCurrentCoworker();
@@ -242,7 +240,7 @@ export async function sendWelcomeInvitations(
   const toSend = invitations.flatMap((inv) => {
     const contact = contactById.get(inv.contact_id);
     return contact?.email
-      ? [{ invitation: inv, email: invitationEmail("welcome", contact, inviteUrl(origin, inv.token)) }]
+      ? [{ invitation: inv, email: invitationEmail("welcome", contact, inviteUrl(inv.token)) }]
       : [];
   });
 

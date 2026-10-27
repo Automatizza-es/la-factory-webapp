@@ -1,6 +1,6 @@
 // Shared look for the app's own emails (invitations, welcome, packages), so
 // they match the Supabase auth templates in supabase/templates/.
-const APP_ORIGIN = "https://hub.lafactorycoworking.com";
+import { APP_ORIGIN } from "@/lib/app-origin";
 
 export function escapeHtml(text: string): string {
   return text

@@ -38,7 +38,6 @@ export function NewCoworkerForm({ dict }: NewCoworkerFormProps) {
       email,
       planCode,
       startDate,
-      origin: window.location.origin,
     });
 
     if (result.error || !result.data) {
@@ -61,7 +60,7 @@ export function NewCoworkerForm({ dict }: NewCoworkerFormProps) {
   async function handleSendEmail() {
     if (!created) return;
     setSendingEmail(true);
-    const result = await sendCoworkerInvitationEmail(created.invitationId, email, created.inviteLink);
+    const result = await sendCoworkerInvitationEmail(created.invitationId, email, created.token);
     setSendingEmail(false);
     if (!result.error) setEmailSent(true);
   }

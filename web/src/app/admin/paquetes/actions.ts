@@ -3,7 +3,7 @@
 import { createClient as createServiceClient } from "@supabase/supabase-js";
 import { revalidatePath } from "next/cache";
 import { getCurrentCoworker } from "@/lib/data/coworker";
-import { getAppOrigin } from "@/lib/app-origin";
+import { APP_ORIGIN } from "@/lib/app-origin";
 import { sendTransactionalEmail } from "@/lib/email/resend";
 import { brandedEmailHtml } from "@/lib/email/template";
 import { contactIdsWithLogin, PRELAUNCH } from "@/lib/launch";
@@ -80,15 +80,14 @@ export async function registerPackage(input: RegisterPackageInput): Promise<Acti
     const zoned = utcIsoToZonedDateAndMinutes(pkg.received_at);
     const whenText = `${formatDateLong(zoned.date, recipientLocale)} · ${minutesToTime(zoned.minutes)}`;
 
-    // Branded template (escapes names); link built from the server's own
-    // origin, never from what the browser sent.
+    // Use the official domain even if the sender is in an old Vercel tab.
     await sendTransactionalEmail({
       to: recipient.email,
       subject: recipientDict.packages.emailSubject,
       html: brandedEmailHtml({
         heading: recipientDict.packages.emailSubject,
         paragraphs: [recipientDict.packages.emailGreeting(recipient.first_name), recipientDict.packages.emailBody],
-        cta: { label: recipientDict.packages.emailCta, url: `${await getAppOrigin()}/paquetes` },
+        cta: { label: recipientDict.packages.emailCta, url: `${APP_ORIGIN}/paquetes` },
         footnotes: [`${whenText} · ${recipientDict.packages.receivedBy(current.coworker.firstName)}`],
       }),
     });
