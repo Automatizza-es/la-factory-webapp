@@ -34,14 +34,20 @@ export function PersonPlanCard({
   const [endDate, setEndDate] = useState(todayInMadrid());
 
   const inForce = membership?.inForce ? membership : null;
-  const otherPlans = plans.filter((p) => p.id !== inForce?.planId);
-  const [selectedPlanId, setSelectedPlanId] = useState("");
-  // A refresh preserves state after assigning or changing a plan. If the
-  // previous selection is now the current plan, use a valid option for both
-  // the select and the action (the browser otherwise only changes its label).
-  const newPlanId = otherPlans.some((p) => p.id === selectedPlanId)
-    ? selectedPlanId
-    : (otherPlans[0]?.id ?? "");
+  const availablePlans = inForce && !plans.some((p) => p.id === inForce.planId)
+    ? [{ id: inForce.planId, name: inForce.planLabel }, ...plans]
+    : plans;
+  const [planSelection, setPlanSelection] = useState({
+    contactId,
+    currentPlanId: inForce?.planId,
+    planId: inForce?.planId ?? "",
+  });
+  // After a save or a move to another person, default to their current plan.
+  const newPlanId = planSelection.contactId === contactId &&
+    planSelection.currentPlanId === inForce?.planId &&
+    availablePlans.some((p) => p.id === planSelection.planId)
+    ? planSelection.planId
+    : (inForce?.planId ?? "");
   const [changeFrom, setChangeFrom] = useState(todayInMadrid());
 
   async function run(action: () => Promise<{ error: string | null }>) {
@@ -78,17 +84,22 @@ export function PersonPlanCard({
               onChange={(value) => run(() => setBillable(contactId, inForce.id, value))}
             />
           </div>
-          {otherPlans.length > 0 && (
+          {availablePlans.length > 0 && (
             <div className="flex flex-col gap-2 border-t border-sand/30 pt-3">
               <div className="flex flex-wrap items-end gap-2">
                 <label className="flex flex-col gap-1 text-xs font-medium text-warm-gray">
                   {t.plan}
                   <select
                     value={newPlanId}
-                    onChange={(e) => setSelectedPlanId(e.target.value)}
+                    disabled={busy}
+                    onChange={(e) => setPlanSelection({
+                      contactId,
+                      currentPlanId: inForce.planId,
+                      planId: e.target.value,
+                    })}
                     className={personInputClass}
                   >
-                    {otherPlans.map((p) => (
+                    {availablePlans.map((p) => (
                       <option key={p.id} value={p.id}>
                         {p.name}
                       </option>
@@ -106,7 +117,7 @@ export function PersonPlanCard({
                 </label>
                 <button
                   type="button"
-                  disabled={busy || !newPlanId || !changeFrom}
+                  disabled={busy || !newPlanId || newPlanId === inForce.planId || !changeFrom}
                   onClick={() => run(() => changePlan(contactId, newPlanId, changeFrom))}
                   className="rounded-xl bg-brown-dark px-4 py-2.5 text-sm font-medium text-white disabled:opacity-60"
                 >

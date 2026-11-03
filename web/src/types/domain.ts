@@ -1,4 +1,5 @@
-export type PlanCode = "fixed" | "hot_desk";
+// Plan codes come from the configurable database catalogue.
+export type PlanCode = string;
 
 export interface QuotaSummary {
   planCode: PlanCode;

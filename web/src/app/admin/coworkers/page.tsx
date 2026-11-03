@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Building2, CheckCircle2, Plus } from "lucide-react";
+import { Building2, CheckCircle2, Eye, Plus } from "lucide-react";
 import { InvitationActions } from "@/components/admin/InvitationActions";
 import { UserSearch } from "@/components/admin/UserSearch";
 import { WelcomeButton } from "@/components/admin/WelcomeButton";
@@ -92,6 +92,16 @@ export default async function AdminUsersPage({ searchParams }: PageProps) {
 
   const personName = (c: (typeof people)[number]) =>
     `${c.firstName} ${c.lastName ?? ""}`.trim() || c.email || "—";
+  const profileLink = (c: (typeof people)[number]) => (
+    <Link
+      href={`/admin/coworkers/${c.contactId}`}
+      aria-label={t.viewProfile(personName(c))}
+      title={t.viewProfile(personName(c))}
+      className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-cream text-brown-dark transition-colors hover:bg-sand/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brown-dark"
+    >
+      <Eye className="h-5 w-5" strokeWidth={1.75} aria-hidden="true" />
+    </Link>
+  );
   const planText = (c: (typeof people)[number]) =>
     c.planLabel ?? (c.sharedWithName ? t.sharedWith(c.sharedWithName) : "—");
   // App access: a tick, or the stage plus what the admin can do about it.
@@ -183,16 +193,19 @@ export default async function AdminUsersPage({ searchParams }: PageProps) {
               return (
                 <li key={c.contactId} className="flex flex-col gap-2 rounded-2xl bg-white p-4 shadow-sm">
                   <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0">
-                      <Link
-                        href={`/admin/coworkers/${c.contactId}`}
-                        className="font-medium text-brown-dark hover:underline"
-                      >
-                        {name}
-                      </Link>
-                      {c.email && name !== c.email && (
-                        <p className="truncate text-xs text-warm-gray">{c.email}</p>
-                      )}
+                    <div className="flex min-w-0 items-start gap-3">
+                      {profileLink(c)}
+                      <div className="min-w-0">
+                        <Link
+                          href={`/admin/coworkers/${c.contactId}`}
+                          className="font-medium text-brown-dark hover:underline"
+                        >
+                          {name}
+                        </Link>
+                        {c.email && name !== c.email && (
+                          <p className="truncate text-xs text-warm-gray">{c.email}</p>
+                        )}
+                      </div>
                     </div>
                     <span
                       className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-medium ${KIND_STYLE[c.kind]}`}
@@ -238,15 +251,20 @@ export default async function AdminUsersPage({ searchParams }: PageProps) {
                     return (
                       <tr key={c.contactId} className="border-b border-sand/30 last:border-0">
                         <td className="px-5 py-3">
-                          <Link
-                            href={`/admin/coworkers/${c.contactId}`}
-                            className="font-medium text-brown-dark hover:underline"
-                          >
-                            {name}
-                          </Link>
-                          {c.email && name !== c.email && (
-                            <p className="text-xs text-warm-gray">{c.email}</p>
-                          )}
+                          <div className="flex items-center gap-3">
+                            {profileLink(c)}
+                            <div>
+                              <Link
+                                href={`/admin/coworkers/${c.contactId}`}
+                                className="font-medium text-brown-dark hover:underline"
+                              >
+                                {name}
+                              </Link>
+                              {c.email && name !== c.email && (
+                                <p className="text-xs text-warm-gray">{c.email}</p>
+                              )}
+                            </div>
+                          </div>
                         </td>
                         <td className="px-5 py-3">
                           <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${KIND_STYLE[c.kind]}`}>

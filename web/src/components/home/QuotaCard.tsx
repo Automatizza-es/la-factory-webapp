@@ -10,7 +10,9 @@ interface QuotaCardProps {
 
 export function QuotaCard({ quota, dict }: QuotaCardProps) {
   const availableMinutes = quota.totalMinutes - quota.usedMinutes;
-  const usedRatio = Math.min(quota.usedMinutes / quota.totalMinutes, 1);
+  const usedRatio = quota.totalMinutes > 0
+    ? Math.max(0, Math.min(quota.usedMinutes / quota.totalMinutes, 1))
+    : 0;
 
   return (
     <section className="rounded-3xl bg-white p-5 shadow-sm">

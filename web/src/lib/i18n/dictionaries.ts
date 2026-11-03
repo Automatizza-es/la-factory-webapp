@@ -401,6 +401,7 @@ export interface Dictionary {
     coworkers: {
       title: string;
       subtitle: string;
+      viewProfile: (name: string) => string;
       name: string;
       plan: string;
       status: string;
@@ -1175,6 +1176,7 @@ const es: Dictionary = {
     coworkers: {
       title: "Usuarios",
       subtitle: "Toda la comunidad: coworkers, invitados y admins.",
+      viewProfile: (name) => `Ver ficha de ${name}`,
       name: "Nombre",
       plan: "Tarifa",
       status: "Estado",
@@ -1952,6 +1954,7 @@ const ca: Dictionary = {
     coworkers: {
       title: "Usuaris",
       subtitle: "Tota la comunitat: coworkers, convidats i admins.",
+      viewProfile: (name) => `Veure la fitxa de ${name}`,
       name: "Nom",
       plan: "Tarifa",
       status: "Estat",
@@ -2728,6 +2731,7 @@ const en: Dictionary = {
     coworkers: {
       title: "Users",
       subtitle: "The whole community: coworkers, guests and admins.",
+      viewProfile: (name) => `View profile for ${name}`,
       name: "Name",
       plan: "Plan",
       status: "Status",
