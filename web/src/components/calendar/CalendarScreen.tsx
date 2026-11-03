@@ -33,8 +33,8 @@ interface CalendarScreenProps {
 }
 
 // The day/week booking calendar, shared by both roles so admins book from
-// the same screen as coworkers. Differences for admins: every booking shows
-// who it's for and can be managed, new bookings ask "Reserva para", there's
+// the same screen as coworkers. Differences for admins: every booking can
+// be managed, new bookings ask "Reserva para", there's
 // no quota, and the header shows the hours they've booked this month.
 export async function CalendarScreen({ role, params }: CalendarScreenProps) {
   const { fecha, sala, vista } = params;

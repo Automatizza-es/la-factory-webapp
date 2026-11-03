@@ -196,13 +196,12 @@ export interface RoomOccupancyBlock {
   // For coworkers: their own booking. For admins: every booking (they can
   // manage all of them).
   isMine: boolean;
-  // Admin calendar only: who the booking is for. Coworkers never get it.
+  // Who the booking is for, visible to everyone with calendar access.
   label?: string;
 }
 
-// Room occupancy for the calendar view: any signed-in coworker can see
-// that a slot is taken, but only whether it's their own booking, never
-// whose it is otherwise (see get_room_occupancy's SECURITY DEFINER note).
+// Shared calendar occupancy and names. The RPC exposes only this narrow
+// shape; full contact records and booking management retain their own RLS.
 export async function getRoomOccupancy(
   supabase: SupabaseClient,
   rangeStartIso: string,
@@ -224,6 +223,7 @@ export async function getRoomOccupancy(
     starts_at: string;
     ends_at: string;
     is_mine: boolean;
+    label: string | null;
   }
 
   return ((data ?? []) as RawOccupancy[]).map((row) => {
@@ -236,6 +236,7 @@ export async function getRoomOccupancy(
       startMinutes: start.minutes,
       endMinutes: end.minutes,
       isMine: row.is_mine,
+      label: row.label ?? undefined,
     };
   });
 }

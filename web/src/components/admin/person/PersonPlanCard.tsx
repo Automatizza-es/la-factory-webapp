@@ -34,8 +34,14 @@ export function PersonPlanCard({
   const [endDate, setEndDate] = useState(todayInMadrid());
 
   const inForce = membership?.inForce ? membership : null;
-  const otherPlans = plans.filter((p) => p.name !== inForce?.planLabel);
-  const [newPlanId, setNewPlanId] = useState(otherPlans[0]?.id ?? "");
+  const otherPlans = plans.filter((p) => p.id !== inForce?.planId);
+  const [selectedPlanId, setSelectedPlanId] = useState("");
+  // A refresh preserves state after assigning or changing a plan. If the
+  // previous selection is now the current plan, use a valid option for both
+  // the select and the action (the browser otherwise only changes its label).
+  const newPlanId = otherPlans.some((p) => p.id === selectedPlanId)
+    ? selectedPlanId
+    : (otherPlans[0]?.id ?? "");
   const [changeFrom, setChangeFrom] = useState(todayInMadrid());
 
   async function run(action: () => Promise<{ error: string | null }>) {
@@ -79,7 +85,7 @@ export function PersonPlanCard({
                   {t.plan}
                   <select
                     value={newPlanId}
-                    onChange={(e) => setNewPlanId(e.target.value)}
+                    onChange={(e) => setSelectedPlanId(e.target.value)}
                     className={personInputClass}
                   >
                     {otherPlans.map((p) => (

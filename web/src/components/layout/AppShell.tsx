@@ -33,7 +33,8 @@ export function AppShell({ role, user, notifications, dict, children }: AppShell
           notificationsEmpty={dict.notifications.empty}
           profileHref={role === "admin" ? "/admin/mas" : "/perfil"}
         />
-        <main className="flex-1 px-5 py-5 md:px-8 md:py-6">
+        {/* Leave room for the fixed mobile tabs, including the iOS home indicator. */}
+        <main className="flex-1 px-5 pt-5 pb-[calc(5rem+env(safe-area-inset-bottom,0px))] md:px-8 md:py-6">
           <div className={role === "admin" ? "w-full" : "mx-auto w-full max-w-6xl"}>
             {children}
           </div>

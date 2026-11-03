@@ -183,7 +183,7 @@ export function WeekCalendar({
                     const style = { top, height: Math.max(bottom - top, 18) };
                     const content = (
                       <>
-                        <p className="truncate font-medium">
+                        <p className="truncate font-medium" title={block.label}>
                           {block.label ?? (block.isMine ? myName : dict.booked)}
                         </p>
                         <p className="truncate opacity-80">

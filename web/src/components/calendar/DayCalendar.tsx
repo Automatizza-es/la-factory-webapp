@@ -40,7 +40,7 @@ interface Selection {
   startMinutes: number;
   endMinutes: number;
   bookingId?: string;
-  // Admin only: who an existing booking is for.
+  // Who an existing booking is for.
   label?: string;
 }
 
@@ -335,7 +335,7 @@ export function DayCalendar({
                 const style = { top, height: Math.max(bottom - top, 18) };
                 const content = (
                   <>
-                    <p className="font-medium">
+                    <p className="font-medium" title={block.label}>
                       {block.label ?? (block.isMine ? myName : dict.booked)}
                     </p>
                     <p className="opacity-80">
