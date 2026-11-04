@@ -4,3 +4,8 @@
 # Contact exports (personal data): never commit
 *.xlsx
 *.csv
+
+# Database backups and local recovery credentials
+.backups/
+**/rclone.conf
+**/__pycache__/

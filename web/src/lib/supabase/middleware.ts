@@ -17,6 +17,12 @@ const PUBLIC_PATHS = [
 ];
 
 export async function updateSession(request: NextRequest) {
+  // Only these informational pages are public; backup files and credentials
+  // are never served by the application.
+  if (["/copias", "/copias/privacidad", "/copias/condiciones"].includes(request.nextUrl.pathname)) {
+    return NextResponse.next({ request });
+  }
+
   let response = NextResponse.next({ request });
 
   const supabase = createServerClient(

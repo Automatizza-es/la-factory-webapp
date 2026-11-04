@@ -1,0 +1,77 @@
+name: Supabase weekly backup to La Factory Drive
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '23 7 * * 1'
+      timezone: Europe/Madrid
+
+permissions:
+  contents: read
+
+concurrency:
+  group: supabase-weekly-backup
+  cancel-in-progress: false
+
+jobs:
+  backup:
+    if: github.event_name == 'workflow_dispatch' || vars.BACKUP_ENABLED == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Check out backup scripts
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+
+      - name: Check required authorizations before exporting any data
+        env:
+          BACKUP_SUPABASE_ACCESS_TOKEN: ${{ secrets.BACKUP_SUPABASE_ACCESS_TOKEN }}
+          BACKUP_SUPABASE_PROJECT_REF: ${{ secrets.BACKUP_SUPABASE_PROJECT_REF }}
+          BACKUP_SUPABASE_URL: ${{ secrets.BACKUP_SUPABASE_URL }}
+          BACKUP_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.BACKUP_SUPABASE_SERVICE_ROLE_KEY }}
+          BACKUP_ENCRYPTION_PASSPHRASE: ${{ secrets.BACKUP_ENCRYPTION_PASSPHRASE }}
+          BACKUP_RCLONE_CONFIG: ${{ secrets.BACKUP_RCLONE_CONFIG }}
+        run: |
+          for setting in BACKUP_SUPABASE_ACCESS_TOKEN BACKUP_SUPABASE_PROJECT_REF BACKUP_SUPABASE_URL BACKUP_SUPABASE_SERVICE_ROLE_KEY BACKUP_ENCRYPTION_PASSPHRASE BACKUP_RCLONE_CONFIG; do
+            if [ -z "${!setting}" ]; then
+              echo "Missing configuration: $setting" >&2
+              exit 1
+            fi
+          done
+
+      - name: Install backup tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends rclone gnupg
+          npm install --prefix "$RUNNER_TEMP/supabase-cli" --no-audit --no-fund supabase@2.117.0
+          echo "$RUNNER_TEMP/supabase-cli/node_modules/.bin" >> "$GITHUB_PATH"
+
+      - name: Export, encrypt and verify backup
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.BACKUP_SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_PROJECT_REF: ${{ secrets.BACKUP_SUPABASE_PROJECT_REF }}
+          SUPABASE_URL: ${{ secrets.BACKUP_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.BACKUP_SUPABASE_SERVICE_ROLE_KEY }}
+          BACKUP_ENCRYPTION_PASSPHRASE: ${{ secrets.BACKUP_ENCRYPTION_PASSPHRASE }}
+        run: |
+          python3 web/scripts/backup_supabase.py --output-dir "$RUNNER_TEMP/backup-upload"
+
+      - name: Upload encrypted backup to Drive and check its contents
+        env:
+          RCLONE_CONFIG_CONTENT: ${{ secrets.BACKUP_RCLONE_CONFIG }}
+        run: |
+          umask 077
+          if [ -z "$RCLONE_CONFIG_CONTENT" ]; then
+            echo 'Missing BACKUP_RCLONE_CONFIG; authorize La Factory Drive first.' >&2
+            exit 1
+          fi
+          printf '%s' "$RCLONE_CONFIG_CONTENT" > "$RUNNER_TEMP/factory-rclone.conf"
+          backup_folder="factory:Backups La Factory/Supabase/$(date -u +%Y-%m-%dT%H-%M-%SZ)"
+          rclone --config "$RUNNER_TEMP/factory-rclone.conf" copy "$RUNNER_TEMP/backup-upload" "$backup_folder" --retries 3 --log-level ERROR
+          rclone --config "$RUNNER_TEMP/factory-rclone.conf" check "$RUNNER_TEMP/backup-upload" "$backup_folder" --one-way --log-level ERROR
+          echo 'Encrypted backup uploaded and verified in Drive.' >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Remove temporary Drive authorization
+        if: always()
+        run: rm -f "$RUNNER_TEMP/factory-rclone.conf"
