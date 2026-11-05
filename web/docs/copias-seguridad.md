@@ -6,19 +6,24 @@ El Mac no necesita estar encendido. El horario es orientativo: GitHub puede retr
 
 ## Estado de la activación
 
-El workflow y el exportador están preparados. No considerar las copias automáticas activas
-hasta publicar el workflow, configurar los secretos, ejecutar una primera copia desde Actions
-y comprobar el archivo en el Drive de La Factory. La programación queda desactivada hasta
-establecer la variable de Actions `BACKUP_ENABLED=true` después de esa primera prueba.
-Conectar Drive a un chat no autoriza por sí
-solo al proceso independiente de GitHub Actions.
+Activado el 5 de noviembre de 2026, después de completar las autorizaciones y verificar
+la primera ejecución desde GitHub Actions. `BACKUP_ENABLED=true` habilita las copias de los lunes.
+La siguiente ejecución prevista es el 9 de noviembre de 2026 a las 07:23, hora de Madrid.
 
-En la preparación del 3 de noviembre de 2026 se creó el proyecto Google Cloud y el cliente
-OAuth de escritorio, pero no se concedió acceso a Drive. Google mantiene desactivado
-«Publicar app» hasta completar la información de marca. Antes de autorizar el proceso
-permanente, completar las páginas públicas de descripción, privacidad y condiciones con
-información fiel a esta integración y revisar el estado de publicación. No activar copias
-semanales con una autorización de prueba que pueda caducar a los siete días.
+- Carpeta de copias: https://drive.google.com/drive/folders/1ZNHefXgBIpOk6zDeg18wvZlTQsWLO3gk
+- Primera ejecución correcta: https://github.com/Automatizza-es/la-factory-webapp/actions/runs/41999516972
+- Primera copia: `la-factory-2026-11-05T09-05-53Z.tar.gz.gpg`, 6.932.916 bytes y 22 archivos de Storage.
+
+La primera copia se descargó de Drive, se verificó su SHA-256, se descifró temporalmente y
+se comprobaron los hashes y tamaños de sus 70 archivos internos. Los datos temporales se
+eliminaron. No se ha realizado una restauración completa de la base de datos.
+
+Google OAuth está en producción y usa el permiso `drive.file`. El token de Supabase está
+limitado al proyecto de La Factory: Project Settings (Read), Database (Read-write) y
+Connection Pooling (Read). No caduca hasta revocarlo. Database (Read-write) es necesario
+para que el CLI cree el rol temporal de conexión; también permitiría modificar datos si
+se utilizara fuera de este exportador. Los seis secretos necesarios están configurados en
+GitHub Actions. Las copias no se guardan como artefactos del repositorio público.
 
 ## Contenido
 
@@ -76,7 +81,8 @@ En `Automatizza-es/la-factory-webapp` → Settings → Secrets and variables →
 Guardar también la clave de recuperación en el gestor de contraseñas de La Factory, fuera de
 GitHub y de las copias cifradas. Perder esa clave impide recuperar los archivos.
 La prueba local usa una clave privada en `.backups/recovery-key.txt`, que nunca se versiona.
-Antes de usar esa misma clave en la nube, conservarla en el gestor de contraseñas de La Factory.
+La misma clave está configurada como secreto privado de GitHub Actions. Conservar también
+una copia en el gestor de contraseñas de La Factory para la recuperación independiente.
 
 Supabase permite crear tokens limitados a un proyecto desde Account → Access Tokens. Preferir
 uno específico para estas copias frente al token de acceso completo que crea `supabase login`.
