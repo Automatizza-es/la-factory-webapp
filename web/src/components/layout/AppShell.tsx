@@ -1,4 +1,5 @@
 import { AppHeader } from "@/components/layout/AppHeader";
+import { AppViewport } from "@/components/layout/AppViewport";
 import { BottomNav } from "@/components/layout/BottomNav";
 import type { AppRole } from "@/components/layout/nav-items";
 import { Sidebar } from "@/components/layout/Sidebar";
@@ -22,10 +23,10 @@ interface AppShellProps {
 // full width.
 export function AppShell({ role, user, notifications, dict, children }: AppShellProps) {
   return (
-    <div className="min-h-screen md:pl-60">
+    <AppViewport>
       <Sidebar role={role} user={user} />
 
-      <div className="flex min-h-screen flex-col">
+      <div data-app-scroll tabIndex={-1} className="app-content-scroll flex flex-col">
         <AppHeader
           coworker={user}
           notifications={notifications}
@@ -33,14 +34,13 @@ export function AppShell({ role, user, notifications, dict, children }: AppShell
           notificationsEmpty={dict.notifications.empty}
           profileHref={role === "admin" ? "/admin/mas" : "/perfil"}
         />
-        {/* Leave room for the fixed mobile tabs, including the iOS home indicator. */}
-        <main className="flex-1 px-5 pt-5 pb-[calc(5rem+env(safe-area-inset-bottom,0px))] md:px-8 md:py-6">
+        <main className="flex-1 px-5 py-5 md:px-8 md:py-6">
           <div className={role === "admin" ? "w-full" : "mx-auto w-full max-w-6xl"}>
             {children}
           </div>
         </main>
-        <BottomNav role={role} />
       </div>
-    </div>
+      <BottomNav role={role} />
+    </AppViewport>
   );
 }

@@ -12,7 +12,7 @@ export function BottomNav({ role }: { role: AppRole }) {
   return (
     <nav
       data-bottom-nav
-      className="fixed inset-x-0 bottom-0 z-30 border-t border-sand/60 bg-cream/95 px-2 pb-[max(env(safe-area-inset-bottom,0px),8px)] pt-2 backdrop-blur-sm md:hidden"
+      className="relative z-30 shrink-0 border-t border-sand/60 bg-cream px-2 pb-[max(env(safe-area-inset-bottom,0px),8px)] pt-2 md:hidden"
     >
       <ul className="grid grid-cols-4">
         {bottom.map((item) => {

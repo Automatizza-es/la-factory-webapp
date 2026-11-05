@@ -130,14 +130,14 @@ export function BookingCard({ booking }: BookingCardProps) {
       {error && <p className="mt-2 text-xs text-red-600">{error}</p>}
 
       {detailOpen && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center md:items-center md:p-6">
+        <div className="app-overlay fixed inset-0 z-50 flex items-end justify-center md:items-center md:p-6">
           <button
             type="button"
             aria-label={dict.common.close}
             onClick={() => setDetailOpen(false)}
             className="absolute inset-0 bg-ink/30"
           />
-          <div className="relative max-h-[85dvh] w-full max-w-[480px] overflow-y-auto overscroll-contain rounded-t-3xl md:rounded-3xl bg-white pb-[max(env(safe-area-inset-bottom,0px),20px)] shadow-xl">
+          <div className="app-sheet relative max-h-[85dvh] w-full max-w-[480px] overflow-y-auto overscroll-contain rounded-t-3xl md:rounded-3xl bg-white pb-[max(env(safe-area-inset-bottom,0px),20px)] shadow-xl">
             <div className="relative h-40 w-full bg-sand/50">
               {booking.roomImagePath && (
                 <Image

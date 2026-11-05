@@ -43,3 +43,51 @@ img {
 [hidden] {
   display: none !important;
 }
+
+.app-viewport,
+.app-content-scroll {
+  min-height: 100vh;
+}
+
+@media (width < 48rem) {
+  html:has([data-app-viewport]),
+  body:has([data-app-viewport]) {
+    height: 100%;
+    overflow: hidden;
+    overscroll-behavior-y: none;
+  }
+
+  html:has([data-app-viewport]) {
+    padding: 0;
+  }
+
+  .app-viewport {
+    position: fixed;
+    inset-inline: 0;
+    top: var(--app-viewport-top, 0px);
+    height: var(--app-viewport-height, 100dvh);
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding-top: env(safe-area-inset-top, 0px);
+    background: var(--background);
+  }
+
+  .app-content-scroll {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+  }
+
+  .app-overlay {
+    top: var(--app-viewport-top, 0px);
+    bottom: auto;
+    height: var(--app-viewport-height, 100dvh);
+  }
+
+  .app-sheet {
+    max-height: calc(var(--app-viewport-height, 100dvh) * 0.85);
+  }
+}
