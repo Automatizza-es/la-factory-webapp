@@ -75,17 +75,16 @@ async function toItems(
   );
 }
 
-// What a coworker/guest sees (RLS): their own reports plus any open one.
+// Members can only see their own reports, independently of their status.
 export async function getIncidentsForMember(
   supabase: SupabaseClient,
   contactId: string,
-): Promise<{ open: IncidentItem[]; mine: IncidentItem[] }> {
-  const { data } = await supabase.from("incidents").select(COLUMNS).order("created_at", { ascending: false });
+): Promise<IncidentItem[]> {
+  const { data } = await supabase.from("incidents").select(COLUMNS)
+    .eq("reporter_contact_id", contactId)
+    .order("created_at", { ascending: false });
   const items = await toItems(supabase, (data ?? []) as RawIncident[], contactId, false);
-  return {
-    open: items.filter((i) => i.status !== "resolved"),
-    mine: items.filter((i) => i.isMine),
-  };
+  return items;
 }
 
 export type AdminIncidentFilter = "open" | "resolved" | "all";

@@ -14,7 +14,7 @@ export default async function IncidentsPage() {
   const dict = getDictionary(await getLocale());
   const t = dict.incidents;
   const supabase = await createClient();
-  const { open, mine } = await getIncidentsForMember(supabase, current.contactId);
+  const mine = await getIncidentsForMember(supabase, current.contactId);
 
   return (
     <div className="flex flex-col gap-6">
@@ -31,20 +31,6 @@ export default async function IncidentsPage() {
           {t.report}
         </Link>
       </div>
-
-      <section className="flex flex-col gap-3">
-        <div>
-          <h2 className="text-lg font-semibold text-ink">{t.openTitle}</h2>
-          <p className="text-xs text-warm-gray">{t.openHint}</p>
-        </div>
-        <div className="grid gap-3 md:grid-cols-2">
-          {open.length === 0 ? (
-            <p className="col-span-full rounded-2xl bg-white p-4 text-sm text-warm-gray shadow-sm">{t.noneOpen}</p>
-          ) : (
-            open.map((incident) => <IncidentCard key={incident.id} incident={incident} />)
-          )}
-        </div>
-      </section>
 
       <section className="flex flex-col gap-3">
         <h2 className="text-lg font-semibold text-ink">{t.mineTitle}</h2>

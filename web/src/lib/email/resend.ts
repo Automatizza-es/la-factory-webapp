@@ -7,6 +7,7 @@ export interface SendEmailInput {
   to: string;
   subject: string;
   html: string;
+  idempotencyKey?: string;
 }
 
 export interface SendEmailResult {
@@ -22,6 +23,7 @@ export async function sendTransactionalEmail(input: SendEmailInput): Promise<Sen
     headers: {
       Authorization: `Bearer ${apiKey}`,
       "Content-Type": "application/json",
+      ...(input.idempotencyKey ? { "Idempotency-Key": input.idempotencyKey } : {}),
     },
     body: JSON.stringify({
       from: FROM_ADDRESS,
@@ -29,9 +31,9 @@ export async function sendTransactionalEmail(input: SendEmailInput): Promise<Sen
       subject: input.subject,
       html: input.html,
     }),
-  });
+  }).catch(() => null);
 
-  if (!response.ok) return { error: "send_failed" };
+  if (!response?.ok) return { error: "send_failed" };
   return { error: null };
 }
 

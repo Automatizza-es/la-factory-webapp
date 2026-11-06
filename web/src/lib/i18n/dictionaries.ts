@@ -71,10 +71,7 @@ export interface Dictionary {
     viewMine: string;
     backHome: string;
     descriptionRequired: string;
-    openTitle: string;
-    openHint: string;
     mineTitle: string;
-    noneOpen: string;
     noneMine: string;
     status: Record<"pending" | "in_progress" | "resolved", string>;
     adminNote: string;
@@ -825,7 +822,7 @@ const es: Dictionary = {
   },
   incidents: {
     title: "Incidencias",
-    subtitle: "¿Algo no funciona en el espacio? Avísanos y lo arreglamos.",
+    subtitle: "Tu aviso llega a administración. Solo tú y los administradores podéis ver tus incidencias.",
     report: "Comunicar incidencia",
     reportTitle: "Nueva incidencia",
     category: "¿Qué pasa?",
@@ -849,10 +846,7 @@ const es: Dictionary = {
     viewMine: "Ver mis incidencias",
     backHome: "Volver a inicio",
     descriptionRequired: "Describe la incidencia.",
-    openTitle: "Abiertas en el espacio",
-    openHint: "Si lo que ves ya está aquí, no hace falta que lo comuniques otra vez.",
     mineTitle: "Mis incidencias",
-    noneOpen: "Ahora mismo no hay incidencias abiertas.",
     noneMine: "No has comunicado ninguna incidencia.",
     status: { pending: "Pendiente", in_progress: "En proceso", resolved: "Resuelta" },
     adminNote: "Respuesta de La Factory",
@@ -1603,7 +1597,7 @@ const ca: Dictionary = {
   },
   incidents: {
     title: "Incidències",
-    subtitle: "Alguna cosa no funciona a l'espai? Avisa'ns i ho arreglem.",
+    subtitle: "El teu avís arriba a administració. Només tu i els administradors podeu veure les teves incidències.",
     report: "Comunicar incidència",
     reportTitle: "Nova incidència",
     category: "Què passa?",
@@ -1627,10 +1621,7 @@ const ca: Dictionary = {
     viewMine: "Veure les meves incidències",
     backHome: "Tornar a inici",
     descriptionRequired: "Descriu la incidència.",
-    openTitle: "Obertes a l'espai",
-    openHint: "Si el que veus ja és aquí, no cal que ho tornis a comunicar.",
     mineTitle: "Les meves incidències",
-    noneOpen: "Ara mateix no hi ha incidències obertes.",
     noneMine: "No has comunicat cap incidència.",
     status: { pending: "Pendent", in_progress: "En curs", resolved: "Resolta" },
     adminNote: "Resposta de La Factory",
@@ -2381,7 +2372,7 @@ const en: Dictionary = {
   },
   incidents: {
     title: "Issues",
-    subtitle: "Something not working in the space? Let us know and we'll fix it.",
+    subtitle: "Your report goes to the administrators. Only you and the administrators can see your issues.",
     report: "Report an issue",
     reportTitle: "New issue",
     category: "What's wrong?",
@@ -2405,10 +2396,7 @@ const en: Dictionary = {
     viewMine: "View my issues",
     backHome: "Back to home",
     descriptionRequired: "Describe the issue.",
-    openTitle: "Open in the space",
-    openHint: "If what you see is already here, no need to report it again.",
     mineTitle: "My issues",
-    noneOpen: "No open issues right now.",
     noneMine: "You haven't reported any issues.",
     status: { pending: "Pending", in_progress: "In progress", resolved: "Resolved" },
     adminNote: "Reply from La Factory",
