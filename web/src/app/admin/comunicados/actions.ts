@@ -33,23 +33,27 @@ interface Recipient {
   preferred_locale: string | null;
 }
 
-// Who gets it. Archived people never do; admins only when picked by hand.
-async function resolveRecipients(admin: SupabaseClient, input: SendAnnouncementInput): Promise<Recipient[]> {
+async function resolveRecipients(
+  admin: SupabaseClient,
+  input: SendAnnouncementInput,
+  senderId: string,
+): Promise<Recipient[]> {
   const [{ data: contacts }, { data: users }] = await Promise.all([
     admin.from("contacts").select("id, email, first_name, preferred_locale").eq("status", "active"),
     admin.from("users").select("contact_id, role"),
   ]);
   const loginIds = new Set((users ?? []).map((u) => u.contact_id as string));
   const active = ((contacts ?? []) as Recipient[]).filter((c) => !PRELAUNCH || loginIds.has(c.id));
-  const adminIds = new Set((users ?? []).filter((u) => u.role === "admin").map((u) => u.contact_id as string));
+
+  if (input.audience === "all") return active.filter((c) => c.id !== senderId);
 
   if (input.audience === "contacts") {
     const chosen = new Set(input.contactIds ?? []);
     return active.filter((c) => chosen.has(c.id));
   }
 
+  const adminIds = new Set((users ?? []).filter((u) => u.role === "admin").map((u) => u.contact_id as string));
   const community = active.filter((c) => !adminIds.has(c.id));
-  if (input.audience === "all") return community;
 
   if (input.audience === "coworkers") {
     const ids = await planHolderIds(admin, null);
@@ -94,7 +98,7 @@ export async function sendAnnouncement(
   const t = dict.admin.announcements;
   if (!hasAnyAnnouncementText(input.texts)) return { error: t.textRequired };
 
-  const recipients = await resolveRecipients(admin, input);
+  const recipients = await resolveRecipients(admin, input, current.contactId);
   if (recipients.length === 0) return { error: t.noRecipients };
 
   const clean = (s: string) => s.trim() || null;
