@@ -315,6 +315,17 @@ export interface Dictionary {
     lastName: string;
     nif: string;
     companyName: string;
+    needsInvoice: string;
+    invoiceYes: string;
+    invoiceNo: string;
+    invoiceHint: string;
+    invoiceChoiceRequired: string;
+    invoiceDataRequired: string;
+    address: string;
+    city: string;
+    postalCode: string;
+    province: string;
+    country: string;
     optional: string;
     phone: string;
     email: string;
@@ -1085,8 +1096,19 @@ const es: Dictionary = {
     subtitle: "Completa tus datos para terminar de configurar tu cuenta.",
     firstName: "Nombre",
     lastName: "Apellidos",
-    nif: "NIF",
-    companyName: "Empresa",
+    nif: "NIF/CIF",
+    companyName: "Empresa o nombre fiscal",
+    needsInvoice: "¿Necesitas factura?",
+    invoiceYes: "Sí",
+    invoiceNo: "No",
+    invoiceHint: "Si necesitas factura, completa los datos fiscales de tu empresa o de tu actividad como autónomo/a.",
+    invoiceChoiceRequired: "Indica si necesitas factura. Si abriste el registro antes de este cambio, recarga la página.",
+    invoiceDataRequired: "Completa el nombre fiscal, NIF/CIF y la dirección fiscal completa.",
+    address: "Dirección fiscal",
+    city: "Ciudad",
+    postalCode: "Código postal",
+    province: "Provincia o región",
+    country: "País",
     optional: "opcional",
     phone: "Teléfono",
     email: "Email",
@@ -1221,7 +1243,7 @@ const es: Dictionary = {
       sectionPersonal: "Datos personales",
       firstName: "Nombre",
       lastName: "Apellidos",
-      nif: "NIF",
+      nif: "NIF/CIF",
       phone: "Teléfono",
       email: "Email",
       emailHint: "Es su usuario para entrar en la app: si lo cambias, entrará con el nuevo y su contraseña de siempre.",
@@ -1860,8 +1882,19 @@ const ca: Dictionary = {
     subtitle: "Completa les teves dades per acabar de configurar el teu compte.",
     firstName: "Nom",
     lastName: "Cognoms",
-    nif: "NIF",
-    companyName: "Empresa",
+    nif: "NIF/CIF",
+    companyName: "Empresa o nom fiscal",
+    needsInvoice: "Necessites factura?",
+    invoiceYes: "Sí",
+    invoiceNo: "No",
+    invoiceHint: "Si necessites factura, completa les dades fiscals de la teva empresa o de la teva activitat com a autònom/a.",
+    invoiceChoiceRequired: "Indica si necessites factura. Si vas obrir el registre abans d’aquest canvi, recarrega la pàgina.",
+    invoiceDataRequired: "Completa el nom fiscal, NIF/CIF i l’adreça fiscal completa.",
+    address: "Adreça fiscal",
+    city: "Ciutat",
+    postalCode: "Codi postal",
+    province: "Província o regió",
+    country: "País",
     optional: "opcional",
     phone: "Telèfon",
     email: "Email",
@@ -1996,7 +2029,7 @@ const ca: Dictionary = {
       sectionPersonal: "Dades personals",
       firstName: "Nom",
       lastName: "Cognoms",
-      nif: "NIF",
+      nif: "NIF/CIF",
       phone: "Telèfon",
       email: "Email",
       emailHint: "És el seu usuari per entrar a l'app: si el canvies, entrarà amb el nou i la contrasenya de sempre.",
@@ -2635,7 +2668,18 @@ const en: Dictionary = {
     firstName: "First name",
     lastName: "Last name",
     nif: "Tax ID (NIF)",
-    companyName: "Company",
+    companyName: "Company or billing name",
+    needsInvoice: "Do you need an invoice?",
+    invoiceYes: "Yes",
+    invoiceNo: "No",
+    invoiceHint: "If you need an invoice, complete the tax details for your company or self-employed business.",
+    invoiceChoiceRequired: "Choose whether you need an invoice. If you opened registration before this change, reload the page.",
+    invoiceDataRequired: "Complete your billing name, tax ID and full billing address.",
+    address: "Billing address",
+    city: "City",
+    postalCode: "Postal code",
+    province: "Province or region",
+    country: "Country",
     optional: "optional",
     phone: "Phone",
     email: "Email",

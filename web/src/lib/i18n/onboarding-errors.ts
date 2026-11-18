@@ -16,6 +16,11 @@ export function translateOnboardingError(
       return onboardingDict.errorCancelled;
     case "INVITATION_EXPIRED":
       return onboardingDict.errorExpired;
+    case "INVOICE_CHOICE_REQUIRED":
+      return onboardingDict.invoiceChoiceRequired;
+    case "INVOICE_DETAILS_REQUIRED":
+    case "INVOICE_DETAILS_INVALID":
+      return onboardingDict.invoiceDataRequired;
     case "NOT_AUTHORIZED":
       return dict.notAuthorized;
     default:

@@ -188,6 +188,7 @@ export interface AdminPersonContact {
   phone: string | null;
   nif: string | null;
   companyName: string | null;
+  needsInvoice: boolean | null;
   preferredLocale: string;
   status: "active" | "archived";
   canReceivePackages: boolean;
@@ -241,7 +242,7 @@ export async function getCoworkerDetail(
   const { data: c } = await supabase
     .from("contacts")
     .select(
-      "id, first_name, last_name, email, phone, nif, company_name, preferred_locale, status, can_receive_packages, marketing_consent, address, city, postal_code, province, country, billing_company_id, holded_contact_id, internal_notes",
+      "id, first_name, last_name, email, phone, nif, company_name, needs_invoice, preferred_locale, status, can_receive_packages, marketing_consent, address, city, postal_code, province, country, billing_company_id, holded_contact_id, internal_notes",
     )
     .eq("id", contactId)
     .maybeSingle();
@@ -332,6 +333,7 @@ export async function getCoworkerDetail(
       phone: c.phone,
       nif: c.nif,
       companyName: c.company_name,
+      needsInvoice: c.needs_invoice,
       preferredLocale: c.preferred_locale,
       status: c.status,
       canReceivePackages: c.can_receive_packages,

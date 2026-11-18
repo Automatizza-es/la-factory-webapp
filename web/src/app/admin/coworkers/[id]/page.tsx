@@ -94,6 +94,11 @@ export default async function AdminCoworkerDetailPage({ params }: PageProps) {
           }}
         >
           <EmailField contactId={c.id} email={c.email} />
+          {c.needsInvoice !== null && (
+            <p className="text-sm text-warm-gray">
+              {dict.onboarding.needsInvoice} {c.needsInvoice ? dict.onboarding.invoiceYes : dict.onboarding.invoiceNo}
+            </p>
+          )}
         </PersonFieldsCard>
 
         <div className="flex flex-col gap-4">

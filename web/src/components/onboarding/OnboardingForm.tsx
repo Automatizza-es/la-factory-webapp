@@ -5,6 +5,7 @@ import { completeOnboarding } from "@/app/onboarding/actions";
 import { useI18n } from "@/lib/i18n/context";
 import { validateNewPassword } from "@/lib/password";
 import { PasswordInput } from "@/components/auth/PasswordInput";
+import { hasInvoiceDetails } from "@/lib/onboarding-invoice";
 import { TEXT_LIMITS } from "@/lib/limits";
 
 interface OnboardingFormProps {
@@ -21,6 +22,8 @@ export function OnboardingForm({ token, email }: OnboardingFormProps) {
   const [lastName, setLastName] = useState("");
   const [nif, setNif] = useState("");
   const [companyName, setCompanyName] = useState("");
+  const [needsInvoice, setNeedsInvoice] = useState<boolean | null>(null);
+  const [fiscal, setFiscal] = useState({ address: "", city: "", postalCode: "", province: "", country: "" });
   const [phone, setPhone] = useState("");
   const [marketingConsent, setMarketingConsent] = useState(false);
   const [password, setPassword] = useState("");
@@ -30,6 +33,14 @@ export function OnboardingForm({ token, email }: OnboardingFormProps) {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (needsInvoice === null) {
+      setError(dict.onboarding.invoiceChoiceRequired);
+      return;
+    }
+    if (needsInvoice && !hasInvoiceDetails({ companyName, nif, ...fiscal })) {
+      setError(dict.onboarding.invoiceDataRequired);
+      return;
+    }
     const invalidPassword = validateNewPassword(password, confirmPassword, dict.password);
     if (invalidPassword) {
       setError(invalidPassword);
@@ -44,6 +55,8 @@ export function OnboardingForm({ token, email }: OnboardingFormProps) {
       lastName,
       nif,
       companyName,
+      needsInvoice,
+      ...fiscal,
       phone,
       // Whatever language they're viewing the form in (switcher at the top).
       preferredLocale: locale,
@@ -88,12 +101,35 @@ export function OnboardingForm({ token, email }: OnboardingFormProps) {
       </div>
 
       <div className="flex flex-col gap-1.5">
+        <label htmlFor="needsInvoice" className="text-sm font-medium text-ink">
+          {dict.onboarding.needsInvoice} *
+        </label>
+        <select
+          id="needsInvoice"
+          required
+          value={needsInvoice === null ? "" : String(needsInvoice)}
+          onChange={(e) => {
+            setNeedsInvoice(e.target.value === "" ? null : e.target.value === "true");
+            setError(null);
+          }}
+          aria-describedby="invoice-hint"
+          className={inputClass}
+        >
+          <option value="" disabled>—</option>
+          <option value="true">{dict.onboarding.invoiceYes}</option>
+          <option value="false">{dict.onboarding.invoiceNo}</option>
+        </select>
+        <p id="invoice-hint" className="text-xs text-warm-gray">{dict.onboarding.invoiceHint}</p>
+      </div>
+
+      <div className="flex flex-col gap-1.5">
         <label htmlFor="nif" className="text-sm font-medium text-ink">
           {dict.onboarding.nif}{" "}
-          <span className="font-normal text-warm-gray">({dict.onboarding.optional})</span>
+          {needsInvoice ? "*" : <span className="font-normal text-warm-gray">({dict.onboarding.optional})</span>}
         </label>
         <input
           id="nif"
+          required={needsInvoice === true}
           value={nif}
           maxLength={TEXT_LIMITS.nif}
           onChange={(e) => setNif(e.target.value)}
@@ -104,16 +140,35 @@ export function OnboardingForm({ token, email }: OnboardingFormProps) {
       <div className="flex flex-col gap-1.5">
         <label htmlFor="companyName" className="text-sm font-medium text-ink">
           {dict.onboarding.companyName}{" "}
-          <span className="font-normal text-warm-gray">({dict.onboarding.optional})</span>
+          {needsInvoice ? "*" : <span className="font-normal text-warm-gray">({dict.onboarding.optional})</span>}
         </label>
         <input
           id="companyName"
+          required={needsInvoice === true}
           value={companyName}
           maxLength={TEXT_LIMITS.company}
           onChange={(e) => setCompanyName(e.target.value)}
           className={inputClass}
         />
       </div>
+
+      {needsInvoice && (
+        <div className="grid gap-4 sm:grid-cols-2">
+          {(["address", "postalCode", "city", "province", "country"] as const).map((key) => (
+            <div key={key} className={`flex min-w-0 flex-col gap-1.5 ${key === "address" ? "sm:col-span-2" : ""}`}>
+              <label htmlFor={key} className="text-sm font-medium text-ink">{dict.onboarding[key]} *</label>
+              <input
+                id={key}
+                required
+                value={fiscal[key]}
+                maxLength={TEXT_LIMITS[key]}
+                onChange={(e) => setFiscal({ ...fiscal, [key]: e.target.value })}
+                className={inputClass}
+              />
+            </div>
+          ))}
+        </div>
+      )}
 
       <div className="flex flex-col gap-1.5">
         <label htmlFor="phone" className="text-sm font-medium text-ink">
@@ -189,7 +244,7 @@ export function OnboardingForm({ token, email }: OnboardingFormProps) {
         {dict.onboarding.marketingConsent}
       </label>
 
-      {error && <p className="rounded-xl bg-red-50 p-3 text-sm text-red-600">{error}</p>}
+      {error && <p role="alert" className="rounded-xl bg-red-50 p-3 text-sm text-red-600">{error}</p>}
 
       <button
         type="submit"
