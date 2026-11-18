@@ -2,6 +2,7 @@
 
 import {
   Building2,
+  MessagesSquare,
   CalendarDays,
   Megaphone,
   Wrench,
@@ -17,6 +18,7 @@ import {
   Users,
   type LucideIcon,
 } from "lucide-react";
+import { getBoardDictionary } from "@/lib/board";
 import { useI18n } from "@/lib/i18n/context";
 
 // "guest": signed-in person with no plan right now (Invitado).
@@ -43,7 +45,8 @@ export function isNavItemActive(item: NavItem, pathname: string): boolean {
 // One app, two roles: the bottom bar (phone) stays short, the sidebar
 // (tablet/desktop) has room to list every section directly.
 export function useNavItems(role: AppRole): { bottom: NavItem[]; sidebar: NavItem[] } {
-  const { dict } = useI18n();
+  const { dict, locale } = useI18n();
+  const boardLabel = getBoardDictionary(locale).title;
 
   if (role === "admin") {
     const nav = dict.admin.nav;
@@ -64,6 +67,7 @@ export function useNavItems(role: AppRole): { bottom: NavItem[]; sidebar: NavIte
             "/admin/paquetes",
             "/admin/incidencias",
             "/admin/comunicados",
+            "/admin/tablon",
             "/admin/empresas",
             "/admin/facturacion",
             "/admin/configuracion",
@@ -75,6 +79,7 @@ export function useNavItems(role: AppRole): { bottom: NavItem[]; sidebar: NavIte
         dashboard,
         bookings,
         users,
+        { href: "/admin/tablon", label: boardLabel, icon: MessagesSquare },
         { href: "/admin/incidencias", label: nav.incidents, icon: Wrench },
         { href: "/admin/comunicados", label: nav.announcements, icon: Megaphone },
         { href: "/admin/empresas", label: nav.companies, icon: Building2 },
@@ -90,14 +95,15 @@ export function useNavItems(role: AppRole): { bottom: NavItem[]; sidebar: NavIte
   const home = { href: "/", label: nav.home, icon: Home };
   const events = { href: "/eventos", label: nav.events, icon: PartyPopper };
   const packages = { href: "/paquetes", label: nav.packages, shortLabel: nav.packagesShort, icon: Package };
-  const profile = { href: "/perfil", label: nav.profile, icon: User };
+  const profile = { href: "/perfil", label: nav.profile, icon: User, alsoActiveOn: ["/tablon"] };
+  const board = { href: "/tablon", label: boardLabel, icon: MessagesSquare };
   const incidents = { href: "/incidencias", label: nav.incidents, icon: Wrench };
 
   // No plan, no bookings: community side only.
   if (role === "guest") {
     return {
       bottom: [home, events, packages, profile],
-      sidebar: [home, events, packages, incidents, profile],
+      sidebar: [home, events, packages, board, incidents, profile],
     };
   }
 
@@ -105,6 +111,6 @@ export function useNavItems(role: AppRole): { bottom: NavItem[]; sidebar: NavIte
   const bookings = { href: "/reservas", label: nav.bookings, shortLabel: nav.bookingsShort, icon: ListChecks };
   return {
     bottom: [home, book, bookings, profile],
-    sidebar: [home, book, bookings, events, packages, incidents, profile],
+    sidebar: [home, book, bookings, events, packages, board, incidents, profile],
   };
 }

@@ -1,3 +1,4 @@
+import { getBoardDictionary } from "@/lib/board";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
 import type { IncidentCategory, IncidentStatus } from "@/lib/data/incidents";
@@ -17,6 +18,8 @@ export interface NotificationItem {
 
 interface RawNotification {
   id: string;
+  title: string;
+  body: string | null;
   type: string;
   link_path: string | null;
   related_id: string | null;
@@ -78,6 +81,9 @@ function renderNotification(
   } else if (row.type === "announcement") {
     title = announcement?.title ?? dict.genericTitle;
     body = announcement?.body ?? "";
+  } else if (row.type === "board_reply") {
+    title = getBoardDictionary(locale).replyTitle;
+    body = `${row.title} · ${(row.body ?? "").slice(0, 180)}`;
   } else if (row.type === "incident_new") {
     title = dict.incidentNewTitle;
     body = incident
@@ -124,7 +130,7 @@ export async function getMyNotifications(
   const since = new Date(Date.now() - NOTIFICATION_WINDOW_DAYS * 24 * 60 * 60 * 1000).toISOString();
   const { data } = await supabase
     .from("notifications")
-    .select("id, type, link_path, related_id, read_at, created_at")
+    .select("id, type, title, body, link_path, related_id, read_at, created_at")
     .eq("recipient_contact_id", contactId)
     .gte("created_at", since)
     .order("created_at", { ascending: false })

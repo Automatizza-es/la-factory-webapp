@@ -5,6 +5,7 @@ import {
   ChevronRight,
   KeyRound,
   Megaphone,
+  MessagesSquare,
   Package,
   PartyPopper,
   Receipt,
@@ -12,6 +13,7 @@ import {
   Wrench,
 } from "lucide-react";
 import { SignOutButton } from "@/components/layout/SignOutButton";
+import { getBoardDictionary } from "@/lib/board";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import { getLocale } from "@/lib/i18n/server";
 
@@ -19,10 +21,12 @@ import { getLocale } from "@/lib/i18n/server";
 // the bottom bar, plus account actions. On desktop they're all in the
 // sidebar already.
 export default async function AdminMorePage() {
-  const dict = getDictionary(await getLocale());
+  const locale = await getLocale();
+  const dict = getDictionary(locale);
   const nav = dict.admin.nav;
 
   const sections = [
+    { href: "/admin/tablon", label: getBoardDictionary(locale).title, icon: MessagesSquare },
     { href: "/admin/incidencias", label: nav.incidents, icon: Wrench },
     { href: "/admin/comunicados", label: nav.announcements, icon: Megaphone },
     { href: "/admin/empresas", label: nav.companies, icon: Building2 },
