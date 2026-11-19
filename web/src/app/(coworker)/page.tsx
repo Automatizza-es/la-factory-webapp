@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { ChevronRight, Package, Wrench } from "lucide-react";
+import { ChevronRight, MessagesSquare, Package, Wrench } from "lucide-react";
+import { getBoardDictionary } from "@/lib/board";
 import { BookingCard } from "@/components/home/BookingCard";
 import { QuotaCard } from "@/components/home/QuotaCard";
 import { RoomCard } from "@/components/home/RoomCard";
@@ -112,6 +113,17 @@ export default async function HomePage() {
               <ChevronRight className="h-4 w-4 shrink-0 text-warm-gray" strokeWidth={2} />
             </Link>
           )}
+
+          <Link href="/tablon" className="flex items-center gap-3 rounded-2xl bg-white p-4 shadow-sm">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-cream">
+              <MessagesSquare className="h-5 w-5 text-brown-dark" strokeWidth={1.75} />
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="font-semibold text-ink">{getBoardDictionary(locale).title}</p>
+              <p className="text-xs text-warm-gray">{getBoardDictionary(locale).subtitle}</p>
+            </div>
+            <ChevronRight className="h-4 w-4 shrink-0 text-warm-gray" strokeWidth={2} />
+          </Link>
 
           <Link
             href="/incidencias/nueva"
