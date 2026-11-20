@@ -23,11 +23,20 @@ export async function GET(request: NextRequest) {
     .eq("id", postId).maybeSingle();
   const attachment = (post?.attachments as BoardAttachment[] | undefined)?.find((file) => file.path === path);
   if (postError || !attachment) return new NextResponse(null, { status: 404 });
-  const { data, error } = await supabase.storage.from("board").createSignedUrl(path, 60, {
-    download: request.nextUrl.searchParams.has("download") ? attachment.name : false,
-  });
+  const { data, error } = await supabase.storage.from("board").createSignedUrl(path, 60);
   if (error || !data) return new NextResponse(null, { status: 404 });
-  const response = NextResponse.redirect(data.signedUrl);
-  response.headers.set("Cache-Control", "private, no-store");
-  return response;
+  // Proxy the private file instead of redirecting the browser to Storage.
+  // Some privacy extensions block the signed Supabase URL, even when the
+  // signed URL itself is valid.
+  const file = await fetch(data.signedUrl);
+  if (!file.ok || !file.body) return new NextResponse(null, { status: 404 });
+  const download = request.nextUrl.searchParams.has("download");
+  const encodedName = encodeURIComponent(attachment.name).replace(/['()]/g, escape);
+  return new NextResponse(file.body, {
+    headers: {
+      "Cache-Control": "private, no-store",
+      "Content-Type": attachment.type,
+      "Content-Disposition": `${download ? "attachment" : "inline"}; filename*=UTF-8''${encodedName}`,
+    },
+  });
 }
