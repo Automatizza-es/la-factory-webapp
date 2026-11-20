@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FileText, MessageCircle, Search } from "lucide-react";
 import { BoardCreate, BoardManage, BoardReply } from "@/components/board/BoardControls";
+import { BoardText } from "@/components/board/BoardText";
 import { getCurrentCoworker } from "@/lib/data/coworker";
 import { getBoardDictionary, type BoardComment, type BoardPost } from "@/lib/board";
 import { INTL_LOCALE } from "@/lib/i18n/config";
@@ -56,21 +57,21 @@ export async function BoardList({ searchParams }: { searchParams: Promise<BoardS
       {posts.length > 0 && <section className="board-cork p-4 sm:p-5" aria-label={t.title}>
         <div className="board-notes grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
           {posts.slice(0, 20).map((post) => (
-            <Link key={post.id} href={`${base}/${post.id}`} className="board-note flex min-w-0 flex-col gap-3 p-5 text-ink transition-shadow hover:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brown-dark">
-              <div className="flex flex-wrap items-start justify-between gap-2 pt-1">
+            <article key={post.id} className="board-note flex min-w-0 flex-col gap-3 p-5 text-ink transition-shadow hover:shadow-lg">
+              <Link href={`${base}/${post.id}`} className="flex flex-wrap items-start justify-between gap-2 pt-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brown-dark">
                 <h2 className="min-w-0 text-lg font-semibold leading-snug [overflow-wrap:anywhere]">{post.title}</h2>
                 <span className="rounded-full bg-cream px-3 py-1 text-xs font-medium text-brown-dark">{t[post.status]}</span>
-              </div>
-              <p className="line-clamp-4 whitespace-pre-wrap text-sm leading-relaxed text-ink/80 [overflow-wrap:anywhere]">{post.body}</p>
+              </Link>
+              <BoardText text={post.body} className="line-clamp-4 whitespace-pre-wrap text-sm leading-relaxed text-ink/80 [overflow-wrap:anywhere]" />
               {post.comment_match && <div className="rounded-xl bg-cream/90 p-3 text-sm">
                 <p className="font-medium text-brown-dark">{t.commentMatch}</p>
-                <p className="mt-1 line-clamp-3 whitespace-pre-wrap [overflow-wrap:anywhere]">{post.comment_match}</p>
+                <BoardText text={post.comment_match} className="mt-1 line-clamp-3 whitespace-pre-wrap [overflow-wrap:anywhere]" />
               </div>}
               <div className="mt-auto flex flex-wrap items-center justify-between gap-2 border-t border-sand/50 pt-3 text-xs text-warm-gray">
                 <span>{post.author_name} · {date(post.created_at)}</span>
                 <span className="flex items-center gap-1"><MessageCircle className="h-4 w-4" aria-hidden />{post.comment_count} {t.comments.toLowerCase()}</span>
               </div>
-            </Link>
+            </article>
           ))}
         </div>
       </section>}
@@ -123,7 +124,7 @@ export async function BoardDetail({ params, searchParams }: {
         <span className="self-start rounded-full bg-cream px-3 py-1 text-xs text-brown-dark">{t[post.status]}</span>
         <h1 className="text-2xl font-bold [overflow-wrap:anywhere]">{post.title}</h1>
         <p className="text-xs text-warm-gray">{post.author_name} · {date(post.created_at)}</p>
-        <p className="whitespace-pre-wrap text-sm leading-relaxed [overflow-wrap:anywhere]">{post.body}</p>
+        <BoardText text={post.body} className="whitespace-pre-wrap text-sm leading-relaxed [overflow-wrap:anywhere]" />
         {post.attachments.length > 0 && <section aria-label={t.attachments} className="flex flex-col gap-3">
           <div className="grid gap-3 sm:grid-cols-2">
             {post.attachments.filter((a) => a.type.startsWith("image/")).map((file) => (
@@ -151,7 +152,7 @@ export async function BoardDetail({ params, searchParams }: {
           <article id={`comment-${comment.id}`} key={comment.id} className={`${cardClass} scroll-mt-5 target:ring-2 target:ring-sand`}>
             <p className="text-sm font-semibold">{comment.author_name}</p>
             <p className="mt-1 text-xs text-warm-gray">{date(comment.created_at)}</p>
-            <p className="mt-3 whitespace-pre-wrap text-sm [overflow-wrap:anywhere]">{comment.body}</p>
+            <BoardText text={comment.body} className="mt-3 whitespace-pre-wrap text-sm [overflow-wrap:anywhere]" />
           </article>
         ))}
         <nav aria-label={t.comments} className="flex justify-between gap-3 text-sm text-brown-dark">
