@@ -40,6 +40,72 @@ img {
   max-width: 100%;
 }
 
+/* Notice board: a tactile cork surface with paper notes, while keeping the
+   application palette and the controls fully legible on small screens. */
+.board-heading {
+  padding: 0.25rem 0 0;
+}
+
+.board-filter {
+  border: 1px solid color-mix(in srgb, var(--color-sand) 68%, transparent);
+  border-radius: 1.25rem;
+  background: rgb(255 255 255 / 0.72);
+  box-shadow: 0 0.25rem 1.25rem rgb(95 64 35 / 0.08);
+}
+
+.board-cork {
+  border: 1px solid rgb(119 81 45 / 0.34);
+  border-radius: 1.5rem;
+  background-color: #c88d52;
+  background-image:
+    radial-gradient(ellipse at 15% 25%, rgb(255 232 185 / 0.54) 0 1px, transparent 1.75px),
+    radial-gradient(ellipse at 77% 68%, rgb(86 48 24 / 0.22) 0 1px, transparent 1.75px),
+    radial-gradient(ellipse at 44% 83%, rgb(255 236 196 / 0.4) 0 1.5px, transparent 2px),
+    linear-gradient(135deg, rgb(255 224 171 / 0.28), transparent 52%, rgb(91 51 23 / 0.16));
+  background-size: 11px 13px, 15px 17px, 21px 19px, 100% 100%;
+  box-shadow: inset 0 1px 0 rgb(255 245 219 / 0.45), 0 0.75rem 1.75rem rgb(95 64 35 / 0.14);
+}
+
+.board-note {
+  position: relative;
+  min-height: 12rem;
+  border: 1px solid rgb(119 81 45 / 0.13);
+  border-radius: 1rem;
+  background: linear-gradient(135deg, #fffdf9, #f8f0e4);
+  box-shadow: 0 0.75rem 1rem rgb(73 43 22 / 0.24), 0 0.15rem 0.25rem rgb(73 43 22 / 0.14);
+  transform: rotate(-0.55deg);
+}
+
+.board-note::before {
+  position: absolute;
+  z-index: 1;
+  top: -0.5rem;
+  left: 50%;
+  width: 0.9rem;
+  height: 0.9rem;
+  border: 1px solid rgb(102 61 16 / 0.42);
+  border-radius: 999px;
+  background: radial-gradient(circle at 32% 28%, #ffe4a5 0 16%, #d58b27 36%, #8b4d13 75%);
+  box-shadow: 0 0.18rem 0.18rem rgb(64 34 12 / 0.38);
+  content: "";
+}
+
+.board-note:nth-child(3n + 2) { transform: rotate(0.7deg); }
+.board-note:nth-child(3n) { transform: rotate(-0.2deg); }
+
+.board-note:hover { transform: translateY(-0.2rem) rotate(-0.55deg); }
+.board-note:nth-child(3n + 2):hover { transform: translateY(-0.2rem) rotate(0.7deg); }
+.board-note:nth-child(3n):hover { transform: translateY(-0.2rem) rotate(-0.2deg); }
+
+@media (prefers-reduced-motion: reduce) {
+  .board-note,
+  .board-note:nth-child(3n + 2),
+  .board-note:nth-child(3n),
+  .board-note:hover,
+  .board-note:nth-child(3n + 2):hover,
+  .board-note:nth-child(3n):hover { transform: none; }
+}
+
 [hidden] {
   display: none !important;
 }

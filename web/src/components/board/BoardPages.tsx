@@ -34,42 +34,46 @@ export async function BoardList({ searchParams }: { searchParams: Promise<BoardS
   const date = (value: string) => new Intl.DateTimeFormat(INTL_LOCALE[locale], { dateStyle: "medium", timeZone: "Europe/Madrid" }).format(new Date(value));
   const pageHref = (number: number) => `${base}?${new URLSearchParams({ q: query, status, page: String(number) })}`;
   return (
-    <div className="mx-auto flex w-full max-w-3xl flex-col gap-5">
-      <div>
-        <h1 className="text-2xl font-bold">{t.title}</h1>
-        <p className="mt-1 text-sm text-warm-gray">{t.subtitle}</p>
+    <div className="mx-auto flex w-full max-w-6xl flex-col gap-5">
+      <div className="board-heading">
+        <h1 className="text-3xl font-bold tracking-tight text-ink sm:text-4xl">{t.title}</h1>
+        <p className="mt-2 text-base text-warm-gray">{t.subtitle}</p>
       </div>
       {current.access !== "guest" ? <BoardCreate contactId={current.contactId} base={base} /> : <p className="text-sm text-warm-gray">{t.guest}</p>}
-      <form action={base} className="flex flex-col gap-3 rounded-2xl bg-white p-4 shadow-sm sm:flex-row">
+      <form action={base} className="board-filter flex flex-col gap-2 p-3 sm:flex-row sm:items-center">
         <label className="relative min-w-0 flex-1">
           <span className="sr-only">{t.search}</span>
-          <Search aria-hidden className="absolute left-3 top-3.5 h-4 w-4 text-warm-gray" />
-          <input name="q" maxLength={200} defaultValue={query} placeholder={t.search} className="w-full rounded-xl border border-sand py-3 pl-9 pr-3 text-sm" />
+          <Search aria-hidden className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-warm-gray" />
+          <input name="q" maxLength={200} defaultValue={query} placeholder={t.search} className="w-full rounded-xl border border-sand/80 bg-white/80 py-3 pl-9 pr-3 text-sm outline-none transition focus:border-brown-dark" />
         </label>
-        <select name="status" defaultValue={status} aria-label={t.title} className="rounded-xl border border-sand bg-white px-3 py-3 text-sm">
+        <select name="status" defaultValue={status} aria-label={t.title} className="rounded-xl border border-sand/80 bg-white/80 px-3 py-3 text-sm text-ink outline-none focus:border-brown-dark">
           <option value="all">{t.all}</option><option value="active">{t.active}</option><option value="closed">{t.closed}</option>
           {admin && <option value="archived">{t.archived}</option>}
         </select>
-        <button className="rounded-xl bg-brown-dark px-4 py-3 text-sm font-medium text-white">{t.searchButton}</button>
+        <button className="rounded-xl bg-brown-dark px-5 py-3 text-sm font-medium text-white transition hover:bg-brown">{t.searchButton}</button>
       </form>
       {!posts.length && <p className={cardClass}>{t.empty}</p>}
-      {posts.slice(0, 20).map((post) => (
-        <Link key={post.id} href={`${base}/${post.id}`} className={`${cardClass} flex min-w-0 flex-col gap-3 transition-shadow hover:shadow-md`}>
-          <div className="flex flex-wrap items-start justify-between gap-2">
-            <h2 className="min-w-0 text-lg font-semibold [overflow-wrap:anywhere]">{post.title}</h2>
-            <span className="rounded-full bg-cream px-3 py-1 text-xs text-brown-dark">{t[post.status]}</span>
-          </div>
-          <p className="line-clamp-3 whitespace-pre-wrap text-sm text-warm-gray [overflow-wrap:anywhere]">{post.body}</p>
-          {post.comment_match && <div className="rounded-xl bg-cream p-3 text-sm">
-            <p className="font-medium text-brown-dark">{t.commentMatch}</p>
-            <p className="mt-1 line-clamp-3 whitespace-pre-wrap [overflow-wrap:anywhere]">{post.comment_match}</p>
-          </div>}
-          <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-warm-gray">
-            <span>{post.author_name} · {date(post.created_at)}</span>
-            <span className="flex items-center gap-1"><MessageCircle className="h-4 w-4" aria-hidden />{post.comment_count} {t.comments.toLowerCase()}</span>
-          </div>
-        </Link>
-      ))}
+      {posts.length > 0 && <section className="board-cork p-4 sm:p-5" aria-label={t.title}>
+        <div className="board-notes grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+          {posts.slice(0, 20).map((post) => (
+            <Link key={post.id} href={`${base}/${post.id}`} className="board-note flex min-w-0 flex-col gap-3 p-5 text-ink transition-shadow hover:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brown-dark">
+              <div className="flex flex-wrap items-start justify-between gap-2 pt-1">
+                <h2 className="min-w-0 text-lg font-semibold leading-snug [overflow-wrap:anywhere]">{post.title}</h2>
+                <span className="rounded-full bg-cream px-3 py-1 text-xs font-medium text-brown-dark">{t[post.status]}</span>
+              </div>
+              <p className="line-clamp-4 whitespace-pre-wrap text-sm leading-relaxed text-ink/80 [overflow-wrap:anywhere]">{post.body}</p>
+              {post.comment_match && <div className="rounded-xl bg-cream/90 p-3 text-sm">
+                <p className="font-medium text-brown-dark">{t.commentMatch}</p>
+                <p className="mt-1 line-clamp-3 whitespace-pre-wrap [overflow-wrap:anywhere]">{post.comment_match}</p>
+              </div>}
+              <div className="mt-auto flex flex-wrap items-center justify-between gap-2 border-t border-sand/50 pt-3 text-xs text-warm-gray">
+                <span>{post.author_name} · {date(post.created_at)}</span>
+                <span className="flex items-center gap-1"><MessageCircle className="h-4 w-4" aria-hidden />{post.comment_count} {t.comments.toLowerCase()}</span>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>}
       <nav aria-label={t.title} className="flex justify-between gap-3 text-sm font-medium text-brown-dark">
         {page > 1 ? <Link href={pageHref(page - 1)}>{t.previous}</Link> : <span />}
         {posts.length > 20 && <Link href={pageHref(page + 1)}>{t.next}</Link>}

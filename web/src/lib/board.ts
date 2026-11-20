@@ -30,7 +30,7 @@ export const BOARD_DOCUMENT_TYPES = [
 export const BOARD_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
 const es = {
-  title: "Tablón de anuncios", subtitle: "Comparte servicios, busca profesionales y encuentra recomendaciones de la comunidad.",
+  title: "Tablón de anuncios", subtitle: "Comparte algo con la comunidad de La Factory.",
   newPost: "Crear publicación", edit: "Editar", save: "Guardar", publish: "Publicar", saving: "Guardando…",
   postTitle: "Título", text: "Texto", photos: "Fotos", document: "Documento (opcional)",
   fileHint: "Hasta 5 fotos y 1 documento PDF, Word, ODT o TXT. Máximo 10 MB por archivo.",
@@ -53,7 +53,7 @@ const es = {
 };
 type BoardDictionary = Record<keyof typeof es, string>;
 const ca: BoardDictionary = {
-  title: "Tauler d’anuncis", subtitle: "Comparteix serveis, busca professionals i troba recomanacions de la comunitat.",
+  title: "Tauler d’anuncis", subtitle: "Comparteix alguna cosa amb la comunitat de La Factory.",
   newPost: "Crear publicació", edit: "Editar", save: "Desar", publish: "Publicar", saving: "Desant…",
   postTitle: "Títol", text: "Text", photos: "Fotos", document: "Document (opcional)",
   fileHint: "Fins a 5 fotos i 1 document PDF, Word, ODT o TXT. Màxim 10 MB per arxiu.",
@@ -75,7 +75,7 @@ const ca: BoardDictionary = {
   removeFile: "Treure arxiu", noComments: "Encara no hi ha respostes.", attachments: "Arxius adjunts",
 };
 const en: BoardDictionary = {
-  title: "Notice board", subtitle: "Share services, find professionals and discover community recommendations.",
+  title: "Notice board", subtitle: "Share something with the La Factory community.",
   newPost: "Create post", edit: "Edit", save: "Save", publish: "Publish", saving: "Saving…",
   postTitle: "Title", text: "Text", photos: "Photos", document: "Document (optional)",
   fileHint: "Up to 5 photos and 1 PDF, Word, ODT or TXT document. Maximum 10 MB per file.",

@@ -11,7 +11,7 @@ export function BoardCreate({ contactId, base }: { contactId: string; base: stri
   const { locale } = useI18n();
   const [open, setOpen] = useState(false);
   return open ? <BoardEditor contactId={contactId} base={base} onCancel={() => setOpen(false)} /> : (
-    <button onClick={() => setOpen(true)} className="self-start rounded-xl bg-brown-dark px-5 py-3 text-sm font-medium text-white">
+    <button onClick={() => setOpen(true)} className="self-start rounded-xl bg-brown-dark px-5 py-3 text-sm font-medium text-white shadow-sm transition hover:bg-brown hover:shadow-md">
       {getBoardDictionary(locale).newPost}
     </button>
   );
