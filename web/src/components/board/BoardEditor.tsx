@@ -93,7 +93,7 @@ export function BoardEditor({ contactId, base, post, onCancel }: {
         ))}
         <label className="flex flex-col gap-2 text-sm font-medium">
           {t.photos}
-          <input type="file" multiple accept={BOARD_IMAGE_TYPES.join(",")} onChange={(e) => {
+          <input type="file" multiple accept={`${BOARD_IMAGE_TYPES.join(",")},.heic,.heif`} onChange={(e) => {
             setPhotos([...photos, ...Array.from(e.target.files ?? [])]);
             e.target.value = "";
           }} className={inputClass} />

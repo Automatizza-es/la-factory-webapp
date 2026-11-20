@@ -1,11 +1,19 @@
 // Client-side resize + recompress before upload, so a phone photo (often
 // several MB) doesn't go straight into Storage untouched.
+async function normalizeImage(file: File, quality: number): Promise<Blob> {
+  if (file.type !== "image/heic" && file.type !== "image/heif") return file;
+  const { default: heic2any } = await import("heic2any");
+  const converted = await heic2any({ blob: file, toType: "image/jpeg", quality });
+  return Array.isArray(converted) ? converted[0] : converted;
+}
+
 export async function compressImage(
   file: File,
   maxDimension = 1600,
   quality = 0.8,
 ): Promise<Blob> {
-  const bitmap = await createImageBitmap(file);
+  const source = await normalizeImage(file, quality);
+  const bitmap = await createImageBitmap(source);
   const scale = Math.min(1, maxDimension / Math.max(bitmap.width, bitmap.height));
   const width = Math.round(bitmap.width * scale);
   const height = Math.round(bitmap.height * scale);

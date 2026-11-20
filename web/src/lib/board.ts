@@ -27,7 +27,7 @@ export const BOARD_DOCUMENT_TYPES = [
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
   "application/vnd.oasis.opendocument.text", "text/plain",
 ];
-export const BOARD_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
+export const BOARD_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/heic", "image/heif"];
 
 const es = {
   title: "Tablón de anuncios", subtitle: "Comparte algo con la comunidad de La Factory.",
